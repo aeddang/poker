@@ -1,0 +1,134 @@
+import { Subject} from 'rxjs';
+import { convertRectFromDimension } from './util';
+export default class Paint {
+  constructor(delegate = new Subject()) {
+    this.delegate = delegate;
+    this.body = null;
+    this.opacity = 0;
+    this.stream = null;
+    this.canvas = null;
+    this.context = null;
+    this.frm = 0;
+    this.isAutoView = false;
+    this.isDrawing = false;
+    this.dpr = 1;
+  }
+
+  init(body, isAutoView = false) {
+    this.body = body;
+    this.isAutoView = isAutoView;
+    this.dpr = window.devicePixelRatio || 1;
+    this.canvas = document.createElement("canvas");
+    this.body.appendChild(this.canvas);
+    var bounce =  convertRectFromDimension(this.body);
+    this.canvas.width = bounce.width * this.dpr;
+    this.canvas.height = bounce.height * this.dpr;
+    return this.delegate;
+  }
+
+  remove() {
+    this.stop();
+    this.delegate = null;
+    this.body = null;
+    this.stream = null;
+    this.canvas = null;
+    this.context = null;
+  }
+
+  play() {
+    if(this.isAutoView) this.body.style.display = 'block';
+    if(this.stream != null) window.cancelAnimationFrame(this.stream);
+    this.isDrawing = true;
+    this.stream = window.requestAnimationFrame(this.onDraw.bind(this));
+  }
+
+  stop() {
+    if(this.isAutoView) this.body.style.display = 'none';
+    this.isDrawing = false;
+    if(this.stream != null) window.cancelAnimationFrame(this.stream);
+    this.stream = null;
+  }
+
+  onDraw() {
+    if(this.context == null) {
+      this.context = this.canvas.getContext('2d');
+      this.context.scale(this.dpr, this.dpr);
+      this.doInitDraw();
+    }
+    this.doDraw();
+    this.frm ++;
+    this.context.restore();
+    if(this.isDrawing == true) this.stream = window.requestAnimationFrame(this.onDraw.bind(this));
+  }
+
+  doInitDraw(){}
+  doDraw(){}
+}
+
+
+export class LoadingSpiner extends Paint {
+  init(body, width = 80, height = 80, depth = 6, isAutoView = true) {
+    super.init(body, isAutoView);
+    this.width = width;
+    this.height = height;
+    this.depth = depth;
+    let margin = this.depth/2;
+    let frame = 30;
+    let div = 2;
+    let radiusX = this.width/2 - margin;
+    let radiusY = this.height/2 - margin;
+    let start = 45;
+    let diff = 360 / frame;
+    this.points = new Array();
+    for (var i=0; i<= (frame * div); ++i){
+      var r = (i%frame)*diff;
+      r = r*Math.PI/180;
+      var x = radiusX + margin + (Math.cos(r) * radiusX);
+      var y = radiusY + margin + (Math.sin(r) * radiusY);
+      var point = {x:x,y:y};
+      this.points.push(point);
+    }
+    /*
+    for (var i=0; i<= (frame * div); ++i)
+    {
+        var pos = radius;
+        var r = (i%frame)*diff;
+        if(i>=frame)
+        {
+            r = 180 - r;
+            pos = radius  * 3;
+        }
+        r = r*Math.PI/180;
+        var x = pos + margin+(Math.cos(r) *radius);
+        var y = radius + margin + (Math.sin(r) *radius);
+        var point = {x:x,y:y};
+        this.points.push(point);
+    }*/
+  }
+
+  doInitDraw() {
+    this.context.lineCap = 'round';
+    this.context.lineWidth = this.depth;
+  }
+
+  doDraw() {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.beginPath();
+    let frame = this.points.length;
+    let len = 26;
+    for (var i=0; i < len; ++i) {
+      var a = Math.sin((len-i)/len);
+      var gradient=this.context.createLinearGradient(0,0,this.width,this.height);
+      gradient.addColorStop(0,'rgba(86,84,225,'+a+')');
+      gradient.addColorStop(0.3,'rgba(141,79,227,'+a+')');
+      gradient.addColorStop(1,'rgba(42,197,254,'+a+')');
+      this.context.strokeStyle = gradient;
+      var idx  = ((this.frm + i) % frame);
+      var point = this.points[ idx ];
+      (i==0) ? this.context.moveTo(point.x, point.y) : this.context.lineTo(point.x, point.y);
+      this.context.stroke();
+    }
+    this.context.closePath();
+    //this.context.save();
+  }
+}

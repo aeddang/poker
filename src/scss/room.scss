@@ -1,0 +1,15 @@
+@import 'element';
+@import 'mixin';
+
+
+.poker .home { @include page; background:$color-grey;}
+.poker .home .title {@include position-center(300px, 60px, 0px, -40px); @include font-big($color-white); text-align:center;}
+.poker .home .btn-join { @include position-center(200px, 60px ,0px, 40px); width:200px; height:60px;}
+
+
+.poker .join { @include page; background:$color-black;}
+.poker .join .chat-area { @include position-right; width:300px; height:100%; background:$color-white;}
+.poker .join .info-box { @include position-left; width:200px;  height:100%}
+.poker .join .info-box .user {@include font-big($color-white); width:100%; padding:$margin-default}
+.poker .join .info-box .btn-play { @include position-bottom($margin-default);  width:100%; height:60px;}
+.poker .join .loading-bar { @include position-center(100px, 100px) }

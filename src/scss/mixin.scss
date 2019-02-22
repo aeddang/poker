@@ -1,0 +1,25 @@
+@import 'element';
+
+@mixin page {position:relative; width:100%; height:100%}
+
+@mixin position-left($margin:0) {position:relative; display:block; float:left; margin-left:$margin}
+@mixin position-right($margin:0) {position:relative;display:block; float:right; margin-right:$margin}
+
+@mixin position-center($width, $height, $marginX:0px, $marginY:0px) {position: absolute; left: 50%; top: 50%;
+  margin-left:-($width/2)+$marginX; margin-top:-($height/2)+$marginY; width:$width; height:$height}
+
+@mixin position-top($margin:0){position: absolute; top: 0; margin-top:$margin}
+@mixin position-bottom($margin:0){position: absolute; bottom: 0; margin-bottom:$margin}
+@mixin position-center-horizontal($width){position: absolute; margin:0 auto; margin-left:-($width/2); width:$width}
+@mixin position-clear {clear: both}
+
+@mixin font-out {text-indent: -9999px}
+@mixin font-small ($color) { font: { family: $font-family; size: 10px; } color: $color; }
+@mixin font-default ($color) { font: { family: $font-family; size: 12px; } color: $color; }
+@mixin font-big ($color) { font: { family: $font-family; size: 15px; } color: $color; }
+
+
+@mixin btn-trensparent { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0 }
+@mixin btn-default ($width, $height) { width:$width; height:$height; padding:0; border:0; background:none; cursor:pointer }
+@mixin btn-rect ($color) { background:$color; -webkit-border-radius:100px;moz-border-radius:100px;border-radius:100px; }
+@mixin btn-line ($color) { border:0.5px solid $color; -webkit-border-radius:100px;moz-border-radius:100px;border-radius:100px; }
