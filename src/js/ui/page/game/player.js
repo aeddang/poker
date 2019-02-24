@@ -38,7 +38,7 @@ export default class Player extends Component {
 
   }
 
-  getElementProvider() { return new PlayBody(this.body); }
+  getElementProvider() { return new PlayerBody(this.body); }
   onCreate(elementProvider) {
     this.profileImg = elementProvider.getElement('profileImg');
     this.profile = elementProvider.getElement('profile');

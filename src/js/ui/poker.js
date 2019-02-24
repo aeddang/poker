@@ -5,8 +5,7 @@ import * as Util from 'Skeleton/util';
 import * as Config from "Util/config";
 import * as Login from "ViewModel/login";
 import Header from 'Component/header';
-import Join from 'Page/join';
-import Home from 'Page/home';
+import * as Page from 'Page/page';
 
 class PokerBody extends ElementProvider {
   writeHTML() {
@@ -72,9 +71,9 @@ export default class Poker extends Component {
     if(this.currentPage != null) this.currentPage.remove();
     let page = null;
     switch( id ) {
-      case Config.Page.Home : page = new Home(); break;
-      case Config.Page.Join : page = new Join(); break;
-      case Config.Page.Game : page = new Game(); break;
+      case Config.Page.Home : page = new Page.Home(); break;
+      case Config.Page.Join : page = new Page.Join(); break;
+      case Config.Page.Play : page = new Page.Play(); break;
     }
     this.currentPage = page;
     page.init(this.pageArea, this.client, options).subscribe ( this.onPageEvent.bind(this) );

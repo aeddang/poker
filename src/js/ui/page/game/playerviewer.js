@@ -27,7 +27,7 @@ export default class PlayerViewer extends Component {
 
   remove() {
     super.remove();
-    this.players.forEach( p => { r.remove() };
+    this.players.forEach( p => { p.remove(); });
     this.players = null;
   }
 
@@ -52,10 +52,13 @@ export default class PlayerViewer extends Component {
     var rotate = 0;
     var sumRotate = 360 / len;
     this.players.forEach( p => {
-      let rotate += sumRotate
+      rotate += sumRotate
       let r = rotate * Math.PI/180
       let x = posX + (Math.cos(r) *radiusX);
       let y = posY + (Math.sin(r) *radiusY);
+      let pbd = p.getBody();
+      pbd.style.left = Util.getStyleUnit( x );
+      pbd.style.top = Util.getStyleUnit( y );
     });
   }
 

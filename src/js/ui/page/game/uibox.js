@@ -62,7 +62,7 @@ export default class UiBox extends Component {
 		this.btnAllin = null;
   }
 
-  getElementProvider() { return new PlayBody(this.body); }
+  getElementProvider() { return new UiBoxBody(this.body); }
   onCreate(elementProvider) {
     this.playerInfoBox = elementProvider.getElement('playerInfoBox');
     this.gameInfoBox = elementProvider.getElement('gameInfoBox');

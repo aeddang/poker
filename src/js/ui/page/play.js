@@ -3,7 +3,7 @@ import ElementProvider from 'Skeleton/elementprovider';
 import { LoadingSpiner } from 'Skeleton/paint';
 import * as Util from 'Skeleton/util';
 import * as Config from 'Util/config';
-import * from './play/*';
+import * as Game from './game/game';
 
 class PlayBody extends ElementProvider {
   writeHTML() {
@@ -11,11 +11,10 @@ class PlayBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("play");
     cell.innerHTML =`
-
     <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}playArea' class='play-area'>
-      <div id='${this.id}gameViewer' class='game-viewer'>
-      <div id='${this.id}playerViewer' class='player-viewer'>
+      <div id='${this.id}gameViewer' class='game-viewer'></div>
+      <div id='${this.id}playerViewer' class='player-viewer'></div>
       <div id='${this.id}uiBox' class='ui-box'></div>
       <button id='${this.id}btnExit' class='btn-exit'>exit</button>
     </div>
@@ -40,9 +39,9 @@ export default class Play extends Room {
     this.btnExit = null;
     this.playArea = null;
     this.chatArea = null;
-    this.gameViewer = new GameViewer();
-    this.playerViewer = new PlayerViewer();
-    this.uiBox = new UiBox();
+    this.gameViewer = new Game.GameViewer();
+    this.playerViewer = new Game.PlayerViewer();
+    this.uiBox = new Game.UiBox();
     this.loadingBar = new LoadingSpiner();
   }
 
