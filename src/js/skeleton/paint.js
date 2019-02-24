@@ -23,6 +23,9 @@ export default class Paint {
     var bounce =  convertRectFromDimension(this.body);
     this.canvas.width = bounce.width * this.dpr;
     this.canvas.height = bounce.height * this.dpr;
+    this.canvas.style.width = bounce.width+"px";
+    this.canvas.style.height = bounce.height+"px";
+
     return this.delegate;
   }
 
@@ -88,22 +91,6 @@ export class LoadingSpiner extends Paint {
       var point = {x:x,y:y};
       this.points.push(point);
     }
-    /*
-    for (var i=0; i<= (frame * div); ++i)
-    {
-        var pos = radius;
-        var r = (i%frame)*diff;
-        if(i>=frame)
-        {
-            r = 180 - r;
-            pos = radius  * 3;
-        }
-        r = r*Math.PI/180;
-        var x = pos + margin+(Math.cos(r) *radius);
-        var y = radius + margin + (Math.sin(r) *radius);
-        var point = {x:x,y:y};
-        this.points.push(point);
-    }*/
   }
 
   doInitDraw() {

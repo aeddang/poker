@@ -8,8 +8,16 @@ export enum Chat {
   Status
 }
 
-export enum Action {
-  Ready = 1,
+export enum Action{
+  Fold = 1,
+	Raise,
+  Check,
+	Call,
+  Bat,
+  AllIn,
+	BlindAction,
+	SmallBlind,
+	BigBlind
 }
 
 export default interface Command {

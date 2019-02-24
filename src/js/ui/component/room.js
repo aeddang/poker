@@ -10,6 +10,7 @@ export default class Room extends Component {
     this.client = null;
     this.chat = new Chat();
     this.userInfo = null;
+    this.ROOM_KEY = '';
   }
 
   init(body, client, options) {
@@ -28,7 +29,7 @@ export default class Room extends Component {
     this.chat.remove();
     this.chat = null;
   }
-  
+
   onCreate(elementProvider) {
     super.onCreate(elementProvider);
     this.userInfo = Login.model.getUserData();

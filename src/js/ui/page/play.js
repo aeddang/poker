@@ -3,27 +3,22 @@ import ElementProvider from 'Skeleton/elementprovider';
 import { LoadingSpiner } from 'Skeleton/paint';
 import * as Util from 'Skeleton/util';
 import * as Config from 'Util/config';
+import * from './play/*';
 
 class PlayBody extends ElementProvider {
   writeHTML() {
     var cell = document.createElement("div");
     cell.id = this.id+'cell';
-    cell.classList.add("join");
+    cell.classList.add("play");
     cell.innerHTML =`
 
     <div id='${this.id}chatArea' class='chat-area'></div>
-    <div id='${this.id}gameArea' class='game-area'>
-    <div id='${this.id}playerArea' class='player-area'>
-
-    <div id='${this.id}uiBox' class='ui-box'>
-      <p id='${this.id}userInfoBox' class='user-info'></p>
-      <p id='${this.id}gameInfoBox' class='game-info'></p>
-      <button id='${this.id}btnFold' class='btn-fold'>exit</button>
-      <button id='${this.id}btnCheck' class='btn-check'>exit</button>
-      <button id='${this.id}btnBat' class='btn-bat'>exit</button>
-      <div id='${this.id}timeBar' class='time-bar'></div>
+    <div id='${this.id}playArea' class='play-area'>
+      <div id='${this.id}gameViewer' class='game-viewer'>
+      <div id='${this.id}playerViewer' class='player-viewer'>
+      <div id='${this.id}uiBox' class='ui-box'></div>
+      <button id='${this.id}btnExit' class='btn-exit'>exit</button>
     </div>
-    <button id='${this.id}btnExit' class='btn-exit'>exit</button>
     <div id='${this.id}loadingBar' class='loading-bar'></div>
     `;
     this.body.appendChild(cell);
@@ -40,23 +35,30 @@ class PlayInfo {
 export default class Play extends Room {
   constructor() {
     super();
+    this.ROOM_KEY= "game";
     this.info = new PlayInfo();
-    this.btnPlay = null;
-    this.infoBox = null;
+    this.btnExit = null;
+    this.playArea = null;
     this.chatArea = null;
-    this.userInfoBox = null;
+    this.gameViewer = new GameViewer();
+    this.playerViewer = new PlayerViewer();
+    this.uiBox = new UiBox();
     this.loadingBar = new LoadingSpiner();
   }
 
   remove() {
     super.remove();
     this.info = null;
-    this.btnPlay = null;
-    this.infoBox = null;
+    this.btnExit = null;
     this.chatArea = null;
-    this.userInfoBox = null;
     this.loadingBar.remove();
+    this.gameViewer.remove();
+    this.playerViewer.remove();
+    this.uiBox.remove();
     this.loadingBar = null;
+    this.gameViewer = null;
+    this.playerViewer = null;
+    this.uiBox = null;
 
   }
 
@@ -64,12 +66,15 @@ export default class Play extends Room {
   onCreate(elementProvider) {
     let loadingBarBody = elementProvider.getElement('loadingBar');
     let bounce = Util.convertRectFromDimension(loadingBarBody);
-    this.loadingBar.init(loadingBarBody, bounce.width, bounce.height);
-    this.btnPlay = elementProvider.getElement('btnPlay');
-    this.infoBox = elementProvider.getElement('infoBox');
-    this.userInfoBox = elementProvider.getElement('userInfoBox');
+    this.loadingBar.init(elementProvider.getElement('loadingBar'));
+    this.gameViewer.init(elementProvider.getElement('gameViewer'));
+    this.playerViewer.init(elementProvider.getElement('playerViewer'));
+    this.btnExit = elementProvider.getElement('btnExit');
+    this.playArea = elementProvider.getElement('playArea');
     this.chatArea = elementProvider.getElement('chatArea');
     this.chat.init(this.chatArea).subscribe ( this.onChatEvent.bind(this) );
+    this.uiBox.init(elementProvider.getElement('uiBox')).subscribe ( this.onUiEvent.bind(this) );
+
     super.onCreate(elementProvider);
     this.onResize();
     this.join();
@@ -77,37 +82,60 @@ export default class Play extends Room {
   }
 
   setupEvent() {
-    this.attachEvent(this.btnPlay, "click", this.onPlay.bind(this));
+    this.attachEvent(this.btnExit, "click", this.onExit.bind(this));
+    this.room.listen("players/:id", e => {
+      if (e.operation === "add") {
+        console.log( e.path.data );
+      } else if (e.operation === "remove") {
+
+      }
+    });
+
+    this.room.listen("players/:id/:prop", e => {
+      console.log( e.path.id + ' -> ' + e.path.isReady );
+    });
+
   }
 
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let bounceBox = Util.convertRectFromDimension(this.chatArea);
-    this.infoBox.style.width = Util.getStyleUnit( bounce.width - bounceBox.width );
+    this.playArea.style.width = Util.getStyleUnit( bounce.width - bounceBox.width );
     super.onResize();
     this.chat.onResize();
+    this.gameViewer.onResize();
+    this.playerViewer.onResize();
+    this.uiBox.onResize();
+  }
+
+  onUiEvent(event) {
+    let command = new Command (
+      Cmd.CommandType.Action,
+      event.type,
+      event.data
+    );
+    this.room.send({ message: command });
   }
 
   onUpdateUserInfo() {
-    this.userInfoBox.innerHTML =   this.userInfo.name + '<br>' +  this.userInfo.id;
+
   }
 
   join() {
     this.loadingBar.play()
-    this.room = this.client.join("join", {
-      accessToken: this.userInfo.accessToken,
-      player: this.userInfo.name
+    this.room = this.client.join(this.ROOM_KEY, {
+      player: this.userInfo
     });
     this.initRoom();
-  }
-
-  onPlay() {
-
   }
 
   onJoin() {
     super.onJoin();
     this.loadingBar.stop();
+  }
+
+  onExit() {
+
   }
 
   onMessage(message) {

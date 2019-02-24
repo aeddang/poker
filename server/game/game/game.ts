@@ -2,12 +2,16 @@ import { Room, EntityMap, Client, nosync } from "colyseus";
 import { JoinOption, PlayerData } from "../interface"
 import Command, * as Cmd from  "../command";
 import * as Brodcast from  "../brodcastfactory";
+import Player from  "./player";
+import Stage from  "./stage";
+import Dealler from  "./dealler";
 
 class State {
   players: EntityMap<Player> = {};
+  stage: Stage = new Stage();
 
   @nosync
-  //something = "This attribute won't be sent to the client-side";
+  dealler: Dealler = new Dealler();
 
   join (id: string, data:PlayerData) {
       this.players[ id ] = new Player(data);
@@ -23,21 +27,26 @@ class State {
      return this.players[ id ].data;
   }
 
-  onReady (id: string, isReady: boolean) {
-    this.players[ id ].isReady = isReady;
+  onAction (id: string, command: Command) {
+    switch(command.t) {
+      case Cmd.Fold:  break;
+    	case Cmd.Raise:  break;
+      case Cmd.Check:  break;
+    	case Cmd.Call:  break;
+      case Cmd.Bat:  break;
+      case Cmd.AllIn:  break;
+    	case Cmd.BlindAction:  break;
+    	case Cmd.SmallBlind: break;
+    	case Cmd.BigBlind: break;
+    }
+    this.players[ id ].onAction(command);
   }
 }
 
-class Player {
-  isReady:boolean = false;
-  data:PlayerData = null;
-  constructor(data:PlayerData) {
-    this.data = data;
-  }
-}
+
 
 export default class Game extends Room<State> {
-  maxClients = 4;
+  maxClients = 9;
 
   onInit (options) {
     console.log("init Game");
@@ -65,12 +74,8 @@ export default class Game extends Room<State> {
     }
   }
 
-  onAction (client:Client, command : Command) {
-    /*
-    switch(command.t) {
-      case Cmd.Action.Ready : this.broadcast( Brodcast.getMsg ( this.players [ client.sessionId ]  , message.d ));  break;
-    }
-    */
+  onAction (client:Client, command: Command) {
+    this.state.onAction (client.sessionId, command);
   }
 
   onChat (client:Client, command: Command) {
