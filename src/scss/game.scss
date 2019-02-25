@@ -1,0 +1,14 @@
+@import 'element';
+@import 'mixin';
+
+.poker .player {}
+.poker .player .profile-img {width:50px; height:50px;}
+.poker .player .profile-data {@include font-default($color-grey);}
+.poker .player .play-data {@include font-default($color-black);}
+.poker .player .status {@include font-default($color-blue);}
+.poker .player .time-bar {@include font-default($color-red);}
+
+
+.poker .game-viewer { @include position-cover }
+.poker .player-viewer { @include position-cover }
+.poker .ui-box {@include position-bottom; width:100%; height:100px}
