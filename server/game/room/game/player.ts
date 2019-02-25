@@ -1,15 +1,18 @@
-import { PlayerData } from "../interface"
-import Command, * as Cmd from  "../command";
-
+import Command, * as Cmd from  "../../util/command";
+import { JoinOption } from "../../util/interface";
 export default class Player {
-  status:boolean = false;
+  status:Status = Status.wait;
   bankroll:number = 1000;
   isBlind:boolean = false;
+  userId:string;
+  nick:string;
   Hand:Array;
-  data:PlayerData = null;
-  constructor(data:PlayerData) {
-    this.data = data;
+
+  constructor(options:JoinOption) {
+    this.name = options.name;
+    this.userId = options.userId;
     this.isBlind = false;
+    this.reset();
   }
 
   reset(){

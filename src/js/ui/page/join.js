@@ -85,12 +85,8 @@ export default class Join extends Room {
   }
 
   join() {
-    this.loadingBar.play()
-    this.room = this.client.join(this.ROOM_KEY, {
-      accessToken: this.userInfo.accessToken,
-      player: this.userInfo.name
-    });
-    this.initRoom();
+    this.loadingBar.play();
+    super.join();
   }
 
   onPlay() {

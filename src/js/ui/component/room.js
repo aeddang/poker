@@ -35,9 +35,15 @@ export default class Room extends Component {
     this.userInfo = Login.model.getUserData();
   }
 
-  initRoom() {
+  join() {
+    this.room = this.client.join(this.ROOM_KEY, {
+      accessToken: this.userInfo.accessToken,
+      name: this.userInfo.name,
+      userId: this.userInfo.id
+    });
     this.setupRoomEvent();
   }
+  
   setupRoomEvent() {
     this.room.onJoin.add( this.onJoin.bind(this) );
     this.room.onLeave.add( this.onLeave.bind(this) );

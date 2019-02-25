@@ -47,7 +47,14 @@ export default class Player extends Component {
     this.timeBar = elementProvider.getElement('timeBar');
   }
 
-  onUpdateStatus(status){
-
+  onUpdateProp(prop, value){
+    console.log( prop + ' -> ' + value );
+    switch( prop ){
+      case 'status' :  break;
+      case 'bankroll' : break;
+      case 'isBlind' : break;
+      case 'Hand' : break;
+      case 'data' : break;
+    }
   }
 }

@@ -5,9 +5,8 @@ import * as serveIndex from 'serve-index';
 import { createServer } from 'http';
 import { Server } from 'colyseus';
 import { monitor } from '@colyseus/monitor';
+import * as Room from "./room/room";
 
-import AuthJoin from "./join/authjoin";
-import Game from "./game/game";
 
 const port = Number(process.env.PORT || 2567);
 const app = express();
@@ -16,8 +15,8 @@ const gameServer = new Server({
   server: createServer(app)
 });
 
-gameServer.register("join", AuthJoin);
-gameServer.register("game", Game);
+gameServer.register("join", Room.AuthJoin);
+gameServer.register("play", Room.Play);
 
 /*
 gameServer.register("join_with_options", AuthJoin, {

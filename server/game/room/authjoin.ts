@@ -1,8 +1,8 @@
 import { Room, Client } from "colyseus";
 import axios from "axios";
-import { JoinOption, PlayerData } from "../interface";
-import Command, * as Cmd from  "../command";
-import * as Brodcast from  "../brodcastfactory";
+import { JoinOption, PlayerData } from "../util/interface";
+import Command, * as Cmd from  "../util/command";
+import * as Brodcast from  "../util/brodcastfactory";
 
 const FACEBOOK_APP_TOKEN = "295166444484219|Pp5lXBlQuETAezZFYI8Bpml8s2c";
 
@@ -29,8 +29,8 @@ export default class AuthJoin extends Room {
   }
 
   onJoin (client:Client, options:JoinOption) {
-    this.players [ client.sessionId ] = options.player;
-    this.broadcast( Brodcast.getJoinMsg ( options.player ));
+    this.players [ client.sessionId ] = options.name;
+    this.broadcast( Brodcast.getJoinMsg ( options.name ));
   }
 
   onLeave (client:Client) {
@@ -40,7 +40,6 @@ export default class AuthJoin extends Room {
 
   onMessage (client:Client, data: Any) {
     let cmd = data.message;
-    console.log(cmd);
     switch(cmd.c) {
       case Cmd.CommandType.Chat : this.onChat(client, cmd); break;
     }

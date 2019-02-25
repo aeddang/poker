@@ -27,6 +27,7 @@ class PlayBody extends ElementProvider {
 class PlayInfo {
   constructor() {
     this.reset();
+    this.players = [];
   }
   reset() {}
 }
@@ -34,7 +35,7 @@ class PlayInfo {
 export default class Play extends Room {
   constructor() {
     super();
-    this.ROOM_KEY= "game";
+    this.ROOM_KEY= "play";
     this.info = new PlayInfo();
     this.btnExit = null;
     this.playArea = null;
@@ -83,15 +84,13 @@ export default class Play extends Room {
   setupEvent() {
     this.attachEvent(this.btnExit, "click", this.onExit.bind(this));
     this.room.listen("players/:id", e => {
-      if (e.operation === "add") {
-        console.log( e.path.data );
-      } else if (e.operation === "remove") {
-
-      }
+      if (e.operation === "add") console.log(  e.value );
+      else if (e.operation === "remove") console.log( e.path.id + ' <= ' + e.value.name );
     });
 
-    this.room.listen("players/:id/:prop", e => {
-      console.log( e.path.id + ' -> ' + e.path.isReady );
+    this.room.listen("players/:id/:props", e => {
+      console.log( e.path.props + ' -> ' + e.value );
+      //  onUpdateProp(e.path.props, e.value)
     });
 
   }
@@ -121,11 +120,8 @@ export default class Play extends Room {
   }
 
   join() {
-    this.loadingBar.play()
-    this.room = this.client.join(this.ROOM_KEY, {
-      player: this.userInfo
-    });
-    this.initRoom();
+    this.loadingBar.play();
+    super.join();
   }
 
   onJoin() {
@@ -138,6 +134,7 @@ export default class Play extends Room {
   }
 
   onMessage(message) {
+    console.log(message);
     super.onMessage(message);
   }
 
