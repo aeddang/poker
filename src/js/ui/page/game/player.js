@@ -21,17 +21,17 @@ class PlayerBody extends ElementProvider {
 export default class Player extends Component {
   constructor() {
     super();
-    this.profileImg = null;
-    this.profile = null;
-    this.playData = null;
-    this.status = null;
-    this.timeBar = null;
+    this.idx = -1;
   }
 
+  init(body,idx) {
+    this.idx = idx;
+    return super.init(body);
+  }
   remove() {
     super.remove();
     this.profileImg = null;
-    this.profile = null;
+    this.profileData = null;
     this.playData = null;
     this.status = null;
     this.timeBar = null;
@@ -41,10 +41,11 @@ export default class Player extends Component {
   getElementProvider() { return new PlayerBody(this.body); }
   onCreate(elementProvider) {
     this.profileImg = elementProvider.getElement('profileImg');
-    this.profile = elementProvider.getElement('profile');
+    this.profileData = elementProvider.getElement('profileData');
     this.playData = elementProvider.getElement('playData');
     this.status = elementProvider.getElement('status');
     this.timeBar = elementProvider.getElement('timeBar');
+    this.profileData.innerHTML = this.idx + ' : player'
   }
 
   onUpdateProp(prop, value){

@@ -1,4 +1,5 @@
-import { Subject,timer} from 'rxjs';
+import { Subject, interval } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 export default class Component {
   constructor(delegate = new Subject()) {
@@ -89,7 +90,7 @@ export class AnimationComponent extends Component {
   init(body, delay = 50) {
     super.init(body);
     this.doReadyAni();
-    this.rxInitAni = Observable.timer(delay).timeInterval().take(1).subscribe (
+    this.rxInitAni = interval(WAIT_TIME).pipe(take(1)).subscribe (
         this.doInitAni.bind(this)
     );
     return this.delegate;

@@ -1,10 +1,11 @@
 
-const Sender = Object.freeze ({
+export const Sender = Object.freeze ({
   AdminLv1: '1',
   AdminLv2: '2',
   AdminLv3: '3',
   User: '4',
-  Individual: '5'
+  Individual: '5',
+  Push: '6'
 });
 
 const BOUNDERY = '$';
@@ -15,7 +16,7 @@ class Brodcast {
     let datas = data.split(BOUNDERY);
     this.sender = datas[0];
     this.message = datas[1];
-  
+
     let className = '';
     let header = '';
     switch( this.sender ){
@@ -24,6 +25,7 @@ class Brodcast {
       case Sender.AdminLv3 : className='admin-lv3'; header='NOTICE : '; break;
       case Sender.User : className='user'; break;
       case Sender.Individual : className='individual'; break;
+      case Sender.Push : this.message = JSON.parse(this.message); return;
       default : return;
     }
     this.header = header;

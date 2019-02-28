@@ -13,7 +13,7 @@ class PlayerViewerBody extends ElementProvider {
 class PlayerViewerInfo {
   constructor() {
     this.reset();
-    this.playerNum = 8;
+    this.playerNum = 9;
   }
   reset() {}
 }
@@ -35,7 +35,7 @@ export default class PlayerViewer extends Component {
   onCreate(elementProvider) {
     for(var i=0; i<this.info.playerNum; ++i) {
       let player = new Player();
-      player.init( this.getBody() );
+      player.init( this.getBody() , i);
       let body = player.getBody();
       this.players.push(player);
     }
@@ -43,13 +43,18 @@ export default class PlayerViewer extends Component {
 
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());
-    let margin = 100;
-    let posX = bounce.width/2;
-    let posY = bounce.height/2;
-    let radiusX = posX - margin;
-    let radiusY = posY - margin;
+    let marginX = 0;
+    let marginY = -100;
+    let width = 150;
+    let height = 80;
+    let centerX = bounce.width/2;
+    let centerY = bounce.height/2;
+    let posX = centerX - (width/2);
+    let posY = centerY - (height/2) + marginY;
+    let radiusX = centerX - width - Math.abs(marginX);
+    let radiusY = centerY - height - Math.abs(marginY);
     let len = this.info.playerNum + 1;
-    var rotate = 0;
+    var rotate = -90;
     var sumRotate = 360 / len;
     this.players.forEach( p => {
       rotate += sumRotate

@@ -12,7 +12,7 @@ export const UI_EVENT = Object.freeze ({
   BAT: 6,
 	RAISE: 7,
 	ALL_IN: 8,
-	BLIND_ACTION: 9
+	BLIND: 9
 });
 
 
@@ -21,14 +21,15 @@ class UiBoxBody extends ElementProvider {
   this.body.innerHTML = `
       <p id='${this.id}playerInfoBox' class='player-info'></p>
       <p id='${this.id}gameInfoBox' class='game-info'></p>
-      <button id='${this.id}btnFold' class='btn-fold'>fold</button>
-      <button id='${this.id}btnSmallBlind' class='btn-small-blind'>fold</button>
-			<button id='${this.id}btnBigBlind' class='btn-big-blind'>fold</button>
-			<button id='${this.id}btnCheck' class='btn-check'>check</button>
-			<button id='${this.id}btnCall' class='btn-call'>fold</button>
-			<button id='${this.id}btnBat' class='btn-bat'>bat</button>
-			<button id='${this.id}btnRaise' class='btn-raise'>bat</button>
-      <button id='${this.id}btnAllin' class='btn-allin'>allin</button>
+			<button id='${this.id}btnBlind' class='btn-blind'>B</button>
+      <button id='${this.id}btnFold' class='btn-fold'>F</button>
+      <button id='${this.id}btnSmallBlind' class='btn-small-blind'>SB</button>
+			<button id='${this.id}btnBigBlind' class='btn-big-blind'>BB</button>
+			<button id='${this.id}btnCheck' class='btn-check'>CK</button>
+			<button id='${this.id}btnCall' class='btn-call'>C</button>
+			<button id='${this.id}btnBat' class='btn-bat'>BT</button>
+			<button id='${this.id}btnRaise' class='btn-raise'>RA</button>
+      <button id='${this.id}btnAllin' class='btn-allin'>ALL</button>
     `;
   }
 }
@@ -36,16 +37,6 @@ class UiBoxBody extends ElementProvider {
 export default class UiBox extends Component {
   constructor() {
     super();
-    this.playerInfoBox = null;
-    this.gameInfoBox = null;
-    this.btnFold = null;
-		this.btnSmallBlind = null;
-		this.btnBigBlind = null;
-		this.btnCheck = null;
-		this.btnCall = null;
-		this.btnBat = null;
-		this.btnRaise = null;
-		this.btnAllin = null;
   }
 
   remove() {
@@ -66,6 +57,7 @@ export default class UiBox extends Component {
   onCreate(elementProvider) {
     this.playerInfoBox = elementProvider.getElement('playerInfoBox');
     this.gameInfoBox = elementProvider.getElement('gameInfoBox');
+		this.btnBlind = elementProvider.getElement('btnBlind');
     this.btnFold = elementProvider.getElement('btnFold');
 		this.btnSmallBlind = elementProvider.getElement('btnSmallBlind');
 		this.btnBigBlind = elementProvider.getElement('btnBigBlind');
@@ -77,7 +69,8 @@ export default class UiBox extends Component {
   }
 
   setupEvent() {
-    this.attachEvent(this.btnFold, "click", this.onFold.bind(this));
+		this.attachEvent(this.btnBlind, "click", this.onBlind.bind(this));
+		this.attachEvent(this.btnFold, "click", this.onFold.bind(this));
 		this.attachEvent(this.btnSmallBlind, "click", this.onSmallBlind.bind(this));
 		this.attachEvent(this.btnBigBlind, "click", this.onBigBlind.bind(this));
     this.attachEvent(this.btnCheck, "click", this.onCheck.bind(this));
@@ -93,7 +86,7 @@ export default class UiBox extends Component {
   onResize() {
 
   }
-
+	onBlind() { this.delegate.next(new ComponentEvent( UI_EVENT.BLIND )); }
   onFold() { this.delegate.next(new ComponentEvent( UI_EVENT.FOLD )); }
 	onSmallBlind() { this.delegate.next(new ComponentEvent( UI_EVENT.SAMALL_BLIND )); }
 	onBigBlind() { this.delegate.next(new ComponentEvent( UI_EVENT.BIG_BLIND )); }

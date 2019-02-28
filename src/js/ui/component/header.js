@@ -9,8 +9,8 @@ class HeaderBody extends ElementProvider {
   writeHTML() {
     this.body.innerHTML =`
     <p class='title'>Texas hold'em</p>
-    <div id='${this.id}loadingBar' class='loading-bar'></div>
     <button id='${this.id}btnJoin' class='btn-join'></button>
+    <div id='${this.id}loadingBar' class='loading-bar'></div>
     `;
   }
 }

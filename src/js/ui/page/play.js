@@ -4,6 +4,7 @@ import { LoadingSpiner } from 'Skeleton/paint';
 import * as Util from 'Skeleton/util';
 import * as Config from 'Util/config';
 import * as Game from './game/game';
+import Command, * as Cmd from  "Util/command";
 
 class PlayBody extends ElementProvider {
   writeHTML() {
@@ -37,9 +38,6 @@ export default class Play extends Room {
     super();
     this.ROOM_KEY= "play";
     this.info = new PlayInfo();
-    this.btnExit = null;
-    this.playArea = null;
-    this.chatArea = null;
     this.gameViewer = new Game.GameViewer();
     this.playerViewer = new Game.PlayerViewer();
     this.uiBox = new Game.UiBox();
@@ -88,8 +86,13 @@ export default class Play extends Room {
       else if (e.operation === "remove") console.log( e.path.id + ' <= ' + e.value.name );
     });
 
-    this.room.listen("players/:id/:props", e => {
-      console.log( e.path.props + ' -> ' + e.value );
+    this.room.listen("players/:id/:attribute", e => {
+      console.log("player : " + e.path.attribute + ' -> ' + e.value );
+      //  onUpdateProp(e.path.props, e.value)
+    });
+
+    this.room.listen("stage/:attribute", e => {
+      console.log("stage : " + e.path.attribute + ' -> ' + e.value );
       //  onUpdateProp(e.path.props, e.value)
     });
 

@@ -24,9 +24,6 @@ export default class GameViewer extends Component {
   constructor() {
     super();
     this.cards = [];
-    this.ante = null;
-    this.mainPot = null;
-    this.sidePot = null;
   }
 
   remove() {

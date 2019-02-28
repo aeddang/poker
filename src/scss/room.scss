@@ -1,21 +1,21 @@
 @import 'element';
 @import 'mixin';
+@import 'game';
+
+.poker .home { @include page }
+.poker .home .title {@include position-center(300px, 60px, 0px, -40px); @include font-big($color-white); text-align:center }
+.poker .home .btn-join { @include position-center(200px, 60px ,0px, 40px); @include btn-text }
 
 
-.poker .home { @include page; background:$color-grey;}
-.poker .home .title {@include position-center(300px, 60px, 0px, -40px); @include font-big($color-white); text-align:center;}
-.poker .home .btn-join { @include position-center(200px, 60px ,0px, 40px); @include btn-default(200px,60px) }
-
-
-.poker .join { @include page; background:$color-black;}
-.poker .join .chat-area { @include position-right; width:300px; height:100%; background:$color-white;}
-.poker .join .info-box { @include position-left; width:200px;  height:100%}
+.poker .join { @include page }
+.poker .join .chat-area { @include position-right; @include chat }
+.poker .join .info-box { @include position-left; width:0;  height:100%}
 .poker .join .info-box .user {@include font-big($color-white); width:100%; padding:$margin-default}
-.poker .join .info-box .btn-play { @include position-bottom($margin-default); @include btn-default(100%) }
+.poker .join .info-box .btn-play { @include position-bottom-right($margin-default, $margin-default); @include btn-text; @include btn-default-size }
 .poker .join .loading-bar { @include loading-bar  }
 
-.poker .play { @include page; background:$color-black;}
-.poker .play .chat-area { @include position-right; width:300px; height:100%; background:$color-white;}
-.poker .play .play-area { @include position-left; width:200px; height:100%; background:$color-grey;}
-.poker .play .play-area .btn-exit{@include position-top-right($margin-default, $margin-default); @include btn-default}
+.poker .play { @include page }
+.poker .play .chat-area { @include position-right; @include chat}
+.poker .play .play-area { @include position-left; width:0; height:100%; background:$color-black;}
+.poker .play .play-area .btn-exit{@include position-top-right($margin-default, $margin-default); @include btn-text; @include btn-icon-size}
 .poker .play .loading-bar { @include loading-bar }

@@ -1,14 +1,26 @@
 @import 'element';
 @import 'mixin';
 
-.poker .player {}
+.poker .player {position: absolute; background-color: $color-grey; width:150px; height:80px; @include bg-radius(20px)}
 .poker .player .profile-img {width:50px; height:50px;}
-.poker .player .profile-data {@include font-default($color-grey);}
-.poker .player .play-data {@include font-default($color-black);}
+.poker .player .profile-data {@include font-default($color-white);}
+.poker .player .play-data {@include font-default($color-white);}
 .poker .player .status {@include font-default($color-blue);}
 .poker .player .time-bar {@include font-default($color-red);}
 
 
-.poker .game-viewer { @include position-cover }
-.poker .player-viewer { @include position-cover }
-.poker .ui-box {@include position-bottom; width:100%; height:100px}
+.poker .game-viewer { @include position-cover; }
+.poker .player-viewer { @include position-cover; }
+.poker .ui-box { @include position-bottom; width:100%; height:100px; background-color: $color-white}
+
+.poker .ui-box .player-info { @include font-default($color-white) }
+.poker .ui-box .game-info { @include font-default($color-white) }
+.poker .ui-box .btn-blind { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-fold { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-small-blind { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-big-blind { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-check { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-call { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-bat { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-raise { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-allin { @include btn-text; @include btn-icon-size }

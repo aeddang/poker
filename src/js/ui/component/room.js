@@ -2,6 +2,7 @@ import Component from 'Skeleton/component';
 import ComponentEvent from 'Skeleton/event';
 import Chat, { CHAT_EVENT } from  "Component/chat";
 import * as Login from "ViewModel/login";
+import { parseBrodcast, Sender } from 'Util/brodcastfactory';
 
 export default class Room extends Component {
   constructor() {
@@ -43,7 +44,7 @@ export default class Room extends Component {
     });
     this.setupRoomEvent();
   }
-  
+
   setupRoomEvent() {
     this.room.onJoin.add( this.onJoin.bind(this) );
     this.room.onLeave.add( this.onLeave.bind(this) );
@@ -65,7 +66,14 @@ export default class Room extends Component {
   onLeave() { console.log('leave'); }
 
   onMessage(message) {
-    this.chat.onRoomEvent( new ComponentEvent( CHAT_EVENT.RECEIVED_MESSAGE,message ) )
+    let brodcast = parseBrodcast(message);
+    if( brodcast.sender == Sender.Push ) { this.onPush( brodcast.message); return; }
+    this.chat.onRoomEvent( new ComponentEvent( CHAT_EVENT.RECEIVED_MESSAGE,brodcast ) )
+  }
+
+  onPush(data) {
+    console.log('onPush');
+    console.log(data);
   }
 
   onError(error) {

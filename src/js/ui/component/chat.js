@@ -2,7 +2,6 @@ import Component from 'Skeleton/component';
 import ComponentEvent from 'Skeleton/event';
 import ElementProvider from 'Skeleton/elementprovider';
 import Command, * as Cmd from  "Util/command";
-import { parseBrodcast } from 'Util/brodcastfactory';
 import * as Util from 'Skeleton/util';
 
 export const CHAT_EVENT = Object.freeze ({
@@ -106,8 +105,7 @@ export default class Chat extends Component  {
     this.delegate.next(new ComponentEvent( CHAT_EVENT.SEND_MESSAGE,command ));
   }
 
-  onReceivedMessage(data) {
-		let brodcast = parseBrodcast(data);
+  onReceivedMessage(brodcast) {
 		let row = brodcast.row;
 		this.rows.push(row);
 		row.innerHTML = brodcast.getViewString();

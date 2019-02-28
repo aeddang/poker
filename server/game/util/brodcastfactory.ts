@@ -7,10 +7,14 @@ enum Sender {
   AdminLv3,
   User,
   Individual,
+  Push
 }
 
 const BOUNDERY = '$';
 
+export function getPushMsg (msg:string):string {
+  return Sender.Push + BOUNDERY + JSON.stringify(msg);
+}
 
 export function getJoinMsg (nick:string):string {
   return Sender.AdminLv3 + BOUNDERY + nick + " join!!";

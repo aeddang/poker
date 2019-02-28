@@ -3,14 +3,88 @@ import { JoinOption } from "../util/interface"
 import Command, * as Cmd from  "../util/command";
 import * as Brodcast from  "../util/brodcastfactory";
 import * as Game from "./game/game";
+import * as Rx from 'rxjs';
+import { take } from 'rxjs/operators';
+import Event from  "../util/event";
+
+const WAIT_TIME:number = 2000;
+
+const STATE_EVENT = Object.freeze ({
+	PUSH: "push"
+});
+
 
 class State {
-  players: EntityMap<Game.Player> = {};
-  stage: Game.Stage = new Game.Stage();
-
+  players: EntityMap<Game.Player>;
+  stage: Game.Stage;
 
   @nosync
-  dealler: Game.Dealler = new Game.Dealler();
+  dealler: Game.Dealler;
+	@nosync
+  delegate:Rx.Subject;
+	@nosync
+	currentPlayer:Player;
+
+  constructor() {
+    this.players = {};
+    this.dealler = new Game.Dealler();
+    this.stage = new Game.Stage();
+    this.delegate = new Rx.Subject();
+    console.log('constructor');
+    this.start();
+
+  }
+
+  remove() {
+    this.stage.remove();
+    this.delegate.complete();
+    for (let id in this.players) this.players[id].remove();
+    this.players = null;
+    this.delegate = null;
+  }
+
+  start(delay){
+    this.onGameReset();
+    console.log('start');
+    Rx.interval(WAIT_TIME).pipe(take(1)).subscribe(e => {
+      this.onGameStart();
+			let ids = [];
+			for (let id in this.players) ids.push(id);
+      this.stage.start(ids).subscribe ({
+        next :(t) => { this.onGameNextTurn(); },
+        complete :() => { this.onGameComplete(); }
+      });
+			this.setCurrentPlayer();
+    });
+  }
+	setCurrentPlayer(){
+		this.currentPlayer = this.players[ this.stage.currentPlayer ];
+		this.currentPlayer.setActivePlayer();
+	}
+
+  onGameReset(){
+    this.stage.reset();
+    this.dealler.reset();
+    for (let id in this.players) this.players[id].reset();
+  }
+
+  onGameStart(){
+    console.log('onGameStart');
+    for (let id in this.players) {
+      let hand = this.dealler.getHand();
+      this.players[id].hand = hand;
+      this.delegate.next( new Event( STATE_EVENT.PUSH, {id:id, value:hand}) );
+    }
+  }
+
+  onGameNextTurn(playerId){
+		this.setCurrentPlayer();
+    console.log('turn complete ');
+  }
+
+	onGameComplete(playerId){
+		console.log('complete ');
+  }
 
   join (id: string, options:JoinOption) {
     this.players[ id ] = new Game.Player(options);
@@ -50,6 +124,7 @@ export default class Play extends Room<State> {
   onInit (options) {
     console.log("init Game");
     this.setState(new State());
+    this.state.delegate.subscribe( e => { console.log('eeeee '); } );
   }
 
   onDispose () {
@@ -65,9 +140,14 @@ export default class Play extends Room<State> {
     this.broadcast( Brodcast.getLeaveMsg( this.state.leave( client.sessionId ) ));
   }
 
+  onStateEvent(event) {
+    switch(event) {
+      case STATE_EVENT.PUSH : this.onGamePush(event.data)
+    }
+  }
+
   onMessage (client:Client, data: Any) {
     let cmd = data.message;
-    console.log(cmd);
     switch(cmd.c) {
       case Cmd.CommandType.Chat : this.onChat(client, cmd); break;
       case Cmd.CommandType.Action : this.onAction(client, cmd); break;
@@ -81,8 +161,14 @@ export default class Play extends Room<State> {
   onChat (client:Client, command: Command) {
     switch(command.t) {
       case Cmd.Chat.Msg :
-        console.log(this.state.getPlayerData( client.sessionId ).name);
         this.broadcast( Brodcast.getMsg ( this.state.getPlayerData( client.sessionId ).name , command.d ));  break;
     }
   }
+
+  onGamePush (data) {
+    let client:Client = clients.find( c => { c.id == data.id } )
+    if(client == undefined) return;
+    this.send(client,Brodcast.getPushMsg(data.value));
+  }
+
 }
