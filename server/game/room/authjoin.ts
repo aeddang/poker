@@ -1,24 +1,26 @@
-import { Room, Client } from "colyseus";
+import { Client } from "colyseus";
+import RoomComponent from '../skeleton/roomcomponent'
 import axios from "axios";
 import { JoinOption, PlayerData } from "../util/interface";
 import Command, * as Cmd from  "../util/command";
 import * as Brodcast from  "../util/brodcastfactory";
+import Debugger from '../util/log';
 
 const FACEBOOK_APP_TOKEN = "295166444484219|Pp5lXBlQuETAezZFYI8Bpml8s2c";
 
-export default class AuthJoin extends Room {
-  players: EntityMap<string> = {};
 
+export default class AuthJoin extends RoomComponent {
+  players: EntityMap<string> = {};
+  debuger: Debugger;
   onInit (options) {
-    console.log("init Join");
+    super.onInit(options);
   }
 
   onDispose () {
-    console.log("dispose Join");
+    super.onDispose();
   }
 
   async onAuth (options:JoinOption) {
-
     const response = await axios.get('https://graph.facebook.com/debug_token',  {
       params: {
         'input_token': options.accessToken,
@@ -38,18 +40,8 @@ export default class AuthJoin extends Room {
     delete this.players[ client.sessionId ];
   }
 
-  onMessage (client:Client, data: Any) {
-    let cmd = data.message;
-    switch(cmd.c) {
-      case Cmd.CommandType.Chat : this.onChat(client, cmd); break;
-    }
+  getPlayerName(client:Client):string {
+    return this.players[ client.sessionId ];
   }
-
-  onChat (client:Client, cmd: Command) {
-    switch(cmd.t) {
-      case Cmd.Chat.Msg : this.broadcast( Brodcast.getMsg ( this.players [ client.sessionId ]  , cmd.d ));  break;
-    }
-  }
-
 
 }

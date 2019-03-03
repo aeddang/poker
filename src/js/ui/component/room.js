@@ -66,7 +66,9 @@ export default class Room extends Component {
   onLeave() { console.log('leave'); }
 
   onMessage(message) {
+    console.log(message);
     let brodcast = parseBrodcast(message);
+    console.log(brodcast);
     if( brodcast.sender == Sender.Push ) { this.onPush( brodcast.message); return; }
     this.chat.onRoomEvent( new ComponentEvent( CHAT_EVENT.RECEIVED_MESSAGE,brodcast ) )
   }

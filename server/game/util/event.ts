@@ -1,5 +1,5 @@
 export default class Event {
-  constructor(type,data = null) {
+  constructor(type:string,data = null) {
     this.type = type;
     this.data = data;
   }

@@ -1,134 +1,32 @@
-import { Room, EntityMap, Client, nosync } from "colyseus";
+import { Client } from "colyseus";
+import RoomComponent from '../skeleton/roomcomponent'
 import { JoinOption } from "../util/interface"
 import Command, * as Cmd from  "../util/command";
 import * as Brodcast from  "../util/brodcastfactory";
-import * as Game from "./game/game";
-import * as Rx from 'rxjs';
-import { take } from 'rxjs/operators';
-import Event from  "../util/event";
+import Game from "./game/game";
+import { GAME_EVENT } from "./game/game";
+import Debugger from '../util/log';
 
-const WAIT_TIME:number = 2000;
+const REJOIN_LIMITED_TIME = 20;
 
-const STATE_EVENT = Object.freeze ({
-	PUSH: "push"
-});
-
-
-class State {
-  players: EntityMap<Game.Player>;
-  stage: Game.Stage;
-
-  @nosync
-  dealler: Game.Dealler;
-	@nosync
-  delegate:Rx.Subject;
-	@nosync
-	currentPlayer:Player;
-
-  constructor() {
-    this.players = {};
-    this.dealler = new Game.Dealler();
-    this.stage = new Game.Stage();
-    this.delegate = new Rx.Subject();
-    console.log('constructor');
-    this.start();
-
-  }
-
-  remove() {
-    this.stage.remove();
-    this.delegate.complete();
-    for (let id in this.players) this.players[id].remove();
-    this.players = null;
-    this.delegate = null;
-  }
-
-  start(delay){
-    this.onGameReset();
-    console.log('start');
-    Rx.interval(WAIT_TIME).pipe(take(1)).subscribe(e => {
-      this.onGameStart();
-			let ids = [];
-			for (let id in this.players) ids.push(id);
-      this.stage.start(ids).subscribe ({
-        next :(t) => { this.onGameNextTurn(); },
-        complete :() => { this.onGameComplete(); }
-      });
-			this.setCurrentPlayer();
-    });
-  }
-	setCurrentPlayer(){
-		this.currentPlayer = this.players[ this.stage.currentPlayer ];
-		this.currentPlayer.setActivePlayer();
-	}
-
-  onGameReset(){
-    this.stage.reset();
-    this.dealler.reset();
-    for (let id in this.players) this.players[id].reset();
-  }
-
-  onGameStart(){
-    console.log('onGameStart');
-    for (let id in this.players) {
-      let hand = this.dealler.getHand();
-      this.players[id].hand = hand;
-      this.delegate.next( new Event( STATE_EVENT.PUSH, {id:id, value:hand}) );
-    }
-  }
-
-  onGameNextTurn(playerId){
-		this.setCurrentPlayer();
-    console.log('turn complete ');
-  }
-
-	onGameComplete(playerId){
-		console.log('complete ');
-  }
-
-  join (id: string, options:JoinOption) {
-    this.players[ id ] = new Game.Player(options);
-  }
-
-  leave (id: string): string {
-    let nick = this.players[ id ].name;
-    delete this.players[ id ];
-    return nick;
-  }
-
-  getPlayerData (id: string): PlayerData {
-     return this.players[ id ];
-  }
-
-  onAction (id: string, command: Command) {
-    switch(command.t) {
-      case Cmd.Fold:  break;
-    	case Cmd.Raise:  break;
-      case Cmd.Check:  break;
-    	case Cmd.Call:  break;
-      case Cmd.Bat:  break;
-      case Cmd.AllIn:  break;
-    	case Cmd.BlindAction:  break;
-    	case Cmd.SmallBlind: break;
-    	case Cmd.BigBlind: break;
-    }
-    this.players[ id ].onAction(command);
-  }
-}
-
-
-
-export default class Play extends Room<State> {
+export default class Play extends RoomComponent<Game> {
   maxClients = 9;
-
+	ante:number = 1;
+  debuger: Debugger;
   onInit (options) {
-    console.log("init Game");
-    this.setState(new State());
-    this.state.delegate.subscribe( e => { console.log('eeeee '); } );
+    super.onInit(options);
+    this.setState(new Game(this.ante, this.maxClients));
+    this.state.delegate.subscribe( this.onStateEvent.bind(this) );
   }
 
   onDispose () {
-    console.log("dispose Game");
+    this.state.remove();
+    super.onDispose();
+  }
+
+	onAuth (options:JoinOption) {
+    let isJoinAble = this.state.isJoinAble();
+    return isJoinAble;
   }
 
   onJoin (client:Client, options:JoinOption) {
@@ -136,39 +34,31 @@ export default class Play extends Room<State> {
     this.broadcast( Brodcast.getJoinMsg( options.name ));
   }
 
-  onLeave (client:Client) {
-    this.broadcast( Brodcast.getLeaveMsg( this.state.leave( client.sessionId ) ));
-  }
-
-  onStateEvent(event) {
-    switch(event) {
-      case STATE_EVENT.PUSH : this.onGamePush(event.data)
+  async onLeave (client:Client, consented: boolean) {
+    this.state.waiting( client.sessionId );
+    try {
+      if (consented) throw new Error("consented leave");
+      await this.allowReconnection(client, REJOIN_LIMITED_TIME);
+      this.state.reJoin( client.sessionId );
+    } catch (e) {
+      this.broadcast( Brodcast.getLeaveMsg( this.state.leave( client.sessionId ) ));
     }
   }
 
-  onMessage (client:Client, data: Any) {
-    let cmd = data.message;
-    switch(cmd.c) {
-      case Cmd.CommandType.Chat : this.onChat(client, cmd); break;
-      case Cmd.CommandType.Action : this.onAction(client, cmd); break;
+  onStateEvent(event) {
+    switch(event.type) {
+      case GAME_EVENT.PUSH :
+        this.onPush(event.data);
+        break;
     }
   }
 
   onAction (client:Client, command: Command) {
+    super.onAction(client, command);
     this.state.onAction (client.sessionId, command);
   }
 
-  onChat (client:Client, command: Command) {
-    switch(command.t) {
-      case Cmd.Chat.Msg :
-        this.broadcast( Brodcast.getMsg ( this.state.getPlayerData( client.sessionId ).name , command.d ));  break;
-    }
+  getPlayerName(client:Client):string {
+    return this.state.getPlayerData( client.sessionId ).name
   }
-
-  onGamePush (data) {
-    let client:Client = clients.find( c => { c.id == data.id } )
-    if(client == undefined) return;
-    this.send(client,Brodcast.getPushMsg(data.value));
-  }
-
 }

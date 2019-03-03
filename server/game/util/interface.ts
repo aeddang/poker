@@ -3,3 +3,8 @@ export interface JoinOption {
   name:string;
   userId:string;
 }
+
+export interface PushData {
+  id: string;
+  value:Any;
+}

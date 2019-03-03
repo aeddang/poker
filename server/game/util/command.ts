@@ -1,6 +1,7 @@
 export enum CommandType {
   Chat = 1,
-  Action
+  Action,
+  Push
 }
 
 export enum Chat {
