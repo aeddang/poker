@@ -1,6 +1,7 @@
 export const CommandType = Object.freeze ({
 	Chat: 1,
-	Action: 2
+	Action: 2,
+	Push: 3
 });
 
 export const Chat = Object.freeze ({
@@ -9,7 +10,15 @@ export const Chat = Object.freeze ({
 });
 
 export const Action = Object.freeze ({
-	Ready: 1
+	Fold: 1,
+  SmallBlind: 2,
+	BigBlind: 3,
+  Check: 4,
+	Call: 5,
+  Bat: 6,
+  Raise: 7,
+  AllIn: 8,
+  Blind: 9
 });
 
 export default class Command {

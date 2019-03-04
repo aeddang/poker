@@ -2,7 +2,7 @@ import { Room, EntityMap, Client } from "colyseus";
 import { JoinOption, PushData } from "../util/interface"
 import Command, * as Cmd from  "../util/command";
 import * as Brodcast from  "../util/brodcastfactory";
-import Debugger from '../util/log';
+import Debugger from './log';
 
 
 export default class RoomComponent<T> extends Room<T> {
@@ -14,6 +14,7 @@ export default class RoomComponent<T> extends Room<T> {
 
   onDispose () {
     this.debuger.info("onDispose");
+    this.debuger = null;
   }
 
 	onAuth (options:JoinOption) {

@@ -6,7 +6,7 @@ import { createServer } from 'http';
 import { Server } from 'colyseus';
 import { monitor } from '@colyseus/monitor';
 import * as Room from './room/room';
-import Debugger from './util/log';
+import Debugger from './skeleton/log';
 
 const port = Number(process.env.PORT || 2567);
 const app = express();

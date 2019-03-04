@@ -16,6 +16,7 @@ export default class Room extends Component {
 
   init(body, client, options) {
     this.client = client;
+    this.debuger.tag = this.ROOM_KEY;
     return super.init(body);
   }
 
@@ -62,25 +63,22 @@ export default class Room extends Component {
     this.chat.onResize();
   }
 
-  onJoin() { console.log('join'); }
-  onLeave() { console.log('leave'); }
+  onJoin() { console.log('join', '', 0); }
+  onLeave() { console.log('leave', '', 0); }
 
   onMessage(message) {
-    console.log(message);
     let brodcast = parseBrodcast(message);
-    console.log(brodcast);
+    this.debuger.log(brodcast, 'onMessage', '', 0);
     if( brodcast.sender == Sender.Push ) { this.onPush( brodcast.message); return; }
     this.chat.onRoomEvent( new ComponentEvent( CHAT_EVENT.RECEIVED_MESSAGE,brodcast ) )
   }
 
   onPush(data) {
-    console.log('onPush');
-    console.log(data);
+    this.debuger.log(data, 'onPush', '', 0);
   }
 
   onError(error) {
-    console.log('onError!!!');
-    console.log(error);
+    this.debuger.error(error, 'onError!!!');
   }
 
 }

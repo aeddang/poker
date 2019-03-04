@@ -72,30 +72,34 @@ export default class Play extends Room {
     this.chatArea = elementProvider.getElement('chatArea');
     this.chat.init(this.chatArea).subscribe ( this.onChatEvent.bind(this) );
     this.uiBox.init(elementProvider.getElement('uiBox')).subscribe ( this.onUiEvent.bind(this) );
-
     super.onCreate(elementProvider);
     this.onResize();
     this.join();
-    this.onUpdateUserInfo()
   }
-
   setupEvent() {
     this.attachEvent(this.btnExit, "click", this.onExit.bind(this));
     this.room.listen("players/:id", e => {
-      if (e.operation === "add") console.log(  e.value );
-      else if (e.operation === "remove") console.log( e.path.id + ' <= ' + e.value.name );
+      if (e.operation === "add") this.playerViewer.onJoin(e.path.id, e.value);
+      else if (e.operation === "remove") this.playerViewer.onLeave(e.path.id, e.value);
     });
 
     this.room.listen("players/:id/:attribute", e => {
-      console.log("player : " + e.path.attribute + ' -> ' + e.value );
-      //  onUpdateProp(e.path.props, e.value)
+      this.playerViewer.onUpdatePlayer(e.path.id, e.path.attribute, e.value);
     });
 
     this.room.listen("stage/:attribute", e => {
-      console.log("stage : " + e.path.attribute + ' -> ' + e.value );
-      //  onUpdateProp(e.path.props, e.value)
+      let attr = e.path.attribute;
+      switch(attr){
+        case 'maxPlayer':
+        case 'time':
+        case 'currentID':
+          this.playerViewer.onUpdateSyncProp (attr, e.value);
+          break;
+        default:
+          this.gameViewer.onUpdateSyncProp (attr, e.value);
+          break;
+      }
     });
-
   }
 
   onResize() {
@@ -118,10 +122,6 @@ export default class Play extends Room {
     this.room.send({ message: command });
   }
 
-  onUpdateUserInfo() {
-
-  }
-
   join() {
     this.loadingBar.play();
     super.join();
@@ -133,17 +133,17 @@ export default class Play extends Room {
   }
 
   onExit() {
-
+    Poker.onPageChange(Config.Page.Join);
   }
 
   onMessage(message) {
-    console.log(message);
     super.onMessage(message);
   }
 
   onError(error) {
     super.onError(error);
     this.loadingBar.stop();
+    this.onExit();
   }
 
 

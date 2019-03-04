@@ -38,6 +38,7 @@ class ChatInfo {
 export default class Chat extends Component  {
   constructor() {
     super();
+		this.debuger.tag = 'Chat';
     this.info = new ChatInfo();
     this.viewer = null;
     this.inputForm = null;

@@ -37,6 +37,7 @@ class UiBoxBody extends ElementProvider {
 export default class UiBox extends Component {
   constructor() {
     super();
+		this.debuger.tag = 'UiBox';
   }
 
   remove() {

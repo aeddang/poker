@@ -1,9 +1,10 @@
 import Command from "../../util/command";
+import Component from '../../skeleton/component'
 import { Action, checkCommand } from  "../../util/command";
 import { JoinOption } from "../../util/interface";
 import { nosync } from "colyseus";
 
-export default class Player {
+export default class Player extends Component {
   status:Status = Status.Wait;
   bankroll:number = 1000;
   isBlind:boolean = false;
@@ -21,6 +22,7 @@ export default class Player {
   isActionComplete:boolean = false;
 
   constructor(id:stirng, options:JoinOption, position:number) {
+    super();
     this.id = id;
     this.position = position;
     this.name = options.name;
@@ -28,6 +30,11 @@ export default class Player {
     this.isBlind = false;
     this.networkStatus = NetworkStatus.Connected;
     this.reset();
+  }
+
+  remove() {
+    super.remove();
+    this.hand = null;
   }
 
   reset(){
@@ -65,12 +72,16 @@ export default class Player {
   start(ante:number, hand:Array) {
     this.bankroll -= ante;
     this.hand = hand;
-    this.status = Status.Passive;
+    this.status = Status.Play;
   }
 
   isActionAble():boolean {
     switch( this.status ){
-      case Status.Fold, Status.AllIn, Status.Impossible, Status.Wait : return false;
+      case Status.Fold :
+      case Status.AllIn :
+      case Status.Impossible :
+      case Status.Wait :
+        return false;
       default: return true;
     }
   }
@@ -101,7 +112,6 @@ export default class Player {
     	case Action.BigBlind: this.status = Status.Play; break;
     }
     this.isActionComplete = true;
-    checkCommand(command);
   }
 }
 
@@ -115,6 +125,6 @@ enum Status{
 
 enum NetworkStatus{
   Connected = 1,
-  Disconnected,
+  DisConnected,
   Wait
 }

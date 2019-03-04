@@ -1,14 +1,20 @@
+import Component from '../../skeleton/component'
 
-export default class Dealler {
+
+export default class Dealler extends Component {
   cards:Array<Card>;
   communityCards:Array<Card>;
-  constructor() {
+
+  remove(){
+    this.cards = null;
+    this.communityCards= null;
+    super.remove();
   }
 
   reset(){
     this.resetCards();
   }
-  
+
   resetCards(){
     this.cards = [];
     this.createCards(Suit.Spade);

@@ -50,6 +50,6 @@ export function log(tag, debugType, value , key = ''){
     console[debugType](header.prompt);
     console.dir(value);
   } else {
-    console[debugType](header.prompt + value[debugType]);
+    console[debugType](header.prompt + String(value)[debugType]);
   }
 }

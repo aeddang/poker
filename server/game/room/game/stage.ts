@@ -1,25 +1,26 @@
 import * as Rx from 'rxjs';
 import { take } from 'rxjs/operators';
 import { nosync } from "colyseus";
+import Component from '../../skeleton/component'
 
 const GAME_SPEED:number = 1000;
 const LIMIT_TIME:number = 30;
-export default class Stage {
+export default class Stage extends Component {
   ante:number = 1;
   maxPlayer:number;
   mainPot:number;
   sidePot:number;
-  turn:number;
   status:Status;
   communityCards:Array;
   time:number;
+  currentID:string;
 
+  @nosync
+  turn:number;
   @nosync
   ids:Array<String>;
   @nosync
   positions:Array<string>;
-  @nosync
-  currentID:string;
   @nosync
   delegate:Rx.Subject;
   @nosync
@@ -31,6 +32,7 @@ export default class Stage {
 
 
   constructor(ante:number, maxClients:number) {
+    super();
     this.maxPlayer = maxClients;
     this.status = Status.Complete;
     this.positions = Array(maxClients);
@@ -42,8 +44,24 @@ export default class Stage {
   }
 
   remove() {
+    super.remove();
+    this.removeTimeSubscription();
+    this.removeDelegate();
+    this.gameTimeSubscription = null;
+    this.gameScheduler = null;
+    this.ids = null;
+    this.communityCards = null;
+    this.positions = null;
+  }
+
+  removeTimeSubscription() {
     if( this.gameTimeSubscription != null ) this.gameTimeSubscription.unsubscribe();
-    this.reset();
+    this.gameTimeSubscription = null;
+  }
+
+  removeDelegate() {
+    if( this.delegate != null ) this.delegate.complete();
+    this.delegate = null;
   }
 
   reset(){
@@ -55,7 +73,7 @@ export default class Stage {
     this.status = Status.Wait;
     this.gameTimeSubscription = null;
     this.ids = null;
-    console.log('reset ->' + this.currentID);
+    this.debuger.log(this.currentID, 'reset');
   }
 
   joinPosition( id:string ):number {
@@ -86,7 +104,6 @@ export default class Stage {
   start(ids:Array):Rx.Subject {
     this.ids = ids;
     this.currentID = this.getCurrentID();
-    console.log('stage start ->' + this.currentID);
     this.delegate = new Rx.Subject();
     this.status = Status.Play;
     this.communityCards = [];
@@ -108,15 +125,13 @@ export default class Stage {
     this.turn ++;
     this.time = LIMIT_TIME;
     this.currentID = this.getCurrentID();
-    this.gameTimeSubscription.unsubscribe();
-    this.gameTimeSubscription = null;
+    this.removeTimeSubscription();
     this.delegate.next(this.time);
   }
 
   onGameComplete(){
     this.status = Status.Complete;
-    if( this.delegate != null ) this.delegate.complete();
-    this.delegate = null;
+    this.removeDelegate();
   }
 
   getCurrentID(): string{

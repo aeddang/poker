@@ -27,6 +27,7 @@
     "get-node-dimensions": "^1.2.1",
     "nodemon": "^1.11.0",
     "rxjs": "^6.4.0",
+    "rxjs-observe": "^2.0.0",
     "serve-index": "^1.8.0",
     "store": "^2.0.12",
     "uuid": "^3.3.2",

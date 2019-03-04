@@ -18,6 +18,7 @@ class HeaderBody extends ElementProvider {
 export default class Header extends Component {
   constructor() {
     super();
+    this.debuger.tag = 'Header';
     this.btnJoin = null;
     this.loadingBar = new LoadingSpiner();
     Login.model.delegate.subscribe ( this.onLoginEvent.bind(this) );

@@ -1,21 +1,26 @@
 import { Subject, interval } from 'rxjs';
 import { take } from 'rxjs/operators';
+import Debugger from './log';
 
 export default class Component {
   constructor(delegate = new Subject()) {
+    this.debuger = new Debugger(this);
     this.delegate = delegate;
     this.body = null;
     this.cell = null;
     this.isDown = false;
     this.attachEvents = [];
+    this.disposable = [];
+    this.debuger.log("constructor", '', 0);
   }
 
   init(body) {
     if( typeof(body) == 'string' ) body = document.getElementById(body);
     this.body = body;
     this.createElements();
-    this.createObservable();
     this.setupEvent();
+    this.setupSubscription();
+    this.debuger.log("init", '', 0);
     return this.delegate;
   }
 
@@ -26,12 +31,16 @@ export default class Component {
   remove() {
     if(this.delegate == null) return;
     this.delegate.complete(this);
+    this.disposable.forEach( s=> s.unsubscribe() );
     this.clearEvent();
     if(this.cell == null) this.body.innerHTML = "";
     else if(this.cell.parentNode) this.cell.parentNode.removeChild(this.cell);
+    this.disposable = null;
     this.delegate = null;
     this.cell = null;
     this.body = null;
+    this.debuger.log("remove", '', 0);
+    this.debuger = null;
   }
 
   getElementProvider() { return null; }
@@ -45,10 +54,8 @@ export default class Component {
   }
   onCreate(elementProvider){}
 
-  createObservable(){}
-
+  setupSubscription (){}
   setupEvent(){}
-
   setupDelegate(){}
 
   attachEvent(element, event, handler, useCapture = false) {
@@ -70,9 +77,7 @@ export default class Component {
 
   clearEvent() {
     if(this.attachEvents == null) return;
-    this.attachEvents.forEach((evt) => {
-        evt.element.removeEventListener(evt.event,evt.handler);
-    });
+    this.attachEvents.forEach( evt => evt.element.removeEventListener(evt.event,evt.handler) );
     this.attachEvents = null;
   }
 

@@ -1,4 +1,4 @@
-import Component from 'Skeleton/component';
+import SyncPropsComponent from 'Component/syncpropscomponent';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 
@@ -20,9 +20,10 @@ class GameViewerBody extends ElementProvider {
   }
 }
 
-export default class GameViewer extends Component {
+export default class GameViewer extends SyncPropsComponent {
   constructor() {
     super();
+    this.debuger.tag = 'GameViewer';
     this.cards = [];
   }
 
@@ -42,7 +43,39 @@ export default class GameViewer extends Component {
     for(var i=0; i<5; ++i) this.cards.push(elementProvider.getElement('card'+i));
   }
 
-  onUpdateStatus(status){
+  setupSyncProps(){
 
+    this.syncProps = {
+      ante:1,
+      mainPot:0,
+      sidePot:0,
+      status:Status.Wait,
+      communityCards:[]
+    };
+    this.watchs = {
+      ante: value =>{
+        this.debuger.log(value, 'ante');
+      },
+      mainPot: value =>{
+        this.debuger.log(value, 'mainPot');
+      },
+      sidePot: value =>{
+        this.debuger.log(value, 'sidePot');
+      },
+      status: value =>{
+        this.debuger.log(value, 'status');
+      },
+      communityCards: value =>{
+        this.debuger.log(value, 'communityCards');
+      }
+    };
+    
+    super.setupSyncProps();
   }
 }
+
+export const Status = Object.freeze ({
+  Wait: 1,
+  Play: 2,
+  Complete: 3
+});
