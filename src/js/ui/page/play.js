@@ -84,6 +84,7 @@ export default class Play extends Room {
     });
 
     this.room.listen("players/:id/:attribute", e => {
+
       this.playerViewer.onUpdatePlayer(e.path.id, e.path.attribute, e.value);
     });
 

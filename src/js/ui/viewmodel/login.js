@@ -28,7 +28,8 @@ class UserInfo {
 
   setData(userData) {
 		this.name = userData.name;
-		this.id = userData.id;
+		//this.id = userData.id;
+		this.id = instenceID;
   }
 
   getStatus() {

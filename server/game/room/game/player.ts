@@ -9,10 +9,15 @@ export default class Player extends Component {
   bankroll:number = 1000;
   isBlind:boolean = false;
   userId:string;
-  nick:string;
+  name:string;
   position:number;
+  isDealler:boolean = false;
   isActive:boolean = false;
   networkStatus:NetworkStatus;
+  gameBat:number = 0;
+  checkBat:number = 0;
+  openHand:Array;
+  currentAction:Array;
 
   @nosync
   id:string;
@@ -27,20 +32,14 @@ export default class Player extends Component {
     this.position = position;
     this.name = options.name;
     this.userId = options.userId;
-    this.isBlind = false;
     this.networkStatus = NetworkStatus.Connected;
-    this.reset();
   }
 
   remove() {
     super.remove();
     this.hand = null;
-  }
-
-  reset(){
-    this.hand = null;
-    this.status = Status.Wait;
-    this.isBlind = false;
+    this.openHand = null;
+    this.currentAction = null;
   }
 
   isConnected():boolean {
@@ -60,19 +59,44 @@ export default class Player extends Component {
     this.networkStatus = NetworkStatus.DisConnected;
   }
 
-  isPlayAble(ante:number, ):boolean {
+  isPlayAble(minBankroll:number):boolean {
     if( this.networkStatus != NetworkStatus.Connected ) return false;
-    if( ante > this.bankroll ) {
+    if( minBankroll > this.bankroll ) {
       this.status = Status.Impossible;
       return false;
     }
     return true;
   }
 
-  start(ante:number, hand:Array) {
-    this.bankroll -= ante;
+  onReset(){
+    this.hand = null;
+    this.status = Status.Wait;
+    this.isBlind = false;
+    this.isDealler = false;
+  }
+
+  onStart(hand:Array) {
     this.hand = hand;
+    this.openHand = [];
+    this.currentAction = [];
     this.status = Status.Play;
+  }
+
+  onNextRound() {
+    this.gameBat = 0;
+  }
+
+  onBatting(amount:number):boolean{
+    if( amount > this.bankroll ) return false;
+    this.gameBat += amount;
+    this.bankroll -= amount;
+    return true;
+  }
+
+  onShowDown(){
+    if(this.status == Status.Impossible || this.status == Status.Wait) return;
+    this.status = Status.ShowDown;
+    this.openHand = this.hand;
   }
 
   isActionAble():boolean {
@@ -86,7 +110,25 @@ export default class Player extends Component {
     }
   }
 
-  setActivePlayer(){
+  setActivePlayer(action:Array, turnBat:number, minBat:number){
+    this.checkBat = turnBat - this.gameBat;
+    let bat = this.checkBat + minBat;
+    this.currentAction = action.map( ac => {
+      switch(ac){
+        case Action.Check:
+        case Action.Call:
+          if( this.checkBat >= this.bankroll) return Action.AllIn;
+          break;
+        case Action.Bat:
+        case Action.Raise:
+          if( bat >= this.bankroll) return Action.AllIn;
+          break;
+        case Action.BigBlind:
+          if( minBat >= this.bankroll) return Action.AllIn;
+          break
+      }
+      return ac;
+    });
     this.isActive = true;
     this.isActionComplete = false;
   }
@@ -111,6 +153,8 @@ export default class Player extends Component {
     	case Action.SmallBlind: this.status = Status.Play; break;
     	case Action.BigBlind: this.status = Status.Play; break;
     }
+    this.checkBat = 0;
+    this.currentAction = [];
     this.isActionComplete = true;
   }
 }
@@ -120,7 +164,8 @@ enum Status{
   Impossible,
   Fold,
 	Play,
-  AllIn
+  AllIn,
+  ShowDown
 }
 
 enum NetworkStatus{

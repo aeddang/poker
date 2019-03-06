@@ -8,7 +8,7 @@ import { take } from 'rxjs/operators';
 import Event from  "../../util/event";
 
 import Player  from  "./player";
-import Stage from  "./stage";
+import Stage, * as Stg from  "./stage";
 import Dealler from  "./dealler";
 
 
@@ -31,15 +31,15 @@ export default class Game extends Component {
 	@nosync
 	currentPlayer:Player;
   @nosync
-	startPlayer:Player;
+	endPlayerID:string;
   @nosync
 	playerNum:number = 0;
 
-  constructor(ante: number, maxClients:number) {
+  constructor(ante: number, gameRule:number, maxClients:number) {
 		super();
 		this.players = {};
     this.dealler = new Dealler();
-    this.stage = new Stage(ante, maxClients);
+    this.stage = new Stage(ante, gameRule, maxClients);
     this.delegate = new Rx.Subject();
   }
 
@@ -49,7 +49,6 @@ export default class Game extends Component {
     this.delegate.complete();
     for (let id in this.players) this.players[id].remove();
     this.players = null;
-    this.startPlayer = null;
     this.currentPlayer = null;
 		this.dealler = null;
     this.delegate = null;
@@ -57,65 +56,86 @@ export default class Game extends Component {
   }
 
   start(delay){
+		this.onReset();
     if(  this.playerNum < MIN_GAME_PLAYER ) return;
-    this.onGameReset();
     this.debuger.log('start');
     Rx.interval(WAIT_TIME).pipe(take(1)).subscribe(e => {
       let ids = this.getGameStartAblePlayers();
       if( ids.length < MIN_GAME_PLAYER ) {
-        this.onGameError();
+        this.onError();
         return;
       }
-      this.stage.start(ids).subscribe ({
-        next :(t) => { this.onGameNextTurn(); },
-        complete :() => { this.onGameComplete(); }
+      this.stage.onStart(ids).subscribe ({
+        next :(e) => {
+					switch(e.type) {
+						case Stg.STAGE_EVENT.NEXT_TURN :
+							this.onTurnNext( e.data );
+							break;
+						case Stg.STAGE_EVENT.COMPLETE_TURN :
+						  this.onTurnStart( e.data );
+							break;
+						case Stg.STAGE_EVENT.CURRENT_PLAYER_CHANGED :
+							this.onCurrentPlayerChanged( e.data );
+							break;
+					}
+				},
+        complete :() => { this.onShowDown(); }
       });
-      this.onGameStart( ids );
-      this.onGameTurnStart();
+      this.onStart( ids );
+      this.onTurnStart( this.stage.status );
     });
   }
 
   getGameStartAblePlayers():Array<String> {
     let ids:Array<String> = [];
     for (let id in this.players) {
-      if( this.players[id].isPlayAble(this.stage.ante) ) ids.push(id);
+      if( this.players[id].isPlayAble(this.stage.minBankroll) ) ids.push(id);
     }
 		this.debuger.log(ids);
     return ids;
   }
 
-  onGameReset(){
-    this.stage.reset();
-    this.dealler.reset();
-    this.startPlayer = null;
-    this.currentPlayer = null;
-    for (let id in this.players) this.players[id].reset();
+  onReset(){
+    this.stage.onReset();
+    this.dealler.onReset();
+    for (let id in this.players) this.players[id].onReset();
   }
 
-  onGameStart( ids:Array<String> ) {
-    ids.forEach( id => {
+  onStart( ids:Array<String> ) {
+    this.players[ this.stage.dellerID ].isDealler = true;
+		ids.forEach( id => {
+			let player = this.players[id];
       let hand = this.dealler.getHand();
-      this.players[id].start( this.stage.ante, hand );
-      if( this.players[id].isBlind ) return;
+      player.onStart( hand );
+			this.onBatting(id, this.stage.ante);
+      if( player.isBlind ) return;
       this.delegate.next( new Event( GAME_EVENT.PUSH, {id:id, value:hand}) );
     })
+
     this.debuger.log('onGameStart');
   }
 
-  onGameTurnStart(){
-    this.removeCurrentPlayer();
-		this.startPlayer = this.players[ this.stage.currentID ];
-    this.setCurrentPlayer( this.startPlayer );
+  onTurnStart(status:Stg.Status){
     this.debuger.log('onGameTurnStart');
-    this.stage.turnStart();
+		let burnCards = [];
+		switch(status) {
+			case Stg.Status.Flop :
+			  burnCards = this.dealler.getFlop();
+				break;
+		  case Stg.Status.Turn :
+			  burnCards = this.dealler.getTurn();
+				break;
+		}
+		this.stage.onTurnStart( burnCards );
+		this.endPlayerID = this.stage.currentID;
   }
 
-  onGameNextTurn(playerId){
-    this.removeCurrentPlayer();
-    let nextPlayer = this.players[ this.stage.currentID ];
-    if( nextPlayer == this.startPlayer ) {
+  onTurnNext( id:string ){
+    let nextPlayer = this.players[ id ];
+    if( this.endPlayerID == id ) {
       this.debuger.log('turn complete');
-      this.stage.onGameComplete();
+      this.stage.onNextRound();
+			for (let id in this.players) this.players[id].onNextRound();
       return;
     }
     if( !nextPlayer.isActionAble() ) {
@@ -124,20 +144,24 @@ export default class Game extends Component {
       return;
     }
     this.debuger.log('turn next');
-    this.setCurrentPlayer( nextPlayer );
-    this.stage.turnStart();
+		this.stage.onTurnNext();
   }
 
-  removeCurrentPlayer() {
-    if(this.currentPlayer == null) return;
+  onCurrentPlayerChanged( id:string ) {
+		if(this.currentPlayer == null) return;
     this.currentPlayer.setPassivePlayer();
-    this.currentPlayer = null;
+		this.currentPlayer = this.players[ id ];
+		let actions = this.stage.getActions();
+    player.setActivePlayer(actions, this.stage.turnBat, this.stage.minBat);
   }
 
-  setCurrentPlayer(player:Player) {
-    this.currentPlayer = player;
-    player.setActivePlayer();
-  }
+	onBatting(id:String, amount:number){
+		if( this.players[ id ].onBatting(amount) ) {
+			this.stage.onBatting(amount);
+		} else {
+			this.debuger.warn(this.players[ id ], 'batting leak');
+		}
+	}
 
   onAction (id: string, command: Command) {
     if(Cmd.BlindAction){
@@ -146,34 +170,57 @@ export default class Game extends Component {
     }
     if( this.currentPlayer == null ) return;
     if( id != this.currentPlayer.id ) return;
-
 		this.debuger.log(command, 'onAction');
     switch(command.t) {
     	case Action.Raise:
 			case Action.Bat:
+        this.onBatting(id, command.d);
+				this.endPlayerID = id;
+			  break;
 			case Action.SmallBlind:
+			  this.onBatting(id, this.stage.smallBlindBat);
+				break;
 			case Action.BigBlind:
-        this.startPlayer = this.currentPlayer;
+			  this.onBatting(id, this.stage.bigBlindBat);
+        this.endPlayerID = id;
         break;
+      case Action.AllIn:
+				this.onBatting(id, command.d);
+				break;
+			case Action.Check:
+	    case Action.Call:
+				this.onBatting(id, command.d);
+				break;
     }
     this.players[ id ].onAction(command);
-    this.stage.onTurnComplete();
+		this.stage.onAction(command);
   }
 
-  onGameError() {
+  onError() {
     this.debuger.log('onGameError');
-    this.stage.onGameComplete();
-    this.onGameComplete();
+    this.onComplete();
   }
 
-	onGameComplete() {
+	onShowDown() {
+		this.debuger.log('onShowDown');
+    for (let id in this.players) {
+			let player = this.players[id];
+			player.onShowDown();
+			if( !player.isConnected() ) this.leaveCompleted(id);
+		}
+		Rx.interval(WAIT_TIME).pipe(take(1)).subscribe( this.onComplete.bind(this) );
+  }
+
+	onComplete() {
 		this.debuger.log('onGameComplete');
-    for (let id in this.players) if( !this.players[id].isConnected() ) this.leaveCompleted(id);
-    this.start();
-  }
+		this.stage.onComplete();
+		this.start();
+	}
 
-  isJoinAble():boolean {
-    return this.stage.isJoinAble;
+  isJoinAble(userId:string):boolean {
+		if(! this.stage.isJoinAble) return false;
+		for (let id in this.players) if( this.players[id].userId == userId ) return false;
+    return true;
   }
 
   join(id:string, options:JoinOption) {

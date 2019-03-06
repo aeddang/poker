@@ -54,22 +54,22 @@ export default class GameViewer extends SyncPropsComponent {
     };
     this.watchs = {
       ante: value =>{
-        this.debuger.log(value, 'ante');
+        this.debuger.log(value, 'anteA');
       },
       mainPot: value =>{
-        this.debuger.log(value, 'mainPot');
+        this.debuger.log(value, 'mainPotA');
       },
       sidePot: value =>{
-        this.debuger.log(value, 'sidePot');
+        this.debuger.log(value, 'sidePotA');
       },
       status: value =>{
-        this.debuger.log(value, 'status');
+        this.debuger.log(value, 'statusA');
       },
       communityCards: value =>{
-        this.debuger.log(value, 'communityCards');
+        this.debuger.log(value, 'communityCardsA');
       }
     };
-    
+
     super.setupSyncProps();
   }
 }

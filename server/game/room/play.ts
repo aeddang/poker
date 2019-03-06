@@ -12,10 +12,11 @@ const REJOIN_LIMITED_TIME = 20;
 export default class Play extends RoomComponent<Game> {
   maxClients = 9;
 	ante:number = 1;
+  gameRule:number = 2;
   debuger: Debugger;
   onInit (options) {
     super.onInit(options);
-    this.setState(new Game(this.ante, this.maxClients));
+    this.setState(new Game(this.ante, this.gameRule, this.maxClients));
     this.state.delegate.subscribe( this.onStateEvent.bind(this) );
   }
 
@@ -25,7 +26,7 @@ export default class Play extends RoomComponent<Game> {
   }
 
 	onAuth (options:JoinOption) {
-    let isJoinAble = this.state.isJoinAble();
+    let isJoinAble = this.state.isJoinAble(options.userId);
     return isJoinAble;
   }
 

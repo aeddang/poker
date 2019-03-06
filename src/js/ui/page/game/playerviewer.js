@@ -53,13 +53,13 @@ export default class PlayerViewer extends SyncPropsComponent {
 
     this.watchs = {
       maxPlayer: value =>{
-        this.debuger.log(value, 'maxPlayer');
+        this.debuger.log(value, 'maxPlayerA');
       },
       time: value =>{
-        this.debuger.log(value, 'time');
+        this.debuger.log(value, 'timeA');
       },
       currentID: value =>{
-        this.debuger.log(value, 'currentID');
+        this.debuger.log(value, 'currentIDA');
       }
     };
     super.setupSyncProps();

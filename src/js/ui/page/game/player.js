@@ -44,7 +44,7 @@ export default class Player extends SyncPropsComponent {
       bankroll:0,
       isBlind:false,
       userId:'',
-      nick:'',
+      name:'',
       position:-1,
       isActive:false,
       networkStatus:-1
@@ -62,8 +62,8 @@ export default class Player extends SyncPropsComponent {
       userId: value =>{
         this.debuger.log(value, 'userId');
       },
-      nick: value =>{
-        this.debuger.log(value, 'nick');
+      name: value =>{
+        this.debuger.log(value, 'name');
       },
       position: value =>{
         this.debuger.log(value, 'position');
@@ -73,7 +73,7 @@ export default class Player extends SyncPropsComponent {
       },
       networkStatus: value =>{
         this.debuger.log(value, 'networkStatus');
-      },
+      }
     };
     super.setupSyncProps();
   }
@@ -104,7 +104,8 @@ export const Status = Object.freeze ({
   Impossible: 2,
   Fold: 3,
 	Play: 4,
-  AllIn: 5
+  AllIn: 5,
+  ShowDown: 6
 });
 
 export const NetworkStatus = Object.freeze ({
