@@ -11,6 +11,7 @@ const LIMIT_TIME:number = 30;
 export const STAGE_EVENT = Object.freeze ({
 	NEXT_TURN: "nextTurn",
   COMPLETE_TURN: "completeTurn",
+	TIME_CHANGED: "timeChanged",
   CURRENT_PLAYER_CHANGED: "currentPlayerChanged"
 });
 
@@ -27,21 +28,19 @@ export default class Stage extends Component {
   ante:number = 1;
   gameRule:number = 2;
   isLimited:boolean = false;
-  maxPlayer:number;
   mainPot:number;
   sidePot:number;
   status:Status;
   communityCards:Array;
-  time:number;
+
   minBat:number;
   turnBat:number;
 
+
+  @nosync
+	time:number;
   @nosync
   turn:number;
-  @nosync
-  deallerTurn:number;
-  @nosync
-  deallerButton:number;
   @nosync
   ids:Array<String>;
   @nosync
@@ -49,15 +48,11 @@ export default class Stage extends Component {
   @nosync
   dellerID:string;
   @nosync
-  positions:Array<string>;
-  @nosync
   delegate:Rx.Subject;
   @nosync
   gameScheduler:Rx.Observable;
   @nosync
   gameTimeSubscription:Rx.Subscription;
-  @nosync
-  isJoinAble:boolean = true;
   @nosync
   didBat:boolean = false;
   @nosync
@@ -67,20 +62,16 @@ export default class Stage extends Component {
   @nosync
   minBankroll:number;
 
-  constructor(ante:number, gameRule:number, maxClients:number) {
+  constructor(ante:number, gameRule:number) {
     super();
     this.ante = ante;
     this.gameRule = gameRule;
     this.smallBlindBat = ante * gameRule;
     this.bigBlindBat = this.smallBlindBat * 2;
     this.minBankroll = this.bigBlindBat + ante;
-    this.deallerTurn = 0;
-    this.maxPlayer = maxClients;
     this.status = Status.Wait;
-    this.positions = Array(maxClients);
     this.turn = 0;
     this.time = 0;
-    this.deallerButton = 0;
     this.delegate = null;
     this.gameScheduler = Rx.interval(GAME_SPEED);
   }
@@ -106,20 +97,6 @@ export default class Stage extends Component {
     this.delegate = null;
   }
 
-  joinPosition( id:string ):number {
-    let idx = this.positions.findIndex( pos => pos == null );
-    this.positions[idx] = id;
-    if(idx == (this.maxPlayer-1)) this.isJoinAble = false;
-    return idx;
-  }
-
-  leavePosition( id:string ):number {
-    let idx = this.positions.findIndex( pos => pos === id );
-    this.positions[idx] = null;
-    this.isJoinAble = true;
-    return idx;
-  }
-
   isStart():boolean {
     if( this.status == Status.Wait ) return false;
     return true;
@@ -131,7 +108,7 @@ export default class Stage extends Component {
     return true;
   }
 
-  onReset(){
+  reset(){
     this.currentID = '';
     this.mainPot = 0;
     this.sidePot = 0;
@@ -143,17 +120,15 @@ export default class Stage extends Component {
     this.ids = null;
   }
 
-  onStart(ids:Array):Rx.Subject {
+  start(ids:Array):Rx.Subject {
     this.ids = ids;
-    this.deallerButton = this.deallerTurn % this.ids.length;
-    this.dellerID = this.getCurrentID();
     this.delegate = new Rx.Subject();
     this.status = Status.FreeFlop;
     this.communityCards = [];
     return this.delegate;
   }
 
-  onTurnStart( burnCards:Array ) {
+  turnStart( burnCards:Array ) {
     this.turnBat = 0;
     this.turn = 1;
     this.didBat = false;
@@ -161,10 +136,10 @@ export default class Stage extends Component {
     this.communityCards = this.communityCards.concat( burnCards );
     this.currentID = this.getCurrentID();
     this.delegate.next( new Event( STAGE_EVENT.CURRENT_PLAYER_CHANGED , this.currentID ) );
-    this.onTurnNext();
+    this.turnNext();
   }
 
-  onTurnNext() {
+  turnNext() {
     this.time = LIMIT_TIME;
     this.gameTimeSubscription = this.gameScheduler.pipe(take(LIMIT_TIME)).subscribe( {
       next :(t) => { this.onTime(); },
@@ -174,12 +149,7 @@ export default class Stage extends Component {
 
   onTime(){
     this.time--;
-  }
-
-  onBatting(amount:number){
-    if( this.minBat < amount ) this.minBat = amount;
-    this.turnBat += amount;
-    this.mainPot += amount;
+		this.delegate.next( new Event( STAGE_EVENT.TIME_CHANGED , this.time ) );
   }
 
   onTurnComplete() {
@@ -190,18 +160,23 @@ export default class Stage extends Component {
     this.delegate.next( new Event( STAGE_EVENT.NEXT_TURN , this.currentID ) );
   }
 
-  onNextRound() {
+	batting(amount:number){
+    if( this.minBat < amount ) this.minBat = amount;
+    this.turnBat += amount;
+    this.mainPot += amount;
+  }
+
+  nextRound() {
     this.status ++;
     if(this.status == Status.ShowDown) this.delegate.complete();
     else this.delegate.next( new Event( STAGE_EVENT.COMPLETE_TURN , this.status ) );
   }
 
-  onComplete(){
-    this.deallerTurn ++;
+  complete(){
     this.removeDelegate();
   }
 
-  onAction (command: Command) {
+  action (command: Command) {
     switch(command.t) {
       case Action.Bat: this.didBat = true; break;
       case Action.AllIn: ; break;
@@ -221,7 +196,7 @@ export default class Stage extends Component {
   }
 
   getCurrentID(): string{
-    let idx = (this.deallerButton + this.turn) % this.ids.length;
+    let idx = this.turn % this.ids.length;
     return this.ids[idx]
   }
 }

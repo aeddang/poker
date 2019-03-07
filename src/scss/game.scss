@@ -1,13 +1,20 @@
 @import 'element';
 @import 'mixin';
 
-.poker .player {position: absolute; background-color: $color-grey; width:150px; height:80px; @include bg-radius(20px)}
-.poker .player .profile-img {width:50px; height:50px;}
-.poker .player .profile-data {@include font-default($color-white);}
-.poker .player .play-data {@include font-default($color-white);}
-.poker .player .status {@include font-default($color-blue);}
-.poker .player .time-bar {@include font-default($color-red);}
 
+.poker .player {}
+
+.poker .player-position-wait { @include position-top-left($margin-tiny); width:150px; height:100px;  background-color: $color-grey;}
+.poker .player-position-join { @include position-cover;  background-color: $color-grey;}
+.poker .player-me { background-color: $color-red; }
+.poker .player .profile-img { width:50px; height:50px }
+.poker .player .profile-data { @include font-default($color-white) }
+.poker .player .play-data { @include font-default($color-white) }
+.poker .player .status { @include font-default($color-blue) }
+.poker .player .time-bar { @include font-default($color-red) }
+
+.poker .position { position: absolute; background-color: $color-grey; width:150px; height:100px; @include bg-radius(20px) }
+.poker .position .btn-join { @include btn-text; @include btn-icon-size }
 
 .poker .game-viewer { @include position-cover; }
 .poker .player-viewer { @include position-cover; }

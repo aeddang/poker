@@ -57,7 +57,7 @@ export default class Play extends Room {
     this.gameViewer = null;
     this.playerViewer = null;
     this.uiBox = null;
-
+    this.me = null;
   }
 
   getElementProvider() { return new PlayBody(this.body); }
@@ -66,11 +66,13 @@ export default class Play extends Room {
     let bounce = Util.convertRectFromDimension(loadingBarBody);
     this.loadingBar.init(elementProvider.getElement('loadingBar'));
     this.gameViewer.init(elementProvider.getElement('gameViewer'));
-    this.playerViewer.init(elementProvider.getElement('playerViewer'));
+
     this.btnExit = elementProvider.getElement('btnExit');
     this.playArea = elementProvider.getElement('playArea');
     this.chatArea = elementProvider.getElement('chatArea');
     this.chat.init(this.chatArea).subscribe ( this.onChatEvent.bind(this) );
+
+    this.playerViewer.init(elementProvider.getElement('playerViewer')).subscribe ( this.onUiEvent.bind(this) );
     this.uiBox.init(elementProvider.getElement('uiBox')).subscribe ( this.onUiEvent.bind(this) );
     super.onCreate(elementProvider);
     this.onResize();
@@ -78,29 +80,37 @@ export default class Play extends Room {
   }
   setupEvent() {
     this.attachEvent(this.btnExit, "click", this.onExit.bind(this));
+
+    this.room.listen("maxPlayer", e => {
+      this.playerViewer.onUpdateSyncProp("maxPlayer", e.value);
+    });
+
+    this.room.listen("stage", e => {
+      this.gameViewer.onUpdateSyncProps(e.value);
+    });
+    this.room.listen("stage/:attribute", e => {
+      this.gameViewer.onUpdateSyncProp (e.path.attribute, e.value);
+    });
+
     this.room.listen("players/:id", e => {
-      if (e.operation === "add") this.playerViewer.onJoin(e.path.id, e.value);
-      else if (e.operation === "remove") this.playerViewer.onLeave(e.path.id, e.value);
+      this.debuger.log(e , 'players');
+      if (e.operation === "add") {
+        let itsMe = this.userInfo.id == e.value.userId;
+        if( itsMe ) {
+          this.me = e.path.id;
+          this.uiBox.onUpdateSyncProps(e.value);
+        }
+        this.playerViewer.onJoin(e.path.id, e.value, itsMe);
+      }
+      else if (e.operation === "remove") { this.playerViewer.onLeave(e.path.id, e.value); }
     });
 
     this.room.listen("players/:id/:attribute", e => {
-
       this.playerViewer.onUpdatePlayer(e.path.id, e.path.attribute, e.value);
+      if(e.path.id == this.me) this.uiBox.onUpdateSyncProp (e.path.attribute, e.value);
     });
 
-    this.room.listen("stage/:attribute", e => {
-      let attr = e.path.attribute;
-      switch(attr){
-        case 'maxPlayer':
-        case 'time':
-        case 'currentID':
-          this.playerViewer.onUpdateSyncProp (attr, e.value);
-          break;
-        default:
-          this.gameViewer.onUpdateSyncProp (attr, e.value);
-          break;
-      }
-    });
+
   }
 
   onResize() {
@@ -115,6 +125,7 @@ export default class Play extends Room {
   }
 
   onUiEvent(event) {
+    this.debuger.log(event, 'onUiEvent');
     let command = new Command (
       Cmd.CommandType.Action,
       event.type,

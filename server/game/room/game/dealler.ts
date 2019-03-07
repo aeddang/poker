@@ -11,7 +11,7 @@ export default class Dealler extends Component {
     super.remove();
   }
 
-  onReset(){
+  reset(){
     this.resetCards();
   }
 

@@ -20,7 +20,8 @@ export enum Action{
   Bat,
   Raise,
   AllIn,
-  Blind
+  Blind,
+  JoinGame
 }
 
 export default interface Command {

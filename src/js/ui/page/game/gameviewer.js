@@ -42,35 +42,24 @@ export default class GameViewer extends SyncPropsComponent {
     this.sidePot = elementProvider.getElement('sidePot');
     for(var i=0; i<5; ++i) this.cards.push(elementProvider.getElement('card'+i));
   }
-
-  setupSyncProps(){
-
-    this.syncProps = {
-      ante:1,
-      mainPot:0,
-      sidePot:0,
-      status:Status.Wait,
-      communityCards:[]
-    };
+  setupWatchs(){
     this.watchs = {
       ante: value =>{
-        this.debuger.log(value, 'anteA');
+        this.debuger.log(value, 'ante');
       },
       mainPot: value =>{
-        this.debuger.log(value, 'mainPotA');
+        this.debuger.log(value, 'mainPot');
       },
       sidePot: value =>{
-        this.debuger.log(value, 'sidePotA');
+        this.debuger.log(value, 'sidePot');
       },
       status: value =>{
-        this.debuger.log(value, 'statusA');
+        this.debuger.log(value, 'status');
       },
       communityCards: value =>{
-        this.debuger.log(value, 'communityCardsA');
+        this.debuger.log(value, 'communityCards');
       }
     };
-
-    super.setupSyncProps();
   }
 }
 

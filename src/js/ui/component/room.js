@@ -63,8 +63,8 @@ export default class Room extends Component {
     this.chat.onResize();
   }
 
-  onJoin() { console.log('join', '', 0); }
-  onLeave() { console.log('leave', '', 0); }
+  onJoin() { this.debuger.log('join', '', 0); }
+  onLeave() { this.debuger.log('leave', '', 0); }
 
   onMessage(message) {
     let brodcast = parseBrodcast(message);

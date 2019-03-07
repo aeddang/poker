@@ -56,7 +56,7 @@ export default class Play extends RoomComponent<Game> {
 
   onAction (client:Client, command: Command) {
     super.onAction(client, command);
-    this.state.onAction (client.sessionId, command);
+    this.state.action (client.sessionId, command);
   }
 
   getPlayerName(client:Client):string {

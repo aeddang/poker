@@ -1,8 +1,8 @@
 import SyncPropsComponent from 'Component/syncpropscomponent';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
-import Player from './Player';
-
+import Player from './player';
+import Position from './position';
 class PlayerViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
@@ -13,7 +13,6 @@ class PlayerViewerBody extends ElementProvider {
 class PlayerViewerInfo {
   constructor() {
     this.reset();
-    this.playerNum = 9;
   }
   reset() {}
 }
@@ -23,46 +22,49 @@ export default class PlayerViewer extends SyncPropsComponent {
     super();
     this.debuger.tag = 'PlayerViewer';
     this.info = new PlayerViewerInfo();
-    this.players = [];
-    this.positions = {};
+    this.players = {};
+    this.positions = [];
   }
 
   remove() {
     super.remove();
-    this.players.forEach( p => { p.remove(); });
+    for (let id in this.players) this.players[id].remove();
+    this.positions.forEach( p => { p.remove(); });
     this.players = null;
     this.positions = null;
   }
 
   getElementProvider() { return new PlayerViewerBody(this.body); }
   onCreate(elementProvider) {
-    for(var i=0; i<this.info.playerNum; ++i) {
-      let player = new Player();
-      player.init( this.getBody() , i);
-      let body = player.getBody();
-      this.players.push(player);
-    }
+  }
+
+  setupWatchs(){
+    this.watchs = {
+      maxPlayer: value =>{
+        this.onCreatePositions(value);
+      }
+    };
   }
 
   setupSyncProps(){
-    this.syncProps = {
-      maxPlayer:1,
-      time:0,
-      currentID:''
+    let syncProps = {
+      maxPlayer:0,
     };
+    super.setupSyncProps(syncProps);
+  }
 
-    this.watchs = {
-      maxPlayer: value =>{
-        this.debuger.log(value, 'maxPlayerA');
-      },
-      time: value =>{
-        this.debuger.log(value, 'timeA');
-      },
-      currentID: value =>{
-        this.debuger.log(value, 'currentIDA');
-      }
-    };
-    super.setupSyncProps();
+  onCreatePositions( playerNum ){
+    for(var i=0; i < playerNum; ++i) {
+      let position = new Position();
+      position.init( this.getBody() , i).subscribe ( this.onUiEvent.bind(this) );
+      this.positions.push(position);
+    }
+    this.onResize();
+    this.debuger.log(playerNum , 'onCreatePositions');
+  }
+
+  onUiEvent(event) {
+    this.delegate.next(event);
   }
 
   onResize() {
@@ -77,10 +79,10 @@ export default class PlayerViewer extends SyncPropsComponent {
     let posY = centerY - (height/2) + marginY;
     let radiusX = centerX - width - Math.abs(marginX);
     let radiusY = centerY - height - Math.abs(marginY);
-    let len = this.info.playerNum + 1;
+    let len = this.positions.length + 1;
     var rotate = -90;
     var sumRotate = 360 / len;
-    this.players.forEach( p => {
+    this.positions.forEach( p => {
       rotate += sumRotate
       let r = rotate * Math.PI/180
       let x = posX + (Math.cos(r) *radiusX);
@@ -91,36 +93,40 @@ export default class PlayerViewer extends SyncPropsComponent {
     });
   }
 
-  onJoin(id, syncProps) {
-    let pos = syncProps.position;
-    let player = this.players[ pos ];
-    if( player == undefined ) {
-      this.debuger.warn(id, 'join player position undefined');
-      return;
-    }
-    this.positions[id] = player;
-    player.onJoin( syncProps );
+  onJoin(id, syncProps, itsMe) {
+    this.debuger.log(syncProps , 'onJoin');
+    this.onCreatePlayer( id, syncProps, itsMe );
   }
 
-  getPlayer(id) {
-    let player = this.positions[ id ];
-    if( player == undefined ) {
-      this.debuger.warn(id, 'player undefined');
-      return null;
-    }
-    return player;
+  onCreatePlayer( id, syncProps, itsMe ){
+    let player = new Player();
+    this.debuger.log( player , 'onCreatePlayer');
+    player.init( this.getBody(), itsMe ).subscribe ( this.onUiEvent.bind(this) );
+    player.onUpdateSyncProps( syncProps );
+    this.players[id] = player;
+    this.debuger.log(id , 'onCreatePlayer');
   }
 
   onLeave(id) {
-    let player = this.getPlayer( id );
+    let player = this.players[id];
     if( player == null ) return;
-    player.onLeave();
-    delete this.positions[id];
+    this.positions[ player.position ].leavePlayer();
+    player.remove();
+    delete this.players[id]
   }
 
   onUpdatePlayer(id, prop, value){
-    let player = this.getPlayer( id );
+    let player = this.players[id];
+    this.debuger.log( player , 'onUpdatePlayer');
     if( player == null ) return;
+
+    if( prop == 'position') {
+      let position = this.positions[ value ];
+      if( position == null ) return;
+      position.getBody().appendChild( player.getBody() );
+      if( player.me ) this.positions.forEach( p => { p.joinPlayer(); } );
+      else position.joinPlayer();
+    }
     player.onUpdateSyncProp( prop, value);
   }
 }

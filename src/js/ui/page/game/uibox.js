@@ -1,4 +1,4 @@
-import Component from 'Skeleton/component';
+import SyncPropsComponent from 'Component/syncpropscomponent';
 import ComponentEvent from 'Skeleton/event';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
@@ -34,7 +34,7 @@ class UiBoxBody extends ElementProvider {
   }
 }
 
-export default class UiBox extends Component {
+export default class UiBox extends SyncPropsComponent {
   constructor() {
     super();
 		this.debuger.tag = 'UiBox';
@@ -69,6 +69,30 @@ export default class UiBox extends Component {
 		this.btnAllin = elementProvider.getElement('btnAllin');
   }
 
+	setupWatchs(){
+		this.watchs = {
+      isActive: value =>{
+        this.debuger.log(value, 'isActive');
+      },
+      bankroll: value =>{
+        this.debuger.log(value, 'bankroll');
+      },
+      gameBat: value =>{
+        this.debuger.log(value, 'gameBat');
+      },
+      checkBat: value =>{
+        this.debuger.log(value, 'checkBat');
+      },
+      time: value =>{
+        this.debuger.log(value, 'time');
+      },
+      currentAction: value =>{
+        this.debuger.log(value, 'currentAction');
+      }
+    };
+  }
+
+
   setupEvent() {
 		this.attachEvent(this.btnBlind, "click", this.onBlind.bind(this));
 		this.attachEvent(this.btnFold, "click", this.onFold.bind(this));
@@ -81,12 +105,6 @@ export default class UiBox extends Component {
     this.attachEvent(this.btnAllin, "click", this.onAllin.bind(this));
   }
 
-  onUpdateStatus(status){
-
-  }
-  onResize() {
-
-  }
 	onBlind() { this.delegate.next(new ComponentEvent( UI_EVENT.BLIND )); }
   onFold() { this.delegate.next(new ComponentEvent( UI_EVENT.FOLD )); }
 	onSmallBlind() { this.delegate.next(new ComponentEvent( UI_EVENT.SAMALL_BLIND )); }

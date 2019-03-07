@@ -7,6 +7,7 @@ class PlayerBody extends ElementProvider {
     var cell = document.createElement("div");
     cell.id = this.id+'cell';
     cell.classList.add("player");
+    cell.classList.add("player-position-wait");
     cell.innerHTML = `
       <img id='${this.id}profileImg' class='profile-img'></img>
       <p id='${this.id}profileData' class='profile-data'></p>
@@ -22,11 +23,11 @@ export default class Player extends SyncPropsComponent {
   constructor() {
     super();
     this.debuger.tag = 'Player';
-    this.idx = -1;
+    this.me = false;
   }
 
-  init(body,idx) {
-    this.idx = idx;
+  init(body, itsMe) {
+    this.me = itsMe;
     return super.init(body);
   }
   remove() {
@@ -38,20 +39,11 @@ export default class Player extends SyncPropsComponent {
     this.timeBar = null;
   }
 
-  setupSyncProps(){
-    this.syncProps = {
-      status:-1,
-      bankroll:0,
-      isBlind:false,
-      userId:'',
-      name:'',
-      position:-1,
-      isActive:false,
-      networkStatus:-1
-    };
+  setupWatchs(){
     this.watchs = {
       status: value =>{
         this.debuger.log(value, 'status');
+        this.status.innerHTML = 'player -> ' + value;
       },
       bankroll: value =>{
         this.debuger.log(value, 'bankroll');
@@ -64,8 +56,11 @@ export default class Player extends SyncPropsComponent {
       },
       name: value =>{
         this.debuger.log(value, 'name');
+        this.profileData.innerHTML = value;
       },
       position: value =>{
+        if(value != -1) this.onGameJoin();
+        this.playData.innerHTML = 'pos -> ' + value;
         this.debuger.log(value, 'position');
       },
       isActive: value =>{
@@ -75,7 +70,6 @@ export default class Player extends SyncPropsComponent {
         this.debuger.log(value, 'networkStatus');
       }
     };
-    super.setupSyncProps();
   }
 
   getElementProvider() { return new PlayerBody(this.body); }
@@ -86,15 +80,12 @@ export default class Player extends SyncPropsComponent {
     this.status = elementProvider.getElement('status');
     this.timeBar = elementProvider.getElement('timeBar');
     this.profileData.innerHTML = this.idx + ' : player out'
+    if ( this.me ) this.getBody().classList.add("player-me");
   }
 
-  onJoin( syncProps ) {
-    this.onUpdateSyncProps( syncProps );
-    this.profileData.innerHTML = this.idx + ' : player in'
-  }
-
-  onLeave() {
-    this.profileData.innerHTML = this.idx + ' : player out'
+  onGameJoin( ) {
+    this.getBody().classList.remove("player-position-wait");
+    this.getBody().classList.add("player-position-join");
   }
 }
 

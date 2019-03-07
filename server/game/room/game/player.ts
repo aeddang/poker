@@ -5,17 +5,18 @@ import { JoinOption } from "../../util/interface";
 import { nosync } from "colyseus";
 
 export default class Player extends Component {
-  status:Status = Status.Wait;
+  status:Status = Status.Absence;
   bankroll:number = 1000;
   isBlind:boolean = false;
   userId:string;
   name:string;
-  position:number;
+  position:number = -1;
   isDealler:boolean = false;
   isActive:boolean = false;
   networkStatus:NetworkStatus;
   gameBat:number = 0;
   checkBat:number = 0;
+  time:number = 0;
   openHand:Array;
   currentAction:Array;
 
@@ -26,10 +27,10 @@ export default class Player extends Component {
   @nosync
   isActionComplete:boolean = false;
 
-  constructor(id:stirng, options:JoinOption, position:number) {
+
+  constructor(id:stirng, options:JoinOption) {
     super();
     this.id = id;
-    this.position = position;
     this.name = options.name;
     this.userId = options.userId;
     this.networkStatus = NetworkStatus.Connected;
@@ -51,6 +52,19 @@ export default class Player extends Component {
     this.networkStatus = NetworkStatus.Wait;
   }
 
+  isJoinGameAble(){
+    return this.status == Status.WaitBigBlind || this.status == Status.Absence;
+  }
+
+  joinGame( position:number, isPlaying:boolean){
+    this.position = position;
+    this.status = isPlaying ? Status.WaitBigBlind : Status.Wait;
+  }
+
+  isRejoinAble():boolean {
+    return this.networkStatus == NetworkStatus.Wait;
+  }
+
   reJoin(){
     this.networkStatus = NetworkStatus.Connected;
   }
@@ -59,8 +73,10 @@ export default class Player extends Component {
     this.networkStatus = NetworkStatus.DisConnected;
   }
 
-  isPlayAble(minBankroll:number):boolean {
+  isPlayAble(minBankroll:number, posIdx:int):boolean {
     if( this.networkStatus != NetworkStatus.Connected ) return false;
+    if( this.status == Status.Absence ) return false;
+    if( this.status == Status.WaitBigBlind && posIdx != 2 ) return false;
     if( minBankroll > this.bankroll ) {
       this.status = Status.Impossible;
       return false;
@@ -68,32 +84,39 @@ export default class Player extends Component {
     return true;
   }
 
-  onReset(){
-    this.hand = null;
-    this.status = Status.Wait;
-    this.isBlind = false;
-    this.isDealler = false;
+  startDisable () {
+    if( this.status != Status.Absence) this.status = Status.Wait
   }
 
-  onStart(hand:Array) {
+  reset(){
+    this.hand = null;
+    if( this.status != Status.Absence & this.status != Status.WaitBigBlind ) this.status = Status.Wait;
+    this.isBlind = false;
+    this.isDealler = false;
+    this.time = 0;
+    this.currentAction = [Action.Blind];
+  }
+
+  start(hand:Array) {
     this.hand = hand;
     this.openHand = [];
     this.currentAction = [];
     this.status = Status.Play;
+    this.currentAction = [];
   }
 
-  onNextRound() {
+  nextRound() {
     this.gameBat = 0;
   }
 
-  onBatting(amount:number):boolean{
+  batting(amount:number):boolean{
     if( amount > this.bankroll ) return false;
     this.gameBat += amount;
     this.bankroll -= amount;
     return true;
   }
 
-  onShowDown(){
+  showDown(){
     if(this.status == Status.Impossible || this.status == Status.Wait) return;
     this.status = Status.ShowDown;
     this.openHand = this.hand;
@@ -135,14 +158,15 @@ export default class Player extends Component {
 
   setPassivePlayer(){
     this.isActive = false;
+    this.time = 0;
     if( !this.isActionComplete ) this.status = Status.Fold;
   }
 
-  onBlindAction(){
+  blindAction(){
     this.isBlind = true;
   }
 
-  onAction (command: Command) {
+  action (command: Command) {
     switch(command.t) {
       case Action.Fold: this.status = Status.Fold; break;
     	case Action.Raise: this.status = Status.Play; break;
@@ -153,6 +177,7 @@ export default class Player extends Component {
     	case Action.SmallBlind: this.status = Status.Play; break;
     	case Action.BigBlind: this.status = Status.Play; break;
     }
+    this.time = 0;
     this.checkBat = 0;
     this.currentAction = [];
     this.isActionComplete = true;
@@ -165,7 +190,9 @@ enum Status{
   Fold,
 	Play,
   AllIn,
-  ShowDown
+  ShowDown,
+  Absence,
+  WaitBigBlind
 }
 
 enum NetworkStatus{

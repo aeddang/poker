@@ -6,37 +6,48 @@ import { observe } from 'rxjs-observe';
 export default class SyncPropsComponent extends Component {
   constructor() {
     super();
-    this.syncProps = {};
+    this.syncProps = null;
     this.watchs = null;
   }
 
   init(body) {
-    this.setupSyncProps();
-    return super.init(body);
+    this.setupWatchs();
+    super.init(body);
+    this.setupSyncProps()
+    return this.delegate;
+  }
+
+  setupWatchs(){}
+  setupSyncProps(syncProps = null){
+    if(this.watchs == null) return;
+    if(syncProps != null) {
+      this.debuger.log(syncProps, 'setupSyncProps');
+      this.syncProps = syncProps;
+      let { observables, proxy } = observe(syncProps);
+      this.propsObservable = observables;
+      this.propsProxy = proxy;
+      for(let prop in this.syncProps) {
+        this.disposable.push(
+          this.propsObservable[prop].subscribe( value => {
+            if( this.watchs[prop] != undefined ) this.watchs[prop].call(this,value);
+          }));
+      }
+    }
   }
 
   onUpdateSyncProps ( syncProps ) {
+    if( syncProps == null) return;
+    this.debuger.log(syncProps, 'onUpdateSyncProps');
+    if(this.syncProps == null) {
+      this.setupSyncProps(syncProps);
+      return;
+    }
     for(var prop in syncProps)  this.onUpdateSyncProp (prop, syncProps[prop]);
   }
 
   onUpdateSyncProp (prop, value) {
-    if( this.syncProps[prop] != undefined ) { this.propsProxy[prop] = value; }
-  }
-
-  setupSyncProps(){
-    let { observables, proxy } = observe(this.syncProps);
-    this.propsObservable = observables;
-    this.propsProxy = proxy;
-  }
-
-  setupSubscription(){
-    for(let prop in this.syncProps) {
-      this.disposable.push(
-        this.propsObservable[prop].subscribe( value => {
-          this.watchs[prop].call(this,value);
-        }));
-    }
-    super.setupSubscription();
+    if(this.syncProps == null) return;
+    this.propsProxy[prop] = value;
   }
 
   remove() {
