@@ -13,6 +13,7 @@ class PlayerBody extends ElementProvider {
       <p id='${this.id}profileData' class='profile-data'></p>
       <p id='${this.id}playData' class='play-data'></p>
       <p id='${this.id}status' class='status'></p>
+      <p id='${this.id}bankroll' class='bankroll'></p>
       <div id='${this.id}timeBar' class='time-bar'></div>
     `;
     this.body.appendChild(cell);
@@ -24,6 +25,8 @@ export default class Player extends SyncPropsComponent {
     super();
     this.debuger.tag = 'Player';
     this.me = false;
+    this.limitTime = 0;
+    this.time = 0
   }
 
   init(body, itsMe) {
@@ -37,6 +40,7 @@ export default class Player extends SyncPropsComponent {
     this.playData = null;
     this.status = null;
     this.timeBar = null;
+    this.bankroll = null;
   }
 
   setupWatchs(){
@@ -46,7 +50,14 @@ export default class Player extends SyncPropsComponent {
         this.status.innerHTML = 'player -> ' + value;
       },
       bankroll: value =>{
-        this.debuger.log(value, 'bankroll');
+        this.bankroll.innerHTML = 'bankroll -> ' + value;
+      },
+      time: value =>{
+        this.time = value;
+        if(this.limitTime > 0) this.timeBar.style.width =  Util.getStyleRatio( this.time/ this.limitTime * 100 );
+      },
+      limitTime: value =>{
+        this.limitTime = value;
       },
       isBlind: value =>{
         this.debuger.log(value, 'isBlind');
@@ -60,8 +71,6 @@ export default class Player extends SyncPropsComponent {
       },
       position: value =>{
         if(value != -1) this.onGameJoin();
-        this.playData.innerHTML = 'pos -> ' + value;
-        this.debuger.log(value, 'position');
       },
       isActive: value =>{
         this.debuger.log(value, 'isActive');
@@ -78,6 +87,7 @@ export default class Player extends SyncPropsComponent {
     this.profileData = elementProvider.getElement('profileData');
     this.playData = elementProvider.getElement('playData');
     this.status = elementProvider.getElement('status');
+    this.bankroll = elementProvider.getElement('bankroll');
     this.timeBar = elementProvider.getElement('timeBar');
     this.profileData.innerHTML = this.idx + ' : player out'
     if ( this.me ) this.getBody().classList.add("player-me");
@@ -96,7 +106,9 @@ export const Status = Object.freeze ({
   Fold: 3,
 	Play: 4,
   AllIn: 5,
-  ShowDown: 6
+  ShowDown: 6,
+  Absence: 7,
+  WaitBigBlind: 8
 });
 
 export const NetworkStatus = Object.freeze ({

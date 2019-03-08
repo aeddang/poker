@@ -47,9 +47,7 @@ export default class PlayerViewer extends SyncPropsComponent {
   }
 
   setupSyncProps(){
-    let syncProps = {
-      maxPlayer:0,
-    };
+    let syncProps = { maxPlayer:0 };
     super.setupSyncProps(syncProps);
   }
 
@@ -110,14 +108,14 @@ export default class PlayerViewer extends SyncPropsComponent {
   onLeave(id) {
     let player = this.players[id];
     if( player == null ) return;
-    this.positions[ player.position ].leavePlayer();
     player.remove();
     delete this.players[id]
+    let position = this.positions[ player.position ];
+    if( position != null) position.leavePlayer();
   }
 
   onUpdatePlayer(id, prop, value){
     let player = this.players[id];
-    this.debuger.log( player , 'onUpdatePlayer');
     if( player == null ) return;
 
     if( prop == 'position') {

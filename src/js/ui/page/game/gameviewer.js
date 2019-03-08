@@ -45,26 +45,39 @@ export default class GameViewer extends SyncPropsComponent {
   setupWatchs(){
     this.watchs = {
       ante: value =>{
-        this.debuger.log(value, 'ante');
+        this.ante.innerHTML = 'ante: ' + value;
       },
-      mainPot: value =>{
-        this.debuger.log(value, 'mainPot');
-      },
-      sidePot: value =>{
-        this.debuger.log(value, 'sidePot');
+      gamePot: value =>{
+        this.mainPot.innerHTML = 'mainPot: ' + value;
       },
       status: value =>{
         this.debuger.log(value, 'status');
-      },
-      communityCards: value =>{
-        this.debuger.log(value, 'communityCards');
       }
     };
   }
+
+  addSidePot( pot ){
+    this.sidePot.innerHTML = 'sidePot : ' + pot;
+  }
+
+  burnCard( id , cardData ){
+    let idx = Number(id);
+    let card = this.cards[ idx ];
+    card.innerHTML = cardData.suit + " : " + cardData.num;
+    card.style.left =  Util.getStyleUnit( 200 + (idx * 100));
+	}
+  hideCard( id  ){
+    let idx = Number(id);
+    let card = this.cards[ idx ];
+    card.innerHTML = 'hidden';
+    card.style.left = 0;
+	}
 }
 
 export const Status = Object.freeze ({
   Wait: 1,
-  Play: 2,
-  Complete: 3
+  FreeFlop: 2,
+  Flop: 3,
+  Turn: 4,
+  ShowDown: 5,
 });

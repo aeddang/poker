@@ -84,7 +84,10 @@ export default class Play extends Room {
     this.room.listen("maxPlayer", e => {
       this.playerViewer.onUpdateSyncProp("maxPlayer", e.value);
     });
-
+    this.room.listen("dealler/burnCards/:id", e => {
+      if (e.operation === "add") this.gameViewer.burnCard(e.path.id, e.value);
+      else if (e.operation === "remove") this.gameViewer.hideCard(e.path.id);
+    });
     this.room.listen("stage", e => {
       this.gameViewer.onUpdateSyncProps(e.value);
     });
@@ -107,7 +110,10 @@ export default class Play extends Room {
 
     this.room.listen("players/:id/:attribute", e => {
       this.playerViewer.onUpdatePlayer(e.path.id, e.path.attribute, e.value);
-      if(e.path.id == this.me) this.uiBox.onUpdateSyncProp (e.path.attribute, e.value);
+      if(e.path.id == this.me) {
+        this.uiBox.onUpdateSyncProp (e.path.attribute, e.value);
+        if( e.path.attribute == "mainPot") this.gameViewer.addSidePot( e.value );
+      }
     });
 
 

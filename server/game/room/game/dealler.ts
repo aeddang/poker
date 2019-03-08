@@ -1,9 +1,15 @@
 import Component from '../../skeleton/component'
-
+import { nosync } from "colyseus";
 
 export default class Dealler extends Component {
+
+  burnCards:EntityMap<Card> = {};
+  @nosync
   cards:Array<Card>;
+  @nosync
   communityCards:Array<Card>;
+
+
 
   remove(){
     this.cards = null;
@@ -12,6 +18,7 @@ export default class Dealler extends Component {
   }
 
   reset(){
+    for (let id in this.burnCards) delete this.burnCards[id];
     this.resetCards();
   }
 
@@ -37,15 +44,26 @@ export default class Dealler extends Component {
   getHand():Array<Card> {
     return this.getPopCards(2);
   }
-  getFlop():Array<Card> {
-    this.communityCards.slice(2);
+  openFlop() {
+    this.burnCards['0'] = this.communityCards[0];
+    this.burnCards['1'] = this.communityCards[1];
+    this.burnCards['2'] = this.communityCards[2];
   }
-  getTurn():Array<Card> {
-    this.communityCards.slice(0,2);
+  openTurn() {
+    this.burnCards['3'] = this.communityCards[3];
+    this.burnCards['4'] = this.communityCards[4];
+  }
+
+  showDown(){
+    this.burnCards['0'] = this.communityCards[0];
+    this.burnCards['1'] = this.communityCards[1];
+    this.burnCards['2'] = this.communityCards[2];
+    this.burnCards['3'] = this.communityCards[3];
+    this.burnCards['4'] = this.communityCards[4];
   }
 }
 
-class Card {
+export class Card {
   suit: Suit;
   num: number;
   constructor(suit:Suit, num:number) {

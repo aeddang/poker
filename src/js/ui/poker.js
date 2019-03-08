@@ -86,7 +86,7 @@ export default class Poker extends Component {
 
   onLoginEvent(event) {
     switch(event.type) {
-      case Login.EVENT.ON_PROFILE : this.onPageChange(Config.Page.Join); break;
+      case Login.EVENT.ON_PROFILE : this.onPageChange(Config.Page.Play); break;
       case Login.EVENT.LOGOUT : this.onPageChange(Config.Page.Home); break;
     }
   }

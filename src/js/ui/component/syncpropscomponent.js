@@ -21,7 +21,7 @@ export default class SyncPropsComponent extends Component {
   setupSyncProps(syncProps = null){
     if(this.watchs == null) return;
     if(syncProps != null) {
-      this.debuger.log(syncProps, 'setupSyncProps');
+      this.debuger.log(syncProps, 'setupSyncProps', 0);
       this.syncProps = syncProps;
       let { observables, proxy } = observe(syncProps);
       this.propsObservable = observables;
@@ -37,7 +37,7 @@ export default class SyncPropsComponent extends Component {
 
   onUpdateSyncProps ( syncProps ) {
     if( syncProps == null) return;
-    this.debuger.log(syncProps, 'onUpdateSyncProps');
+    this.debuger.log(syncProps, 'onUpdateSyncProps', 0);
     if(this.syncProps == null) {
       this.setupSyncProps(syncProps);
       return;

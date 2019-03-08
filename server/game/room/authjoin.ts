@@ -20,6 +20,7 @@ export default class AuthJoin extends RoomComponent {
     super.onDispose();
   }
 
+  /*
   async onAuth (options:JoinOption) {
     const response = await axios.get('https://graph.facebook.com/debug_token',  {
       params: {
@@ -29,7 +30,7 @@ export default class AuthJoin extends RoomComponent {
     });
     return response.data;
   }
-
+  */
   onJoin (client:Client, options:JoinOption) {
     this.players [ client.sessionId ] = options.name;
     this.broadcast( Brodcast.getJoinMsg ( options.name ));

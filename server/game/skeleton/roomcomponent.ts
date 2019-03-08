@@ -18,7 +18,7 @@ export default class RoomComponent<T> extends Room<T> {
   }
 
 	onAuth (options:JoinOption) {
-    let isJoinAble = this.state.isJoinAble();
+    let isJoinAble = ( this.state == null ) ? true : this.state.isJoinAble();
     return isJoinAble;
   }
 

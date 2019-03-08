@@ -15,11 +15,23 @@ export default class Player extends Component {
   isActive:boolean = false;
   networkStatus:NetworkStatus;
   gameBat:number = 0;
-  checkBat:number = 0;
+  mainPot:number = 0;
   time:number = 0;
+  limitTime:number = 0;
   openHand:Array;
-  currentAction:Array;
 
+  actionBlind:boolean = false;
+  actionFold:boolean = false;
+  actionSmallBlind:boolean = false;
+  actionBigBlind:boolean = false;
+  actionCheck:boolean = false;
+  actionCall:boolean = false;
+  actionBat:boolean = false;
+  actionRaise:boolean = false;
+  actionAllin:boolean = false;
+
+  @nosync
+  currentBlindAction:number = -1;
   @nosync
   id:string;
   @nosync
@@ -40,7 +52,6 @@ export default class Player extends Component {
     super.remove();
     this.hand = null;
     this.openHand = null;
-    this.currentAction = null;
   }
 
   isConnected():boolean {
@@ -83,6 +94,16 @@ export default class Player extends Component {
     }
     return true;
   }
+  isActionAble():boolean {
+    if( this.status == Status.Play ) return true;
+    return false;
+  }
+
+  isNextAble():boolean {
+    if( this.status == Status.Play ) return true;
+    if( this.status == Status.AllIn ) return true;
+    return false;
+  }
 
   startDisable () {
     if( this.status != Status.Absence) this.status = Status.Wait
@@ -94,64 +115,100 @@ export default class Player extends Component {
     this.isBlind = false;
     this.isDealler = false;
     this.time = 0;
-    this.currentAction = [Action.Blind];
+    this.mainPot = 0;
+    this.gameBat = 0;
+    this.currentBlindAction = -1;
+    this.actionBlind = true;
+    this.resetAction();
+  }
+
+  resetAction() {
+    this.actionFold = false;
+    this.actionSmallBlind = false;
+    this.actionBigBlind = false;
+    this.actionCheck = false;
+    this.actionCall = false;
+    this.actionBat = false;
+    this.actionRaise = false;
+    this.actionAllin = false;
   }
 
   start(hand:Array) {
     this.hand = hand;
     this.openHand = [];
-    this.currentAction = [];
+    this.actionBlind = false;
     this.status = Status.Play;
-    this.currentAction = [];
   }
 
   nextRound() {
     this.gameBat = 0;
+    this.resetAction();
   }
 
   batting(amount:number):boolean{
-    if( amount > this.bankroll ) return false;
     this.gameBat += amount;
     this.bankroll -= amount;
     return true;
   }
 
+  action (command: Command) {
+    switch(command.t) {
+      case Action.Fold: this.status = Status.Fold; break;
+      case Action.Raise: this.status = Status.Play; break;
+      case Action.Check: this.status = Status.Play; break;
+      case Action.Call: this.status = Status.Play; break;
+      case Action.Bat: this.status = Status.Play; break;
+      case Action.AllIn: this.status = Status.AllIn; break;
+      case Action.SmallBlind: this.status = Status.Play; break;
+      case Action.BigBlind: this.status = Status.Play; break;
+    }
+    this.time = 0;
+    this.checkBat = 0;
+    this.resetAction();
+    this.isActionComplete = true;
+  }
+
   showDown(){
     if(this.status == Status.Impossible || this.status == Status.Wait) return;
+    this.resetAction();
     this.status = Status.ShowDown;
     this.openHand = this.hand;
   }
 
-  isActionAble():boolean {
-    switch( this.status ){
-      case Status.Fold :
-      case Status.AllIn :
-      case Status.Impossible :
-      case Status.Wait :
-        return false;
-      default: return true;
-    }
-  }
+  setActivePlayer(action:Array,call:number, minBat:number){
 
-  setActivePlayer(action:Array, turnBat:number, minBat:number){
-    this.checkBat = turnBat - this.gameBat;
-    let bat = this.checkBat + minBat;
-    this.currentAction = action.map( ac => {
+    let bat = call + minBat;
+    let isBlindAc = false;
+    let currentAction = action.map( ac => {
       switch(ac){
         case Action.Check:
         case Action.Call:
-          if( this.checkBat >= this.bankroll) return Action.AllIn;
+          if( call >= this.bankroll) return Action.AllIn;
           break;
+        case Action.SmallBlind:
+        case Action.BigBlind: isBlindAc = true;
         case Action.Bat:
         case Action.Raise:
           if( bat >= this.bankroll) return Action.AllIn;
           break;
-        case Action.BigBlind:
-          if( minBat >= this.bankroll) return Action.AllIn;
-          break
       }
       return ac;
     });
+
+    currentAction.forEach( ac => {
+      switch(ac){
+        case Action.Fold: this.actionFold = true; break;
+        case Action.SmallBlind: this.actionSmallBlind = true; break;
+        case Action.BigBlind: this.actionBigBlind = true; break;
+        case Action.Check: this.actionCheck = true; break;
+        case Action.Call: this.actionCall = true; break;
+        case Action.Bat: this.actionBat = true; break;
+        case Action.Raise: this.actionRaise = true; break;
+        case Action.AllIn: this.actionAllIn = true; break;
+      }
+    }) ;
+
+    this.currentBlindAction = isBlindAc ? currentAction[0] : -1;
     this.isActive = true;
     this.isActionComplete = false;
   }
@@ -159,29 +216,15 @@ export default class Player extends Component {
   setPassivePlayer(){
     this.isActive = false;
     this.time = 0;
+    this.limitTime = 0;
     if( !this.isActionComplete ) this.status = Status.Fold;
   }
 
-  blindAction(){
-    this.isBlind = true;
+  blindGame(){
+    this.isBlind = !this.isBlind;
   }
 
-  action (command: Command) {
-    switch(command.t) {
-      case Action.Fold: this.status = Status.Fold; break;
-    	case Action.Raise: this.status = Status.Play; break;
-      case Action.Check: this.status = Status.Play; break;
-    	case Action.Call: this.status = Status.Play; break;
-      case Action.Bat: this.status = Status.Play; break;
-      case Action.AllIn: this.status = Status.AllIn; break;
-    	case Action.SmallBlind: this.status = Status.Play; break;
-    	case Action.BigBlind: this.status = Status.Play; break;
-    }
-    this.time = 0;
-    this.checkBat = 0;
-    this.currentAction = [];
-    this.isActionComplete = true;
-  }
+
 }
 
 enum Status{

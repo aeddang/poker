@@ -7,12 +7,15 @@ import Event from  "../../util/event";
 
 const GAME_SPEED:number = 1000;
 const LIMIT_TIME:number = 30;
+const BLIND_LIMIT_TIME:number = 5;
 
 export const STAGE_EVENT = Object.freeze ({
-	NEXT_TURN: "nextTurn",
-  COMPLETE_TURN: "completeTurn",
+	START_TURN: "startTurn",
 	TIME_CHANGED: "timeChanged",
-  CURRENT_PLAYER_CHANGED: "currentPlayerChanged"
+	LIMIT_TIME_CHANGED: "limitTimeChanged",
+	NEXT_TURN: "nextTurn",
+  CURRENT_PLAYER_CHANGED: "currentPlayerChanged",
+	NEXT_ROUND: "nextRound"
 });
 
 export enum Status{
@@ -28,23 +31,25 @@ export default class Stage extends Component {
   ante:number = 1;
   gameRule:number = 2;
   isLimited:boolean = false;
-  mainPot:number;
-  sidePot:number;
   status:Status;
-  communityCards:Array;
 
   minBat:number;
-  turnBat:number;
+  roundPot:number;
+	gameBat:number;
+	gamePot:number;
 
-
-  @nosync
+	@nosync
 	time:number;
+	@nosync
+	startPlayer:number;
+	@nosync
+	playerBats:Array<number>;
   @nosync
   turn:number;
+	@nosync
+  count:number;
   @nosync
   ids:Array<String>;
-  @nosync
-  currentID:string;
   @nosync
   dellerID:string;
   @nosync
@@ -61,6 +66,9 @@ export default class Stage extends Component {
   bigBlindBat:number;
   @nosync
   minBankroll:number;
+
+	@nosync
+  memoryCount:number = 0;
 
   constructor(ante:number, gameRule:number) {
     super();
@@ -83,23 +91,22 @@ export default class Stage extends Component {
     this.gameTimeSubscription = null;
     this.gameScheduler = null;
     this.ids = null;
-    this.communityCards = null;
     this.positions = null;
+		this.playerBats = null;
   }
 
   removeTimeSubscription() {
-    if( this.gameTimeSubscription != null ) this.gameTimeSubscription.unsubscribe();
+    if( this.gameTimeSubscription != null ) {
+			this.memoryCount --;
+			this.debuger.log(this.memoryCount, 'removeTimeSubscription');
+			this.gameTimeSubscription.unsubscribe();
+		}
     this.gameTimeSubscription = null;
   }
 
   removeDelegate() {
     if( this.delegate != null ) this.delegate.unsubscribe();
     this.delegate = null;
-  }
-
-  isStart():boolean {
-    if( this.status == Status.Wait ) return false;
-    return true;
   }
 
   hasPlayer( id:string ):boolean {
@@ -109,38 +116,43 @@ export default class Stage extends Component {
   }
 
   reset(){
-    this.currentID = '';
-    this.mainPot = 0;
-    this.sidePot = 0;
-    this.didBat = false;
-    this.turn = 0;
-    this.time = LIMIT_TIME;
+  	this.turn = 0;
+    this.time = 0;
     this.status = Status.Wait;
     this.gameTimeSubscription = null;
     this.ids = null;
+		this.playerBats = null;
+		this.didBat = false;
+		this.gameBat = 0;
+		this.roundPot = 0;
+		this.gamePot = 0;
+		this.count = 0;
   }
 
   start(ids:Array):Rx.Subject {
     this.ids = ids;
+		this.startPlayer = 0;
+		this.playerBats = ids.map( id => 0 );
     this.delegate = new Rx.Subject();
     this.status = Status.FreeFlop;
-    this.communityCards = [];
     return this.delegate;
   }
 
-  turnStart( burnCards:Array ) {
+  turnStart() {
     this.turnBat = 0;
-    this.turn = 1;
     this.didBat = false;
     this.minBat = this.bigBlindBat;
-    this.communityCards = this.communityCards.concat( burnCards );
-    this.currentID = this.getCurrentID();
-    this.delegate.next( new Event( STAGE_EVENT.CURRENT_PLAYER_CHANGED , this.currentID ) );
-    this.turnNext();
+		this.count = 1;
+		this.startPlayer = 0;
+		this.onTurnChange(1);
+		this.turnNext();
   }
 
   turnNext() {
-    this.time = LIMIT_TIME;
+		this.memoryCount ++;
+		this.debuger.log(this.memoryCount, 'turnNext');
+    this.time = ( this.count == 1  || ( this.count == 2 && this.status == Status.FreeFlop )) ? BLIND_LIMIT_TIME : LIMIT_TIME;
+		this.delegate.next( new Event( STAGE_EVENT.LIMIT_TIME_CHANGED , this.time ) );
     this.gameTimeSubscription = this.gameScheduler.pipe(take(LIMIT_TIME)).subscribe( {
       next :(t) => { this.onTime(); },
       complete :() => { this.onTurnComplete(); }
@@ -153,50 +165,109 @@ export default class Stage extends Component {
   }
 
   onTurnComplete() {
-    this.turn ++;
-    this.currentID = this.getCurrentID();
-    this.removeTimeSubscription();
-    this.delegate.next( new Event( STAGE_EVENT.CURRENT_PLAYER_CHANGED , this.currentID ) );
-    this.delegate.next( new Event( STAGE_EVENT.NEXT_TURN , this.currentID ) );
+		this.debuger.log('onTurnComplete');
+		this.removeTimeSubscription();
+		this.count ++;
+    let currentId = this.onTurnChange(this.turn + 1);
+		if( this.startPlayer == this.turn ) this.delegate.next( new Event( STAGE_EVENT.NEXT_ROUND, currentId));
+		else this.delegate.next( new Event( STAGE_EVENT.NEXT_TURN , currentId ) );
   }
 
-	batting(amount:number){
-    if( this.minBat < amount ) this.minBat = amount;
-    this.turnBat += amount;
-    this.mainPot += amount;
+	onTurnChange(turn:number):string {
+		this.debuger.log('onTurnChange');
+    this.turn = turn % this.ids.length;
+		let id =  this.ids[this.turn];
+		if( this.startPlayer != this.turn ) this.delegate.next( new Event( STAGE_EVENT.CURRENT_PLAYER_CHANGED , id) );
+    return id;
+  }
+
+	batting(id:string, bat:number ){
+		if( this.minBat < bat ) this.minBat = bat;
+		let idx = this.ids.indexOf(id);
+		this.playerBats[ idx ] += bat;
+    this.gamePot += bat;
+		this.roundPot += bat;
+  }
+
+	action( command: Command ):number {
+		var bat = 0;
+		var totalBat = this.playerBats[ this.turn ];
+		switch(command.t) {
+      case Action.Bat: this.didBat = true;
+			case Action.Raise: this.startPlayer = this.turn;
+			case Action.AllIn:
+				bat = command.d;
+				break;
+			case Action.SmallBlind:	bat = this.smallBlindBat;	break;
+			case Action.BigBlind: bat = this.bigBlindBat;	break;
+      case Action.Fold: bat = 0; break;
+			default: bat = this.gameBat - totalBat; break;
+    }
+		totalBat = bat + totalBat;
+		if( totalBat > this.gameBat ) {
+			this.gameBat = totalBat;
+			this.startPlayer = this.turn;
+			this.debuger.log(this.startPlayer, 'startPlayer changed');
+		}
+		return bat;
   }
 
   nextRound() {
     this.status ++;
-    if(this.status == Status.ShowDown) this.delegate.complete();
-    else this.delegate.next( new Event( STAGE_EVENT.COMPLETE_TURN , this.status ) );
+		this.roundPot = 0;
+		this.gameBat = 0;
+		this.count = 0;
+		this.didBat = false;
   }
 
+	nextCheck() {
+		this.debuger.log(this.status, 'nextCheck');
+    if(this.status == Status.ShowDown) {
+			this.delegate.complete();
+			this.debuger.log(this.status, 'complete');
+		}
+    else {
+			this.delegate.next( new Event( STAGE_EVENT.START_TURN , this.status ) );
+			this.debuger.log(this.status, 'next');
+		}
+  }
+
+	showDown( ){
+		this.status = Status.ShowDown;
+  }
+
+
   complete(){
+		this.removeTimeSubscription();
     this.removeDelegate();
   }
 
-  action (command: Command) {
-    switch(command.t) {
-      case Action.Bat: this.didBat = true; break;
-      case Action.AllIn: ; break;
-    }
-    this.onTurnComplete();
+	getCallBat():number {
+    return this.gameBat - this.playerBats[ this.turn ];
+  }
+
+	getMainPot(id:string):number {
+		let idx = this.ids.indexOf(id);
+		let myBat =  this.playerBats[ idx ];
+		let sum = (a, b) => a + ( (b > myBat) ? myBat : b );
+		let pot = this.playerBats.reduce(sum,0);
+    return pot;
+  }
+
+	getSidePot():number {
+    return this.gamePot;
   }
 
   getActions():Array{
     if(this.status == Status.FreeFlop){
-      if( this.turn == 1 ) return [ Action.SmallBlind ];
-      if( this.turn == 2 ) return [ Action.BigBlind ];
+      if( this.count == 1 ) return [ Action.SmallBlind ];
+      if( this.count == 2 ) return [ Action.BigBlind ];
     } else {
-      if( this.turn == 1 ) return [ Action.BigBlind ];
+      if( this.count == 1 ) return [ Action.BigBlind ];
     }
     if( !this.didBat ) return [ Action.Bat, Action.Check, Action.Fold ];
     return [ Action.Raise, Action.Call, Action.Fold ];
   }
 
-  getCurrentID(): string{
-    let idx = this.turn % this.ids.length;
-    return this.ids[idx]
-  }
+
 }

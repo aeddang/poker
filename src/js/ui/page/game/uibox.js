@@ -86,12 +86,21 @@ export default class UiBox extends SyncPropsComponent {
       time: value =>{
         this.debuger.log(value, 'time');
       },
-      currentAction: value =>{
-        this.debuger.log(value, 'currentAction');
-      }
+			actionBlind: value => { this.setActionButton( this.btnBlind,  value ) },
+			actionFold: value => { this.setActionButton( this.btnFold,  value ) },
+	    actionSmallBlind: value => { this.setActionButton( this.btnSmallBlind,  value ) },
+	    actionBigBlind: value => { this.setActionButton( this.btnBigBlind,  value ) },
+	    actionCheck: value => { this.setActionButton( this.btnCheck,  value ) },
+	    actionCall: value => { this.setActionButton( this.btnCall,  value ) },
+	    actionBat: value => { this.setActionButton( this.btnBat,  value ) },
+	    actionRaise: value => { this.setActionButton( this.btnRaise,  value ) },
+	    actionAllin: value => { this.setActionButton( this.btnAllin,  value ) },
     };
   }
 
+	setActionButton( btn , value ){
+		btn.style.display = value ? 'block' : 'none';
+	}
 
   setupEvent() {
 		this.attachEvent(this.btnBlind, "click", this.onBlind.bind(this));

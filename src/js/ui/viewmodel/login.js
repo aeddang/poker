@@ -27,8 +27,9 @@ class UserInfo {
   }
 
   setData(userData) {
-		this.name = userData.name;
+		//this.name = userData.name;
 		//this.id = userData.id;
+		this.name = 'name : '+instenceID;
 		this.id = instenceID;
   }
 
@@ -59,9 +60,12 @@ class LoginModel {
 
   login () {
     this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
-    FB.login( (response) => {
+		/*
+		FB.login( (response) => {
       ( response.status === 'connected' ) ? this.onLogin(response.authResponse.accessToken) : this.onLoginError();
     }, {scope: 'public_profile,email'});
+		*/
+		this.onLogin('accessToken');
     return this.delegate;
   }
 
