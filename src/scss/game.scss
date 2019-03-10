@@ -20,8 +20,8 @@
 .poker .game-viewer { @include position-cover; }
 .poker .game-viewer .card{ @include position-top-left($margin-tiny); width:100px; height:200px;  background-color: $color-grey; }
 .poker .game-viewer .ante{ @include position-center(100,50, 0, -100); @include font-default($color-white)  }
-.poker .game-viewer .mainPot{@include position-center(200,50); @include font-big($color-white) }
-.poker .game-viewer .sidePot{@include position-center(200,50, 0, 100); @include font-default($color-white) }
+.poker .game-viewer .main-pot{@include position-center(200,50); @include font-big($color-white) }
+.poker .game-viewer .side-pot{@include position-center(200,50, 0, 100); @include font-default($color-white) }
 
 .poker .player-viewer { @include position-cover; }
 .poker .ui-box { @include position-bottom; width:100%; height:100px; background-color: $color-white}

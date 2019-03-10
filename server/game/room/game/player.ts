@@ -82,6 +82,7 @@ export default class Player extends Component {
 
   leave(){
     this.networkStatus = NetworkStatus.DisConnected;
+    this.status = Status.Absence;
   }
 
   isPlayAble(minBankroll:number, posIdx:int):boolean {

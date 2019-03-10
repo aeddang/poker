@@ -61,6 +61,65 @@ export default class Dealler extends Component {
     this.burnCards['3'] = this.communityCards[3];
     this.burnCards['4'] = this.communityCards[4];
   }
+
+  findHandValue( hand:Array<Card> ):HandValue{
+    let hands = this.communityCards.concat(hand);
+    let compare = (a, b) => {
+      if( a.num == b.num ) return a.suit > b.suit;
+      return a.num > b.num
+    }
+    hands.sort( compare );
+    let straight = [];
+    let pairs = {};
+    let kinds =[[], [], [], []];
+    let highcards =[];
+    let prevCard = null;
+
+    let isContinue = false;
+    let kindMax = 0;
+    let kindIdx = -1;
+    hands.forEach( c => {
+      let num = c.num;
+      let kind = c.suit;
+      kinds[ kind ].push ( c );
+      let len = kinds[ kind ].length;
+      if(len > kindMax) {
+        kindMax = len;
+        kindIdx = kind;
+      }
+      if( prevCard != null) {
+        if(prevCard.num == num) {
+          if( pair[ num ] == undefined ) pair[ num ] = [];
+          pair[ num ].push( c );
+        }
+        if( (prevCard.num + 1) == num ) {
+          if( isContinue ) straight.push( c );
+          else {
+            if( straight.length < 5  ) straight = [];
+            isContinue = true;
+            straight = [prevCard, c];
+          }
+        }else{
+          isContinue = false;
+        }
+      }
+      prevCard = c;
+    });
+
+    if ( straight.length >= 5 && kindMax >= 5 ) this.findStraightFlush()
+  }
+
+  findStraightFlush( straight ):HandValue {
+    let kinds = [];
+    straight.forEach( c => {
+      
+    })
+
+  }
+
+
+
+
 }
 
 export class Card {
@@ -77,4 +136,23 @@ enum Suit{
   Heart,
   Diamond,
   Club
+}
+
+interface HandValue {
+  highCards : Array<number>;
+  value : Values;
+  level : number;
+}
+
+enum Values{
+  Highcard = 1,
+  Pair,
+  TwoPairs,
+  ThreeOfAKind,
+  Straight,
+  FourOfAKind,
+  Flush,
+  FullHouse,
+  StraightFlush,
+  RoyalStraightFlush
 }
