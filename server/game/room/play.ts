@@ -23,6 +23,7 @@ export default class Play extends RoomComponent<Game> {
   onDispose () {
     this.state.remove();
     super.onDispose();
+    this.state = null;
   }
 
 	onAuth (options:JoinOption) {

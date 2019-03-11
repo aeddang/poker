@@ -15,6 +15,12 @@ class PlayerBody extends ElementProvider {
       <p id='${this.id}status' class='status'></p>
       <p id='${this.id}bankroll' class='bankroll'></p>
       <div id='${this.id}timeBar' class='time-bar'></div>
+
+      <div id='${this.id}card0' class='card'></div>
+      <div id='${this.id}card1' class='card'></div>
+      <div id='${this.id}card2' class='card'></div>
+      <div id='${this.id}card3' class='card'></div>
+      <div id='${this.id}card4' class='card'></div>
     `;
     this.body.appendChild(cell);
   }
@@ -27,6 +33,7 @@ export default class Player extends SyncPropsComponent {
     this.me = false;
     this.limitTime = 0;
     this.time = 0
+    this.cards = [];
   }
 
   init(body, itsMe) {
@@ -41,6 +48,7 @@ export default class Player extends SyncPropsComponent {
     this.status = null;
     this.timeBar = null;
     this.bankroll = null;
+    this.cards = null;
   }
 
   setupWatchs(){
@@ -91,11 +99,28 @@ export default class Player extends SyncPropsComponent {
     this.timeBar = elementProvider.getElement('timeBar');
     this.profileData.innerHTML = this.idx + ' : player out'
     if ( this.me ) this.getBody().classList.add("player-me");
+    for(var i=0; i<5; ++i) this.cards.push(elementProvider.getElement('card'+i));
   }
 
   onGameJoin( ) {
     this.getBody().classList.remove("player-position-wait");
     this.getBody().classList.add("player-position-join");
+  }
+
+  showCard( id, cardData ) {
+    let idx = Number(id);
+    let card = this.cards[ idx ];
+    card.innerHTML = cardData.suit + " : " + cardData.num;
+    card.style.left =  Util.getStyleUnit( (idx * 60));
+    card.style.display = 'block';
+  }
+
+  hideCard( id ) {
+    let idx = Number(id);
+    let card = this.cards[ idx ];
+    card.innerHTML = 'hidden';
+    card.style.left = 0;
+    card.style.display = 'none';
   }
 }
 

@@ -116,6 +116,11 @@ export default class Play extends Room {
       }
     });
 
+    this.room.listen("players/:id/openHand/:idx", e => {
+      if (e.operation === "add") this.playerViewer.onShowCard(e.path.id, e.path.idx, e.value);
+      else if (e.operation === "remove") this.playerViewer.onHideCard(e.path.id, e.path.idx);
+    });
+
 
   }
 

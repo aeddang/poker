@@ -13,12 +13,14 @@ export default class Player extends Component {
   position:number = -1;
   isDealler:boolean = false;
   isActive:boolean = false;
+  isWinner:boolean = false;
   networkStatus:NetworkStatus;
   gameBat:number = 0;
   mainPot:number = 0;
+
   time:number = 0;
   limitTime:number = 0;
-  openHand:Array;
+  openHand:EntityMap<Any> = {};
 
   actionBlind:boolean = false;
   actionFold:boolean = false;
@@ -29,6 +31,8 @@ export default class Player extends Component {
   actionBat:boolean = false;
   actionRaise:boolean = false;
   actionAllin:boolean = false;
+
+  winPot:number = 0;
 
   @nosync
   currentBlindAction:number = -1;
@@ -51,6 +55,7 @@ export default class Player extends Component {
   remove() {
     super.remove();
     this.hand = null;
+    for (let id in this.openHand) delete this.openHand[id];
     this.openHand = null;
   }
 
@@ -82,7 +87,7 @@ export default class Player extends Component {
 
   leave(){
     this.networkStatus = NetworkStatus.DisConnected;
-    this.status = Status.Absence;
+    this.status = Status.Fold;
   }
 
   isPlayAble(minBankroll:number, posIdx:int):boolean {
@@ -106,6 +111,11 @@ export default class Player extends Component {
     return false;
   }
 
+  isFoldenAble():boolean {
+    if( this.currentBlindAction == -1  &&  this.isActive ) return true;
+    return false;
+  }
+
   startDisable () {
     if( this.status != Status.Absence) this.status = Status.Wait
   }
@@ -115,11 +125,14 @@ export default class Player extends Component {
     if( this.status != Status.Absence & this.status != Status.WaitBigBlind ) this.status = Status.Wait;
     this.isBlind = false;
     this.isDealler = false;
+    this.isWinner = false;
     this.time = 0;
     this.mainPot = 0;
     this.gameBat = 0;
+    this.winPot = 0;
     this.currentBlindAction = -1;
     this.actionBlind = true;
+    for (let id in this.openHand) delete this.openHand[id];
     this.resetAction();
   }
 
@@ -136,7 +149,6 @@ export default class Player extends Component {
 
   start(hand:Array) {
     this.hand = hand;
-    this.openHand = [];
     this.actionBlind = false;
     this.status = Status.Play;
   }
@@ -160,8 +172,10 @@ export default class Player extends Component {
       case Action.Call: this.status = Status.Play; break;
       case Action.Bat: this.status = Status.Play; break;
       case Action.AllIn: this.status = Status.AllIn; break;
-      case Action.SmallBlind: this.status = Status.Play; break;
-      case Action.BigBlind: this.status = Status.Play; break;
+      case Action.SmallBlind:
+      case Action.BigBlind:
+        if( this.networkStatus == NetworkStatus.Connected ) this.status = Status.Play;
+        break;
     }
     this.time = 0;
     this.checkBat = 0;
@@ -169,11 +183,18 @@ export default class Player extends Component {
     this.isActionComplete = true;
   }
 
-  showDown(){
+  showDown( cards:Array ){
     if(this.status == Status.Impossible || this.status == Status.Wait) return;
     this.resetAction();
     this.status = Status.ShowDown;
-    this.openHand = this.hand;
+    cards.forEach( (c, idx) => this.openHand[ idx ] = c );
+    this.debuger.log(this.name, 'onShowDown');
+  }
+
+  updatePot(){
+    this.bankroll += this.winPot;
+    this.debuger.log(this.winPot,'win ' + this.name);
+    this.winPot = 0;
   }
 
   setActivePlayer(action:Array,call:number, minBat:number){
@@ -184,13 +205,13 @@ export default class Player extends Component {
       switch(ac){
         case Action.Check:
         case Action.Call:
-          if( call >= this.bankroll) return Action.AllIn;
+          if( call > this.bankroll) return Action.AllIn;
           break;
         case Action.SmallBlind:
         case Action.BigBlind: isBlindAc = true;
         case Action.Bat:
         case Action.Raise:
-          if( bat >= this.bankroll) return Action.AllIn;
+          if( bat > this.bankroll) return Action.AllIn;
           break;
       }
       return ac;

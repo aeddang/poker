@@ -18,6 +18,10 @@ export const STAGE_EVENT = Object.freeze ({
 	NEXT_ROUND: "nextRound"
 });
 
+const SUBSCRIPTION = Object.freeze ({
+	TURN: "turn"
+});
+
 export enum Status{
   Wait = 1,
   FreeFlop,
@@ -56,8 +60,7 @@ export default class Stage extends Component {
   delegate:Rx.Subject;
   @nosync
   gameScheduler:Rx.Observable;
-  @nosync
-  gameTimeSubscription:Rx.Subscription;
+
   @nosync
   didBat:boolean = false;
   @nosync
@@ -86,27 +89,11 @@ export default class Stage extends Component {
 
   remove() {
     super.remove();
-    this.removeTimeSubscription();
-    this.removeDelegate();
-    this.gameTimeSubscription = null;
+		this.delegate = null;
     this.gameScheduler = null;
     this.ids = null;
     this.positions = null;
 		this.playerBats = null;
-  }
-
-  removeTimeSubscription() {
-    if( this.gameTimeSubscription != null ) {
-			this.memoryCount --;
-			this.debuger.log(this.memoryCount, 'removeTimeSubscription');
-			this.gameTimeSubscription.unsubscribe();
-		}
-    this.gameTimeSubscription = null;
-  }
-
-  removeDelegate() {
-    if( this.delegate != null ) this.delegate.unsubscribe();
-    this.delegate = null;
   }
 
   hasPlayer( id:string ):boolean {
@@ -119,7 +106,6 @@ export default class Stage extends Component {
   	this.turn = 0;
     this.time = 0;
     this.status = Status.Wait;
-    this.gameTimeSubscription = null;
     this.ids = null;
 		this.playerBats = null;
 		this.didBat = false;
@@ -153,7 +139,7 @@ export default class Stage extends Component {
 		this.debuger.log(this.memoryCount, 'turnNext');
     this.time = ( this.count == 1  || ( this.count == 2 && this.status == Status.FreeFlop )) ? BLIND_LIMIT_TIME : LIMIT_TIME;
 		this.delegate.next( new Event( STAGE_EVENT.LIMIT_TIME_CHANGED , this.time ) );
-    this.gameTimeSubscription = this.gameScheduler.pipe(take(LIMIT_TIME)).subscribe( {
+    this.disposable[ SUBSCRIPTION.TURN ] = this.gameScheduler.pipe(take(LIMIT_TIME)).subscribe( {
       next :(t) => { this.onTime(); },
       complete :() => { this.onTurnComplete(); }
     });
@@ -166,7 +152,7 @@ export default class Stage extends Component {
 
   onTurnComplete() {
 		this.debuger.log('onTurnComplete');
-		this.removeTimeSubscription();
+		this.disposable[ SUBSCRIPTION.TURN ].unsubscribe();
 		this.count ++;
     let currentId = this.onTurnChange(this.turn + 1);
 		if( this.startPlayer == this.turn ) this.delegate.next( new Event( STAGE_EVENT.NEXT_ROUND, currentId));
@@ -187,6 +173,8 @@ export default class Stage extends Component {
 		this.playerBats[ idx ] += bat;
     this.gamePot += bat;
 		this.roundPot += bat;
+    this.debuger.log(id, 'bat id');
+		this.debuger.log(this.playerBats[ idx ], 'totalBat changed');
   }
 
 	action( command: Command ):number {
@@ -194,7 +182,9 @@ export default class Stage extends Component {
 		var totalBat = this.playerBats[ this.turn ];
 		switch(command.t) {
       case Action.Bat: this.didBat = true;
-			case Action.Raise: this.startPlayer = this.turn;
+			case Action.Raise:
+				this.startPlayer = this.turn;
+				command.d = this.minBat * command.d;
 			case Action.AllIn:
 				bat = command.d;
 				break;
@@ -203,9 +193,14 @@ export default class Stage extends Component {
       case Action.Fold: bat = 0; break;
 			default: bat = this.gameBat - totalBat; break;
     }
+		this.debuger.log( this.ids[ this.turn ], 'action id');
+    this.debuger.log(totalBat, 'totalBat');
+		this.debuger.log(bat, 'bat');
+
 		totalBat = bat + totalBat;
 		if( totalBat > this.gameBat ) {
 			this.gameBat = totalBat;
+			this.debuger.log(this.gameBat, 'gameBat changed');
 			this.startPlayer = this.turn;
 			this.debuger.log(this.startPlayer, 'startPlayer changed');
 		}
@@ -238,8 +233,8 @@ export default class Stage extends Component {
 
 
   complete(){
-		this.removeTimeSubscription();
-    this.removeDelegate();
+		this.disposable[ SUBSCRIPTION.TURN ].unsubscribe();
+    this.delegate = null;
   }
 
 	getCallBat():number {
@@ -252,6 +247,16 @@ export default class Stage extends Component {
 		let sum = (a, b) => a + ( (b > myBat) ? myBat : b );
 		let pot = this.playerBats.reduce(sum,0);
     return pot;
+  }
+
+	getShowDownPlayers():Array<String> {
+		let len = this.ids.length;
+		let players = [];
+		for ( var i = 0; i < len; ++i  ){
+			let idx = (this.startPlayer + i) % len;
+			players.push( this.ids[idx] )
+		}
+    return players;
   }
 
 	getSidePot():number {

@@ -13,6 +13,7 @@
 .poker .player .bankroll { @include font-default($color-white) }
 .poker .player .status { @include font-default($color-blue) }
 .poker .player .time-bar { width:0%; height:15px;  background-color: $color-blue; }
+.poker .player .card{ @include position-top-left($margin-tiny, 100); width:50px; height:80px;  background-color: $color-white; display:none}
 
 .poker .position { position: absolute; background-color: $color-grey; width:150px; height:150px; @include bg-radius(20px) }
 .poker .position .btn-join { @include btn-text; @include btn-icon-size }

@@ -64,7 +64,7 @@ export default class GameViewer extends SyncPropsComponent {
     let idx = Number(id);
     let card = this.cards[ idx ];
     card.innerHTML = cardData.suit + " : " + cardData.num;
-    card.style.left =  Util.getStyleUnit( 200 + (idx * 100));
+    card.style.left =  Util.getStyleUnit( 200 + (idx * 110));
 	}
   hideCard( id  ){
     let idx = Number(id);

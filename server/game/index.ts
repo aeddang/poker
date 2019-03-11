@@ -7,13 +7,17 @@ import { Server } from 'colyseus';
 import { monitor } from '@colyseus/monitor';
 import * as Room from './room/room';
 import Debugger from './skeleton/log';
+import Dealler from './room/game/dealler';
 
+//const test = new Dealler()
 const port = Number(process.env.PORT || 2567);
 const app = express();
 const debuger = new Debugger("Index");
 const gameServer = new Server({
   server: createServer(app)
 });
+
+
 
 gameServer.register("join", Room.AuthJoin);
 gameServer.register("play", Room.Play);

@@ -4,6 +4,8 @@ export default class Component {
   @nosync
   debuger: Debugger;
 
+  @nosync
+  disposable = {};
   constructor() {
     this.debuger = new Debugger(this);
     this.debuger.log("constructor", '', 0);
@@ -14,7 +16,9 @@ export default class Component {
   }
 
   remove () {
-    this.debuger.log("remove", '', 0);
+    this.debuger.log("remove", '', 1);
     this.debuger = null;
+    for (let id in this.disposable) this.disposable[id].unsubscribe();
+    this.disposable = null;
   }
 }

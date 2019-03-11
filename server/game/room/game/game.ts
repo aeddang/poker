@@ -14,10 +14,20 @@ import Dealler from  "./dealler";
 
 const WAIT_TIME:number = 5000;
 const NEXT_ROUND_TIME:number = 3000;
+const SHOW_TIME:number = 2000;
 const MIN_GAME_PLAYER:number = 2;
 
+
+const SUBSCRIPTION = Object.freeze ({
+	START: "strat",
+	STAGE: "stage",
+	NEXT: "next",
+	SHOW_DOWN: "showDown",
+	COMPLETE: "complete"
+});
+
 export const GAME_EVENT = Object.freeze ({
-	PUSH: "push"
+  PUSH: "push"
 });
 
 
@@ -37,11 +47,14 @@ export default class Game extends Component {
 	positions:Array;
 	@nosync
 	deallerButton:number = 0;
-
 	@nosync
   isStart: boolean = false;
 
-  constructor(ante: number, gameRule:number, maxClients:number) {
+	@nosync
+  stageSubscription:Rx.Subscription;
+
+
+	constructor(ante: number, gameRule:number, maxClients:number) {
 		super();
 		this.maxPlayer = maxClients;
 		this.players = {};
@@ -49,6 +62,12 @@ export default class Game extends Component {
     this.dealler = new Dealler();
     this.stage = new Stage(ante, gameRule);
     this.delegate = new Rx.Subject();
+
+		this.startSubscription = null;
+		this.stageSubscription = null;
+		this.nextRoundSubscription = null;
+		this.completeSubscription = null;
+
   }
 
   remove() {
@@ -71,13 +90,13 @@ export default class Game extends Component {
 		}
     this.debuger.log('start');
 		this.isStart = true;
-    Rx.interval(WAIT_TIME).pipe(take(1)).subscribe(e => {
+    this.disposable[ SUBSCRIPTION.START ] = Rx.interval(WAIT_TIME).pipe(take(1)).subscribe(e => {
 			let ids = this.getGameStartAblePlayers( );
       if( ids.length < MIN_GAME_PLAYER ) {
         this.onStartDisable( true );
         return;
       }
-      this.stage.start( ids ).subscribe ({
+      this.disposable[ SUBSCRIPTION.STAGE ] = this.stage.start( ids ).subscribe ({
         next :(e) => {
 					switch(e.type) {
 						case Stg.STAGE_EVENT.START_TURN :
@@ -105,6 +124,7 @@ export default class Game extends Component {
 			this.onStart( ids );
 			this.onTurnStart( this.stage.status );
     });
+
   }
 
   getGameStartAblePlayers():Array<String> {
@@ -141,7 +161,7 @@ export default class Game extends Component {
   }
 
 	onStartDisable (isRetry:boolean = false) {
-		this.debuger.log('onStartDisable');
+		this.debuger.log(isRetry, 'onStartDisable');
 		this.isStart = false;
 		for (let id in this.players) this.players[id].startDisable();
 		if( isRetry ) this.start();
@@ -206,9 +226,9 @@ export default class Game extends Component {
 			if( player.isNextAble() ) nextPlayer++;
 		}
 		if( playPlayer > 1){
-			Rx.interval(NEXT_ROUND_TIME).pipe(take(1)).subscribe(e => {
-				this.stage.nextCheck();
+			this.disposable[ SUBSCRIPTION.NEXT ] = Rx.interval(NEXT_ROUND_TIME).pipe(take(1)).subscribe(e => {
 				this.debuger.log('onNextCheck');
+				this.stage.nextCheck();
 			});
 		}else{
 			this.debuger.log('onNextComplete');
@@ -249,24 +269,80 @@ export default class Game extends Component {
 		this.stage.onTurnComplete();
   }
 
-  onError() {
-    this.debuger.log('onGameError');
-    this.onComplete();
-  }
-
 	onShowDown( isOpen:boolean = true ) {
 		this.debuger.log('onShowDown');
 		if( isOpen ) {
 			this.dealler.showDown();
 			this.stage.showDown();
 		}
-    for (let id in this.players) {
+		let handsValues = [];
+		let showDownPlayers = this.stage.getShowDownPlayers();
+    showDownPlayers.forEach ( id => {
 			let player = this.players[id];
-			if( isOpen ) player.showDown();
-			if( !player.isConnected() ) this.leaveCompleted(id);
+			if( player.isNextAble() ) {
+				let value = this.dealler.getHandValue( player.hand );
+				value.id = id;
+				handsValues.push( value );
+				if( isOpen ) player.showDown( value.cards );
+			}
+		});
+		if( !isOpen ) {
+			this.onShowDownComplete( handsValues );
+			return;
 		}
-		Rx.interval(WAIT_TIME).pipe(take(1)).subscribe( this.onComplete.bind(this) );
+		let len = handsValues.length;
+		this.disposable[ SUBSCRIPTION.SHOW_DOWN ] = Rx.interval(SHOW_TIME).pipe(take(len)).subscribe( {
+      next :(t) => {  this.players[ handsValues[ t ].id ].showDown(  handsValues[ t ].cards ); },
+      complete :() => { this.onShowDownComplete( handsValues ); }
+    });
+
   }
+
+	onShowDownComplete( handsValues ) {
+    for (let id in this.players) if( !this.players[id].isConnected() ) this.leaveCompleted(id);
+		this.onDivisionPots( handsValues );
+		this.disposable[ SUBSCRIPTION.COMPLETE ] = Rx.interval(WAIT_TIME).pipe(take(1)).subscribe( this.onComplete.bind(this) );
+	}
+
+	onDivisionPots( handsValues ){
+		let results = this.dealler.sortHandValues( handsValues );
+		let totalPot = this.stage.getSidePot();
+		let len = results.length;
+		var idx = 0;
+		var isNext = true;
+		do {
+			let winners = results[ idx ];
+			let playWinners = [];
+			let wNum = winners.length;
+			var tpot = totalPot;
+			winners.forEach( w =>{
+				let player = this.players[ w.id ];
+				player.isWinner = true;
+				var getPot = 0;
+				if ( player.mainPot == 0) {
+					playWinners.push( player );
+					getPot = Math.floor( totalPot / len );
+					player.winPot += getPot;
+					isNext = false
+				} else {
+					getPot = this.stage.getMainPot( w.id );
+					getPot = Math.floor( getPot / len );
+				}
+				tpot -= getPot;
+			})
+			if( isNext ) totalPot = tpot;
+			else {
+				var getPot = Math.floor( tpot/ playWinners.length );
+				playWinners.forEach( p => p.winPot += getPot );
+			}
+			idx ++;
+		} while ( isNext  && (idx < len) )
+
+		handsValues.forEach( v => {
+			this.players[ v.id ].updatePot();
+		});
+
+	}
 
 	onComplete() {
 		this.debuger.log('onGameComplete');
@@ -308,6 +384,7 @@ export default class Game extends Component {
 	}
 
   waiting(id:string){
+		this.debuger.log(id, 'waiting');
     this.players[ id ].waiting();
   }
 
@@ -317,12 +394,14 @@ export default class Game extends Component {
 
   leave(id:string): string {
     this.playerNum --;
-    let nick = this.players[ id ].name;
+		let player =  this.players[ id ];
+    let nick = player.name;
     if( this.stage.hasPlayer( id ) ) {
-      this.players[ id ].leave();
-			this.debuger.log(this.players[ id ], 'leave');
+			player.leave();
+			this.debuger.log(player, 'leave');
+			if( player.isFoldenAble() ) this.stage.onTurnComplete();
     } else {
-			this.debuger.log(this.players[ id ], 'leaveComplete');
+			this.debuger.log(player, 'leaveComplete');
       this.leaveCompleted(id);
     }
     return nick;

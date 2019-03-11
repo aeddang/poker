@@ -127,4 +127,12 @@ export default class PlayerViewer extends SyncPropsComponent {
     }
     player.onUpdateSyncProp( prop, value);
   }
+
+  onShowCard( id, idx, cardData ) {
+    this.players[id].showCard( idx, cardData );
+  }
+
+  onHideCard( id, idx) {
+    this.players[id].hideCard( idx );
+  }
 }
