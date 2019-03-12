@@ -1,6 +1,7 @@
 import SyncPropsComponent from 'Component/syncpropscomponent';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
+import { Action } from  "Util/command";
 
 class PlayerBody extends ElementProvider {
   writeHTML() {
@@ -9,18 +10,30 @@ class PlayerBody extends ElementProvider {
     cell.classList.add("player");
     cell.classList.add("player-position-wait");
     cell.innerHTML = `
-      <img id='${this.id}profileImg' class='profile-img'></img>
-      <p id='${this.id}profileData' class='profile-data'></p>
-      <p id='${this.id}playData' class='play-data'></p>
-      <p id='${this.id}status' class='status'></p>
-      <p id='${this.id}bankroll' class='bankroll'></p>
-      <div id='${this.id}timeBar' class='time-bar'></div>
 
-      <div id='${this.id}card0' class='card'></div>
-      <div id='${this.id}card1' class='card'></div>
-      <div id='${this.id}card2' class='card'></div>
-      <div id='${this.id}card3' class='card'></div>
-      <div id='${this.id}card4' class='card'></div>
+      <div class='profile'>
+        <img id='${this.id}profileImg' class='profile-img'></img>
+        <div class='info'>
+          <p id='${this.id}name' class='name'></p>
+          <p id='${this.id}bankroll' class='bankroll'></p>
+          <p id='${this.id}networkStatus' class='networkStatus'></p>
+        </div>
+      </div>
+      <div class='play-data'>
+        <p id='${this.id}action' class='action'></p>
+        <p id='${this.id}status' class='status'></p>
+        <p id='${this.id}bat' class='bat'></p>
+        <p id='${this.id}dealler' class='dealler'></p>
+        <p id='${this.id}blind' class='blind'></p>
+        <div id='${this.id}timeBar' class='time-bar'></div>
+      </div>
+      <div class='show-down'>
+        <div id='${this.id}card0' class='card'></div>
+        <div id='${this.id}card1' class='card'></div>
+        <div id='${this.id}card2' class='card'></div>
+        <div id='${this.id}card3' class='card'></div>
+        <div id='${this.id}card4' class='card'></div>
+      </div>
     `;
     this.body.appendChild(cell);
   }
@@ -43,22 +56,53 @@ export default class Player extends SyncPropsComponent {
   remove() {
     super.remove();
     this.profileImg = null;
-    this.profileData = null;
-    this.playData = null;
-    this.status = null;
-    this.timeBar = null;
+    this.name = null;
     this.bankroll = null;
+    this.action = null;
+    this.status = null;
+    this.bat = null;
+    this.dealler = null;
+    this.blind = null;
+    this.timeBar = null;
     this.cards = null;
+    this.networkStatus = null;
   }
 
   setupWatchs(){
     this.watchs = {
       status: value =>{
-        this.debuger.log(value, 'status');
-        this.status.innerHTML = 'player -> ' + value;
+        switch ( value ) {
+          case Status.Wait:
+            this.status.innerHTML = 'Wait'
+            break;
+          case Status.Impossible:
+            this.status.innerHTML = 'Impossible'
+            break;
+          case Status.Fold:
+            this.status.innerHTML = 'Fold'
+            break;
+            case Status.Play:
+              this.status.innerHTML = 'Play'
+              break;
+            case Status.AllIn:
+              this.status.innerHTML = 'AllIn'
+              break;
+            case Status.ShowDown:
+              this.status.innerHTML = 'ShowDown'
+              break;
+            case Status.Absence:
+              this.status.innerHTML = 'Absence'
+              break;
+            case Status.WaitBigBlind:
+              this.status.innerHTML = 'WaitBigBlind'
+              break;
+        }
       },
       bankroll: value =>{
-        this.bankroll.innerHTML = 'bankroll -> ' + value;
+        this.bankroll.innerHTML = 'Bankroll -> ' + value;
+      },
+      gameBat: value =>{
+        this.bat.innerHTML = 'GameBat -> ' + value;
       },
       time: value =>{
         this.time = value;
@@ -68,23 +112,60 @@ export default class Player extends SyncPropsComponent {
         this.limitTime = value;
       },
       isBlind: value =>{
-        this.debuger.log(value, 'isBlind');
+        this.blind.innerHTML = value ? 'BlindPlay' : '';
       },
-      userId: value =>{
-        this.debuger.log(value, 'userId');
+      isDealler: value =>{
+        this.dealler.innerHTML = value ? 'DeallerButton' : '';
+      },
+      finalAction: value =>{
+        switch ( value ) {
+          case Action.Fold:
+            this.action.innerHTML = 'Fold'
+            break;
+          case Action.SmallBlind:
+            this.action.innerHTML = 'SmallBlind'
+            break;
+          case Action.BigBlind:
+            this.action.innerHTML = 'BigBlind'
+            break;
+          case Action.Check:
+            this.action.innerHTML = 'Check'
+            break;
+          case Action.Call:
+            this.action.innerHTML = 'Call'
+            break;
+          case Action.Bat:
+            this.action.innerHTML = 'Bat'
+            break;
+          case Action.Raise:
+            this.action.innerHTML = 'Raise'
+            break;
+          case Action.AllIn:
+            this.action.innerHTML = 'AllIn'
+            break;
+        }
       },
       name: value =>{
-        this.debuger.log(value, 'name');
-        this.profileData.innerHTML = value;
+        this.name.innerHTML = value;
       },
       position: value =>{
         if(value != -1) this.onGameJoin();
       },
       isActive: value =>{
-        this.debuger.log(value, 'isActive');
+        value ? this.getBody().classList.add("player-active") : this.getBody().classList.remove("player-active")
       },
       networkStatus: value =>{
-        this.debuger.log(value, 'networkStatus');
+        switch ( value ) {
+          case NetworkStatus.Connected:
+            this.networkStatus.innerHTML = 'Connected'
+            break;
+          case NetworkStatus.DisConnected:
+            this.networkStatus.innerHTML = 'DisConnected'
+            break;
+          case NetworkStatus.Wait:
+            this.networkStatus.innerHTML = 'Wait'
+            break;
+        }
       }
     };
   }
@@ -92,12 +173,16 @@ export default class Player extends SyncPropsComponent {
   getElementProvider() { return new PlayerBody(this.body); }
   onCreate(elementProvider) {
     this.profileImg = elementProvider.getElement('profileImg');
-    this.profileData = elementProvider.getElement('profileData');
-    this.playData = elementProvider.getElement('playData');
-    this.status = elementProvider.getElement('status');
+    this.name = elementProvider.getElement('name');
     this.bankroll = elementProvider.getElement('bankroll');
+    this.networkStatus = elementProvider.getElement('networkStatus');
+    this.action = elementProvider.getElement('action');
+    this.status = elementProvider.getElement('status');
+    this.bat = elementProvider.getElement('bat');
+    this.dealler = elementProvider.getElement('dealler');
+    this.blind = elementProvider.getElement('blind');
     this.timeBar = elementProvider.getElement('timeBar');
-    this.profileData.innerHTML = this.idx + ' : player out'
+
     if ( this.me ) this.getBody().classList.add("player-me");
     for(var i=0; i<5; ++i) this.cards.push(elementProvider.getElement('card'+i));
   }

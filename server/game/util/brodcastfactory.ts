@@ -10,21 +10,21 @@ enum Sender {
   Push
 }
 
-const BOUNDERY = '$';
+const BOUNDERY = '$'
 
 export function getPushMsg (msg:string):string {
-  return Sender.Push + BOUNDERY + JSON.stringify(msg);
+  return Sender.Push + BOUNDERY + JSON.stringify(msg)
 }
 
 export function getJoinMsg (nick:string):string {
-  return Sender.AdminLv3 + BOUNDERY + nick + " join!!";
+  return Sender.AdminLv3 + BOUNDERY + nick + " join!!"
 }
 
 export function getLeaveMsg (nick:string):string {
-  return Sender.AdminLv3 + BOUNDERY + nick + " leave!!";
+  return Sender.AdminLv3 + BOUNDERY + nick + " leave!!"
 }
 
 export function getMsg (nick:string, msg:string, isIndividual:boolean = false):string {
-  let header = isIndividual ? Sender.Individual : Sender.User;
-  return header + BOUNDERY + nick + "-> " + msg;
+  let header = isIndividual ? Sender.Individual : Sender.User
+  return header + BOUNDERY + nick + "-> " + msg
 }

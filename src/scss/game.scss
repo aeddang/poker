@@ -3,26 +3,43 @@
 
 
 .poker .player {}
+.poker .player-position-wait { @include position-bottom-right($margin-tiny); width:150px; height:50px;  background-color: $color-light-grey; overflow: hidden;}
+.poker .player-position-join { @include position-cover;  background-color: $color-light-grey; @include bg-radius(20px);}
+.poker .player-me { background-color: $color-white; }
+.poker .player-active { background-color: $color-light-red; }
+.poker .player .profile { width:100%; height:50px; }
+.poker .player .profile .profile-img { @include position-left; width:50px; height:50px }
+.poker .player .profile .info { @include position-left; padding:$margin-tiny }
+.poker .player .profile .info .name { @include font-default($color-grey) }
+.poker .player .profile .info .bankroll { @include font-default($color-black) }
+.poker .player .play-data { @include position-clear; @include position-horizontal(); width:140px; height:90px; padding:$margin-tiny }
+.poker .player .play-data .action { @include font-default($color-black) }
+.poker .player .play-data .status { @include font-default($color-blue) }
+.poker .player .play-data .dealler { @include font-default($color-grey) }
+.poker .player .play-data .blind { @include font-default($color-grey) }
+.poker .player .play-data .bat { @include font-default($color-grey) }
+.poker .player .play-data .time-bar { width:0%; height:10px;  background-color: $color-blue; }
+.poker .player .show-down {}
+.poker .player .show-down .card{ @include position-top-left($margin-tiny, 100); width:30px; height:50px;  background-color: $color-white; display:none}
 
-.poker .player-position-wait { @include position-top-right($margin-tiny); width:150px; height:150px;  background-color: $color-grey;}
-.poker .player-position-join { @include position-cover;  background-color: $color-grey;}
-.poker .player-me { background-color: $color-red; }
-.poker .player .profile-img { width:50px; height:50px }
-.poker .player .profile-data { @include font-default($color-white) }
-.poker .player .play-data { @include font-default($color-white) }
-.poker .player .bankroll { @include font-default($color-white) }
-.poker .player .status { @include font-default($color-blue) }
-.poker .player .time-bar { width:0%; height:15px;  background-color: $color-blue; }
-.poker .player .card{ @include position-top-left($margin-tiny, 100); width:50px; height:80px;  background-color: $color-white; display:none}
 
-.poker .position { position: absolute; background-color: $color-grey; width:150px; height:150px; @include bg-radius(20px) }
+.poker .position { position: absolute; background-color: $color-grey; width:150px; height:150px; @include bg-radius(20px);}
 .poker .position .btn-join { @include btn-text; @include btn-icon-size }
 
 .poker .game-viewer { @include position-cover; }
-.poker .game-viewer .card{ @include position-top-left($margin-tiny); width:100px; height:200px;  background-color: $color-grey; }
-.poker .game-viewer .ante{ @include position-center(100,50, 0, -100); @include font-default($color-white)  }
-.poker .game-viewer .main-pot{@include position-center(200,50); @include font-big($color-white) }
-.poker .game-viewer .side-pot{@include position-center(200,50, 0, 100); @include font-default($color-white) }
+.poker .game-viewer .cards{}
+.poker .game-viewer .cards .card{ position:absolute; background-color: $color-white; }
+
+.poker .game-viewer .info{ @include position-top-left($margin-default, $margin-default); background-color: $color-grey; padding:$margin-tiny}
+.poker .game-viewer .info .ante{  @include font-default($color-black)  }
+.poker .game-viewer .info .min-bat{  @include font-default($color-blue) }
+.poker .game-viewer .info .game-bat{  @include font-default($color-black) }
+.poker .game-viewer .pot{ @include position-center(200,50, 0, -100)}
+.poker .game-viewer .pot .round{ @include font-big($color-blue); text-align: center }
+.poker .game-viewer .pot .main-pot{ @include font-big($color-white); text-align: center }
+.poker .game-viewer .pot .round-pot{ @include font-default($color-white); text-align: center }
+.poker .game-viewer .pot .side-pot{ @include font-default($color-grey); text-align: center }
+
 
 .poker .player-viewer { @include position-cover; }
 .poker .ui-box { @include position-bottom; width:100%; height:100px; background-color: $color-white}
@@ -37,4 +54,4 @@
 .poker .ui-box .btn-call { @include btn-text; @include btn-icon-size }
 .poker .ui-box .btn-bat { @include btn-text; @include btn-icon-size }
 .poker .ui-box .btn-raise { @include btn-text; @include btn-icon-size }
-.poker .ui-box .btn-allin { @include btn-text; @include btn-icon-size }
+.poker .ui-box .btn-all-in { @include btn-text; @include btn-icon-size }

@@ -25,7 +25,7 @@ export enum Action{
 }
 
 export default interface Command {
-  c:number;
-  t:number;
-  d:Any;
+  c:number
+  t:number
+  d:Any
 }

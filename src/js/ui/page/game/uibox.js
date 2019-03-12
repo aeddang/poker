@@ -29,7 +29,7 @@ class UiBoxBody extends ElementProvider {
 			<button id='${this.id}btnCall' class='btn-call'>C</button>
 			<button id='${this.id}btnBat' class='btn-bat'>BT</button>
 			<button id='${this.id}btnRaise' class='btn-raise'>RA</button>
-      <button id='${this.id}btnAllin' class='btn-allin'>ALL</button>
+      <button id='${this.id}btnAllIn' class='btn-all-in'>ALL</button>
     `;
   }
 }
@@ -51,7 +51,7 @@ export default class UiBox extends SyncPropsComponent {
 		this.btnCall = null;
 		this.btnBat = null;
 		this.btnRaise = null;
-		this.btnAllin = null;
+		this.btnAllIn = null;
   }
 
   getElementProvider() { return new UiBoxBody(this.body); }
@@ -66,7 +66,7 @@ export default class UiBox extends SyncPropsComponent {
 		this.btnCall = elementProvider.getElement('btnCall');
 		this.btnBat = elementProvider.getElement('btnBat');
 		this.btnRaise = elementProvider.getElement('btnRaise');
-		this.btnAllin = elementProvider.getElement('btnAllin');
+		this.btnAllIn = elementProvider.getElement('btnAllIn');
   }
 
 	setupWatchs(){
@@ -94,7 +94,7 @@ export default class UiBox extends SyncPropsComponent {
 	    actionCall: value => { this.setActionButton( this.btnCall,  value ) },
 	    actionBat: value => { this.setActionButton( this.btnBat,  value ) },
 	    actionRaise: value => { this.setActionButton( this.btnRaise,  value ) },
-	    actionAllin: value => { this.setActionButton( this.btnAllin,  value ) },
+	    actionAllIn: value => { this.setActionButton( this.btnAllIn,  value ) },
     };
   }
 
@@ -111,7 +111,7 @@ export default class UiBox extends SyncPropsComponent {
 		this.attachEvent(this.btnCall, "click", this.onCall.bind(this));
     this.attachEvent(this.btnBat, "click", this.onBat.bind(this));
 		this.attachEvent(this.btnRaise, "click", this.onRaise.bind(this));
-    this.attachEvent(this.btnAllin, "click", this.onAllin.bind(this));
+    this.attachEvent(this.btnAllIn, "click", this.onAllIn.bind(this));
   }
 
 	onBlind() { this.delegate.next(new ComponentEvent( UI_EVENT.BLIND )); }
@@ -122,5 +122,5 @@ export default class UiBox extends SyncPropsComponent {
 	onCall() { this.delegate.next(new ComponentEvent( UI_EVENT.CALL )); }
   onBat() { this.delegate.next(new ComponentEvent( UI_EVENT.BAT, 2 )); }
 	onRaise() { this.delegate.next(new ComponentEvent( UI_EVENT.RAISE, 2 )); }
-  onAllin() { this.delegate.next(new ComponentEvent( UI_EVENT.ALL_IN )); }
+  onAllIn() { this.delegate.next(new ComponentEvent( UI_EVENT.ALL_IN )); }
 }
