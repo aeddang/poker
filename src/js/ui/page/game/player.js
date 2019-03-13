@@ -3,6 +3,7 @@ import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import { Action } from  "Util/command";
 
+
 class PlayerBody extends ElementProvider {
   writeHTML() {
     var cell = document.createElement("div");
@@ -23,7 +24,7 @@ class PlayerBody extends ElementProvider {
         <p id='${this.id}action' class='action'></p>
         <p id='${this.id}status' class='status'></p>
         <p id='${this.id}bat' class='bat'></p>
-        <p id='${this.id}dealler' class='dealler'></p>
+        <p id='${this.id}positionStatus' class='position-status'></p>
         <p id='${this.id}blind' class='blind'></p>
         <div id='${this.id}timeBar' class='time-bar'></div>
       </div>
@@ -38,6 +39,10 @@ class PlayerBody extends ElementProvider {
     this.body.appendChild(cell);
   }
 }
+
+
+const CARD_WIDTH = 30;
+const CARD_HEIGHT = 50;
 
 export default class Player extends SyncPropsComponent {
   constructor() {
@@ -61,7 +66,7 @@ export default class Player extends SyncPropsComponent {
     this.action = null;
     this.status = null;
     this.bat = null;
-    this.dealler = null;
+    this.positionStatus = null;
     this.blind = null;
     this.timeBar = null;
     this.cards = null;
@@ -70,6 +75,15 @@ export default class Player extends SyncPropsComponent {
 
   setupWatchs(){
     this.watchs = {
+      name: value =>{
+        this.name.innerHTML = value;
+      },
+      position: value =>{
+        if( value != -1 ) this.onGameJoin();
+      },
+      bankroll: value =>{
+        this.bankroll.innerHTML = 'Bankroll -> ' + value;
+      },
       status: value =>{
         switch ( value ) {
           case Status.Wait:
@@ -81,25 +95,22 @@ export default class Player extends SyncPropsComponent {
           case Status.Fold:
             this.status.innerHTML = 'Fold'
             break;
-            case Status.Play:
-              this.status.innerHTML = 'Play'
-              break;
-            case Status.AllIn:
-              this.status.innerHTML = 'AllIn'
-              break;
-            case Status.ShowDown:
-              this.status.innerHTML = 'ShowDown'
-              break;
-            case Status.Absence:
-              this.status.innerHTML = 'Absence'
-              break;
-            case Status.WaitBigBlind:
-              this.status.innerHTML = 'WaitBigBlind'
-              break;
+          case Status.Play:
+            this.status.innerHTML = 'Play'
+            break;
+          case Status.AllIn:
+            this.status.innerHTML = 'AllIn'
+            break;
+          case Status.ShowDown:
+            this.status.innerHTML = 'ShowDown'
+            break;
+          case Status.Absence:
+            this.status.innerHTML = 'Absence'
+            break;
+          case Status.WaitBigBlind:
+            this.status.innerHTML = 'WaitBigBlind'
+            break;
         }
-      },
-      bankroll: value =>{
-        this.bankroll.innerHTML = 'Bankroll -> ' + value;
       },
       gameBat: value =>{
         this.bat.innerHTML = 'GameBat -> ' + value;
@@ -114,8 +125,12 @@ export default class Player extends SyncPropsComponent {
       isBlind: value =>{
         this.blind.innerHTML = value ? 'BlindPlay' : '';
       },
-      isDealler: value =>{
-        this.dealler.innerHTML = value ? 'DeallerButton' : '';
+      isWinner: value =>{
+        this.action.innerHTML = value  ? 'Win' : '';
+      },
+
+      isActive: value =>{
+        value ? this.getBody().classList.add("player-active") : this.getBody().classList.remove("player-active")
       },
       finalAction: value =>{
         switch ( value ) {
@@ -145,15 +160,6 @@ export default class Player extends SyncPropsComponent {
             break;
         }
       },
-      name: value =>{
-        this.name.innerHTML = value;
-      },
-      position: value =>{
-        if(value != -1) this.onGameJoin();
-      },
-      isActive: value =>{
-        value ? this.getBody().classList.add("player-active") : this.getBody().classList.remove("player-active")
-      },
       networkStatus: value =>{
         switch ( value ) {
           case NetworkStatus.Connected:
@@ -166,7 +172,24 @@ export default class Player extends SyncPropsComponent {
             this.networkStatus.innerHTML = 'Wait'
             break;
         }
-      }
+      },
+      positionStatus: value =>{
+        switch ( value ) {
+          case PositionStatus.DeallerButton:
+            this.positionStatus.innerHTML = 'DB'
+            break;
+          case PositionStatus.BigBlind:
+            this.positionStatus.innerHTML = 'BB'
+            break;
+          case PositionStatus.SmallBlind:
+            this.positionStatus.innerHTML = 'SB'
+            break;
+          case PositionStatus.None:
+            this.positionStatus.innerHTML = ''
+            break;
+        }
+      },
+
     };
   }
 
@@ -179,12 +202,17 @@ export default class Player extends SyncPropsComponent {
     this.action = elementProvider.getElement('action');
     this.status = elementProvider.getElement('status');
     this.bat = elementProvider.getElement('bat');
-    this.dealler = elementProvider.getElement('dealler');
+    this.positionStatus = elementProvider.getElement('positionStatus');
     this.blind = elementProvider.getElement('blind');
     this.timeBar = elementProvider.getElement('timeBar');
 
     if ( this.me ) this.getBody().classList.add("player-me");
-    for(var i=0; i<5; ++i) this.cards.push(elementProvider.getElement('card'+i));
+    for(var i=0; i<5; ++i) {
+      let card = elementProvider.getElement('card'+i);
+      card.width = CARD_WIDTH;
+      card.height = CARD_HEIGHT;
+      this.cards.push(card);
+    }
   }
 
   onGameJoin( ) {
@@ -196,16 +224,16 @@ export default class Player extends SyncPropsComponent {
     let idx = Number(id);
     let card = this.cards[ idx ];
     card.innerHTML = cardData.suit + " : " + cardData.num;
-    card.style.left =  Util.getStyleUnit( (idx * 60));
-    card.style.display = 'block';
+    card.x = idx * CARD_WIDTH;
+    card.visible = true;
   }
 
   hideCard( id ) {
     let idx = Number(id);
     let card = this.cards[ idx ];
     card.innerHTML = 'hidden';
-    card.style.left = 0;
-    card.style.display = 'none';
+    card.x = 0;
+    card.visible = false;
   }
 }
 
@@ -219,6 +247,13 @@ export const Status = Object.freeze ({
   ShowDown: 6,
   Absence: 7,
   WaitBigBlind: 8
+});
+
+const PositionStatus= Object.freeze ({
+  None: 1,
+  DeallerButton: 2,
+  SmallBlind: 3,
+  BigBlind: 4
 });
 
 export const NetworkStatus = Object.freeze ({

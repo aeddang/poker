@@ -120,14 +120,16 @@ export default class Play extends Room {
       if (e.operation === "add") this.playerViewer.onShowCard(e.path.id, e.path.idx, e.value);
       else if (e.operation === "remove") this.playerViewer.onHideCard(e.path.id, e.path.idx);
     });
+  }
 
-
+  onPush(data) {
+    this.debuger.log(data, 'onPush', '', 0);
   }
 
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let bounceBox = Util.convertRectFromDimension(this.chatArea);
-    this.playArea.style.width = Util.getStyleUnit( bounce.width - bounceBox.width );
+    this.playArea.width = bounce.width - bounceBox.width;
     super.onResize();
     this.chat.onResize();
     this.gameViewer.onResize();

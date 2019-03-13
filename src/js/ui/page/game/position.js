@@ -58,7 +58,7 @@ export default class Position extends SyncPropsComponent {
   }
 
   joinPlayer(){
-    //this.btnJoin.style.display = 'none';
+    this.btnJoin.visible = false;
   }
 
   leavePlayer() {

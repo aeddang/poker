@@ -5,20 +5,25 @@ import { JoinOption } from "../../util/interface"
 import { nosync } from "colyseus"
 
 export default class Player extends Component {
-  status:Status = Status.Absence
+
   bankroll:number = 1000
-  isBlind:boolean = false
   userId:string
   name:string
   position:number = -1
-
   networkStatus:NetworkStatus =  NetworkStatus.DisConnected
+
+  isBlind:boolean = false
+  isWinner:boolean = false
+  status:Status = Status.Absence
+  positionStatus:PositionStatus = PositionStatus.None
   gameBat:number = 0
   mainPot:number = 0
+  winPot:number = 0
   time:number = 0
   limitTime:number = 0
-  openHand:EntityMap<Any> = {}
   finalAction:number = -1;
+  isActive:boolean = false
+  openHand:EntityMap<Any> = {}
 
   actionBlind:boolean = false
   actionFold:boolean = false
@@ -30,13 +35,6 @@ export default class Player extends Component {
   actionRaise:boolean = false
   actionAllIn:boolean = false
 
-  winPot:number = 0
-
-  isDealler:boolean = false
-  isWinner:boolean = false
-
-  @nosync
-  isActive:boolean = false
   @nosync
   currentBlindAction:number = -1
   @nosync
@@ -132,12 +130,12 @@ export default class Player extends Component {
     this.hand = null
     if( this.status != Status.Absence & this.status != Status.WaitBigBlind ) this.status = Status.Wait
     this.isBlind = false
-    this.isDealler = false
     this.isWinner = false
     this.time = 0
     this.mainPot = 0
     this.gameBat = 0
     this.winPot = 0
+    this.positionStatus = PositionStatus.None;
     this.currentBlindAction = -1
     this.finalAction = -1;
     this.actionBlind = true
@@ -210,6 +208,15 @@ export default class Player extends Component {
     this.winPot = 0
   }
 
+  setPosition( idx:number ){
+    switch( idx ){
+      case 0: this.positionStatus = PositionStatus.DeallerButton; break
+      case 1: this.positionStatus = PositionStatus.SmallBlind; break
+      case 2: this.positionStatus = PositionStatus.BigBlind; break
+      default: this.positionStatus = PositionStatus.None; break
+    }
+  }
+
   setActivePlayer(action:Array,call:number, minBat:number){
     let bat = call + minBat
     let isBlindAc = false
@@ -243,11 +250,13 @@ export default class Player extends Component {
 
     this.currentBlindAction = isBlindAc ? currentAction[0] : -1
     this.isActive = true
+    this.debuger.log(this.isActive ,'isActive')
     this.isActionComplete = false
   }
 
   setPassivePlayer(){
     this.isActive = false
+    this.debuger.log(this.isActive ,'isActive')
     this.time = 0
     this.limitTime = 0
     if( !this.isActionComplete ) this.status = Status.Fold
@@ -267,6 +276,13 @@ enum Status{
   ShowDown,
   Absence,
   WaitBigBlind
+}
+
+enum PositionStatus{
+  None = 1,
+  DeallerButton,
+  SmallBlind,
+  BigBlind
 }
 
 enum NetworkStatus{

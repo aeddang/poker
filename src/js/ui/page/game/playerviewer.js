@@ -3,6 +3,8 @@ import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import Player from './player';
 import Position from './position';
+
+
 class PlayerViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
@@ -12,6 +14,7 @@ class PlayerViewerBody extends ElementProvider {
 
 class PlayerViewerInfo {
   constructor() {
+    this.myPosition = 0;
     this.reset();
   }
   reset() {}
@@ -80,14 +83,15 @@ export default class PlayerViewer extends SyncPropsComponent {
     let len = this.positions.length + 1;
     var rotate = -90;
     var sumRotate = 360 / len;
+    rotate += (sumRotate * this.info.myPosition);
     this.positions.forEach( p => {
       rotate += sumRotate
       let r = rotate * Math.PI/180
       let x = posX + (Math.cos(r) *radiusX);
       let y = posY + (Math.sin(r) *radiusY);
       let pbd = p.getBody();
-      pbd.style.left = Util.getStyleUnit( x );
-      pbd.style.top = Util.getStyleUnit( y );
+      pbd.x = x;
+      pbd.y = y;
     });
   }
 
@@ -122,10 +126,16 @@ export default class PlayerViewer extends SyncPropsComponent {
       let position = this.positions[ value ];
       if( position == null ) return;
       position.getBody().appendChild( player.getBody() );
-      if( player.me ) this.positions.forEach( p => { p.joinPlayer(); } );
+      if( player.me ) this.onSelectedMyposition( value );
       else position.joinPlayer();
     }
     player.onUpdateSyncProp( prop, value);
+  }
+
+  onSelectedMyposition( position ){
+    this.positions.forEach( p => { p.joinPlayer(); } );
+    this.info.myPosition = position;
+    this.onResize();
   }
 
   onShowCard( id, idx, cardData ) {

@@ -1,7 +1,41 @@
 import { Subject } from 'rxjs';
 import { Rect, Point, convertRectFromDimension, convertPointFromDimension } from './util';
 import { MoveEvent, MOVE_EVENT } from './event';
-import Component from './component';
+import { log } from './log';
+
+
+export function decoratorDynamicDom(element, id) {
+  if( element == null ) {
+    //log( "decoratorDynamicDom" , 'warn', id , "element undefined");
+    return null;
+  }
+  overoadProperty(element, 'x', 'left', 'px');
+  overoadProperty(element, 'y', 'top', 'px');
+  overoadProperty(element, 'width', 'width', 'px');
+  overoadProperty(element, 'height', 'height', 'px');
+  function overoadProperty( ele, prop, attribute, unit = '' ){
+    if( element[ prop ] != undefined ) return //log( 'decoratorDynamicDom' , 'warn', prop , 'prop exist');
+    Object.defineProperty(ele, prop, {
+      get: function(){ return this['_' + prop] || 0; },
+      set: function( value ){
+        this['_' + prop] = value;
+        this.style[ attribute ] = value + unit;
+      }
+    })
+  }
+  if( element.visible == undefined ) {
+    let display = ( element.style.display == 'none' ) ? element.style.display : 'block';
+
+    Object.defineProperty(element, 'visible', {
+      get: function(){ return this._visible || true; },
+      set: function(visible) {
+        this._visible = visible;
+        visible ? this.style.display = display : this.style.display = 'none';
+      }
+    });
+  }
+  return element;
+}
 
 export class DragElement extends Component {
   constructor(delegate = new Subject()) {

@@ -130,13 +130,13 @@ export default class Game extends Component {
 			let id = this.positions[ idx ]
 			if( id != null ){
 				let player = this.players[id]
-				player.isDealler = false
 				let able = player.isPlayAble(this.stage.minBankroll, posIdx)
 				if( able ){
 					if(posIdx == 0){
 						this.deallerButton = idx
 						player.isDealler = true
 					}
+					player.setPosition( posIdx )
 					posIdx ++
 					ids.push( id )
 				}
@@ -195,6 +195,44 @@ export default class Game extends Component {
 		}
 	}
 
+	removeCurrentPlayer(){
+		if(this.currentPlayer == null) return
+		this.currentPlayer.setPassivePlayer()
+		this.currentPlayer = null
+	}
+
+	onCurrentPlayerChanged( id:string ) {
+		this.removeCurrentPlayer();
+		this.currentPlayer = this.players[ id ]
+		let actions = this.stage.getActions()
+		let call = this.stage.getCallBat()
+    this.currentPlayer.setActivePlayer(actions, call, this.stage.minBat)
+		this.debuger.log(this.currentPlayer.name,'onCurrentPlayerChanged')
+  }
+
+	action (id: string, command: Command) {
+		let player = this.players[ id ]
+		this.debuger.log(id, 'action')
+		if( command.t == Action.JoinGame && player.isJoinGameAble()){ this.onJoinGame(id, command.d); return }
+		if( command.t == Action.Blind ){ player.blindGame(); return }
+    if( this.currentPlayer == null ) return
+    if( id != this.currentPlayer.id ) return
+		if( command.t == Action.AllIn ) {
+			command.d = player.bankroll
+			this.debuger.log(player.bankroll, 'allin')
+		}
+		player.action(command)
+		this.onBatting( id, this.stage.action(command) )
+		if( command.t == Action.AllIn ) player.mainPot = this.stage.getMainPot(id)
+		this.removeCurrentPlayer();
+		this.stage.onTurnComplete()
+
+  }
+	onBatting(id:String, amount:number){
+		this.players[ id ].batting(amount)
+		this.stage.batting(id, amount)
+	}
+
   onTurnNext( id:string ){
     let nextPlayer = this.players[ id ]
 		this.debuger.log(nextPlayer.status , 'onTurnNext')
@@ -230,38 +268,6 @@ export default class Game extends Component {
 			else this.onShowDown( false )
 		}
 	}
-
-  onCurrentPlayerChanged( id:string ) {
-		if(this.currentPlayer != null) this.currentPlayer.setPassivePlayer()
-		this.currentPlayer = this.players[ id ]
-		let actions = this.stage.getActions()
-		let call = this.stage.getCallBat()
-    this.currentPlayer.setActivePlayer(actions, call, this.stage.minBat)
-		this.debuger.log(this.currentPlayer.name,'onCurrentPlayerChanged')
-  }
-
-	onBatting(id:String, amount:number){
-		this.players[ id ].batting(amount)
-		this.stage.batting(id, amount)
-	}
-
-  action (id: string, command: Command) {
-		let player = this.players[ id ]
-		this.debuger.log(id, 'action')
-		if( command.t == Action.JoinGame && player.isJoinGameAble()){ this.onJoinGame(id, command.d); return }
-		if( command.t == Action.BlindAction ){ player.blindGame(); return }
-    if( this.currentPlayer == null ) return
-    if( id != this.currentPlayer.id ) return
-		this.currentPlayer = null
-		if( command.t == Action.AllIn ) {
-			command.d = player.bankroll
-			this.debuger.log(player.bankroll, 'allin')
-		}
-		player.action(command)
-		this.onBatting( id, this.stage.action(command) )
-		if( command.t == Action.AllIn ) player.mainPot = this.stage.getMainPot(id)
-		this.stage.onTurnComplete()
-  }
 
 	onShowDown( isOpen:boolean = true ) {
 		this.debuger.log('onShowDown')
@@ -407,16 +413,20 @@ export default class Game extends Component {
   }
 
   leave(id:string): string {
-		let player =  this.players[ id ]
-		if( player == null ) 	this.debuger.log(id, 'rejoin player'); return null
-    this.playerNum --
+		let player = this.players[ id ]
+		if( player == null ) {
+			this.debuger.log(id, 'rejoin player')
+			return null
+		}
+    this.playerNum--
+		this.debuger.log(this.playerNum, 'playerNum');
 		let nick = player.name
     if( this.stage.hasPlayer( id ) ) {
 			player.leave()
-			this.debuger.log(player, 'leave')
+			this.debuger.log(player.name, 'leave')
 			if( player.isFoldenAble() ) this.stage.onTurnComplete()
     } else {
-			this.debuger.log(player, 'leaveComplete')
+			this.debuger.log(player.name, 'leaveComplete')
       this.leaveCompleted(id)
     }
     return nick

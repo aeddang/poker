@@ -75,7 +75,7 @@ export default class Join extends Room {
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let bounceBox = Util.convertRectFromDimension(this.chatArea);
-    this.infoBox.style.width = Util.getStyleUnit( bounce.width - bounceBox.width );
+    this.infoBox.width =  bounce.width - bounceBox.width;
     super.onResize();
     this.chat.onResize();
   }

@@ -98,8 +98,8 @@ export default class UiBox extends SyncPropsComponent {
     };
   }
 
-	setActionButton( btn , value ){
-		btn.style.display = value ? 'block' : 'none';
+	setActionButton( btn , value ) {
+		btn.visible = value ;
 	}
 
   setupEvent() {

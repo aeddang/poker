@@ -115,7 +115,7 @@ export default class Poker extends Component {
     if( bounce.width != this.info.finalSize.width || bounce.height != this.info.finalSize.height ) {
         this.checkFullscreen();
         let headerBounce = Util.convertRectFromDimension(this.header.getBody());
-        this.pageArea.style.height = Util.getStyleUnit(bounce.height - headerBounce.height);
+        this.pageArea.height = bounce.height - headerBounce.height;
         if(this.currentPage != null) this.currentPage.onResize();
     }
   }

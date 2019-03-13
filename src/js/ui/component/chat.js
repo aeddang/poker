@@ -90,9 +90,9 @@ export default class Chat extends Component  {
     super.onResize();
 		let bounce = Util.convertRectFromDimension(this.getBody());
     let bounceBox = Util.convertRectFromDimension(this.inputForm);
-    this.viewer.style.height = Util.getStyleUnit( bounce.height - bounceBox.height );
+    this.viewer.height = bounce.height - bounceBox.height;
 		let bounceBtn = Util.convertRectFromDimension(this.inputBtn);
-		this.inputText.style.width = Util.getStyleUnit( bounce.width - bounceBtn.width );
+		this.inputText.width = bounce.width - bounceBtn.width;
   }
 
   onSendMessage(e) {

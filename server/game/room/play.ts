@@ -42,12 +42,15 @@ export default class Play extends RoomComponent<Game> {
 
   async onLeave (client:Client, consented: boolean) {
     this.state.waiting( client.sessionId )
+    this.debuger.log(consented, 'consented')
     try {
       if (consented) throw new Error("consented leave")
       await this.allowReconnection(client, REJOIN_LIMITED_TIME)
+      this.debuger.log(client.sessionId, 'reJoin')
       this.state.reJoin( client.sessionId )
     } catch (e) {
       let msg = this.state.leave( client.sessionId )
+      this.debuger.log(client.sessionId, 'leave')
       if( msg != null )this.broadcast( Brodcast.getLeaveMsg( msg ))
     }
   }

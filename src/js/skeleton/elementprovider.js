@@ -1,4 +1,7 @@
 import uuidv4 from 'uuid/v4';
+import { decoratorDynamicDom } from 'Skeleton/uielement';
+import Debugger from './log';
+
 
 export default class ElementProvider {
 	constructor(body,id="") {
@@ -15,14 +18,16 @@ export default class ElementProvider {
 
   writeHTML() { }
 
-  getElement(id)
-  {
+  getElement(id) {
     id = this.id+id;
-    return document.getElementById(id);
+    return decoratorDynamicDom( document.getElementById(id), id );
   }
 
-  getElementID(id)
-  {
+  createElement(dom) {
+    return decoratorDynamicDom( document.createElement(dom) );
+  }
+
+  getElementID(id) {
     return this.id+id;
   }
 }

@@ -1,7 +1,7 @@
 import SyncPropsComponent from 'Component/syncpropscomponent';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
-
+import { decoratorDynamicDom } from 'Skeleton/uielement';
 
 class GameViewerBody extends ElementProvider {
   writeHTML() {
@@ -57,16 +57,16 @@ export default class GameViewer extends SyncPropsComponent {
     this.roundPot = elementProvider.getElement('roundPot');
     this.gameBat = elementProvider.getElement('gameBat');
     this.cardArea = elementProvider.getElement('cardArea');
-    this.createCards();
+    this.createCards(elementProvider);
     this.onResize();
   }
 
-  createCards(){
+  createCards(elementProvider){
     for(var i=0; i<5; ++i) {
-      let card = document.createElement("div");
+      let card = elementProvider.createElement("div");
       card.classList.add("card");
-      card.style.width = Util.getStyleUnit( CARD_WIDTH );
-      card.style.height = Util.getStyleUnit( CARD_HEIGHT );
+      card.width = CARD_WIDTH;
+      card.height = CARD_HEIGHT;
       card.innerHTML = 'hidden';
       this.cardArea.appendChild( card );
       this.cards.push( card );
@@ -123,15 +123,15 @@ export default class GameViewer extends SyncPropsComponent {
     var rotate = -90;
     var sumRotate = 360 / len;
     this.cards.forEach( (card, idx) => {
-      card.style.left = Util.getStyleUnit( posX );
+      card.x = posX;
       posX += ( width + margin )
-      card.style.top = Util.getStyleUnit( posY );
+      card.y = posY;
     });
   }
 
   addSidePot( pot ){
-    if(pot == 0) this.sidePot.display = 'none';
-    else this.sidePot.display = 'block';
+    if(pot == 0) this.sidePot.visible = false;
+    else this.sidePot.visible = true;
     this.sidePot.innerHTML = 'sidePot : ' + pot;
   }
 
