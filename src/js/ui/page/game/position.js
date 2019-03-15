@@ -1,4 +1,4 @@
-import SyncPropsComponent from 'Component/syncpropscomponent';
+import { DomComponent } from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import ComponentEvent from 'Skeleton/event';
 
@@ -13,13 +13,14 @@ class PositionBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("position");
     cell.innerHTML = `
-      <button id='${this.id}btnJoin' class='btn-join'></button>
+			<div id='${this.id}title' class='title'>select</div>
+      <button id='${this.id}btnJoin' class='btn-join'>select</button>
     `;
     this.body.appendChild(cell);
   }
 }
 
-export default class Position extends SyncPropsComponent {
+export default class Position extends DomComponent {
   constructor() {
     super();
     this.debuger.tag = 'Position';
@@ -33,19 +34,14 @@ export default class Position extends SyncPropsComponent {
   remove() {
     super.remove();
     this.btnJoin = null;
-  }
-
-  setupSyncProps(){
-    this.syncProps = {
-    };
-    this.watchs = {
-    };
-    super.setupSyncProps();
+		this.title = null;
   }
 
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
+		this.title = elementProvider.getElement('title');
     this.btnJoin = elementProvider.getElement('btnJoin');
+		this.title.innerHTML = this.idx;
   }
 
   setupEvent() {

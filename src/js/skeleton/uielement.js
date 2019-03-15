@@ -14,7 +14,7 @@ export function decoratorDynamicDom(element, id) {
   overoadProperty(element, 'width', 'width', 'px');
   overoadProperty(element, 'height', 'height', 'px');
   function overoadProperty( ele, prop, attribute, unit = '' ){
-    if( element[ prop ] != undefined ) return //log( 'decoratorDynamicDom' , 'warn', prop , 'prop exist');
+    if( element[ prop ] != undefined ) return; //log( 'decoratorDynamicDom' , 'warn', prop , id + 'prop exist');
     Object.defineProperty(ele, prop, {
       get: function(){ return this['_' + prop] || 0; },
       set: function( value ){
@@ -25,7 +25,6 @@ export function decoratorDynamicDom(element, id) {
   }
   if( element.visible == undefined ) {
     let display = ( element.style.display == 'none' ) ? element.style.display : 'block';
-
     Object.defineProperty(element, 'visible', {
       get: function(){ return this._visible || true; },
       set: function(visible) {

@@ -63,6 +63,8 @@ export default class Stage extends Component {
 
   @nosync
   didBat:boolean = false
+	@nosync
+  blindCount:number = 2
   @nosync
   smallBlindBat:number
   @nosync
@@ -121,6 +123,7 @@ export default class Stage extends Component {
 		this.playerBats = ids.map( id => 0 )
     this.delegate = new Rx.Subject()
     this.status = Status.FreeFlop
+		this.blindCount = 2;
     return this.delegate
   }
 
@@ -160,15 +163,22 @@ export default class Stage extends Component {
 		this.debuger.log('onTurnComplete')
 		this.disposable[ SUBSCRIPTION.TURN ].unsubscribe()
 		this.count ++
-    let currentId = this.onTurnChange(this.turn + 1)
-		if( this.startPlayer == this.turn ) this.delegate.next( new Event( STAGE_EVENT.NEXT_ROUND, currentId))
-		else this.delegate.next( new Event( STAGE_EVENT.NEXT_TURN , currentId ) )
+    let nextTurn = (this.turn + 1) % this.ids.length
+		if( this.startPlayer == nextTurn ) {
+			this.debuger.log("nextround", 'onTurnComplete')
+			this.delegate.next( new Event( STAGE_EVENT.NEXT_ROUND))
+		}
+		else {
+			let currentId = this.onTurnChange(nextTurn)
+			this.debuger.log("nextturn", 'onTurnComplete')
+			this.delegate.next( new Event( STAGE_EVENT.NEXT_TURN , currentId ) )
+		}
   }
 
 	onTurnChange(turn:number):string {
-		this.debuger.log('onTurnChange')
     this.turn = turn % this.ids.length
 		let id =  this.ids[this.turn]
+		this.debuger.log(this.startPlayer, 'onTurnChange')
 		if( this.startPlayer != this.turn ) this.delegate.next( new Event( STAGE_EVENT.CURRENT_PLAYER_CHANGED , id) )
     return id
   }
@@ -188,20 +198,20 @@ export default class Stage extends Component {
 		var totalBat = this.playerBats[ this.turn ]
 		switch(command.t) {
       case Action.Bat: this.didBat = true
-			case Action.Raise:
-				this.startPlayer = this.turn
-				command.d = this.minBat * command.d
-			case Action.AllIn:
-				bat = command.d
+			case Action.Raise: command.d = this.minBat * command.d
+			case Action.AllIn: bat = command.d
 				break
-			case Action.SmallBlind:	bat = this.smallBlindBat;	break
-			case Action.BigBlind: bat = this.bigBlindBat;	break
+			case Action.SmallBlind:
+				bat = this.smallBlindBat
+				this.blindCount--
+				break
+			case Action.BigBlind:
+				this.blindCount--
+				bat = this.bigBlindBat
+				break
       case Action.Fold: bat = 0; break
 			default: bat = this.gameBat - totalBat; break
     }
-		this.debuger.log( this.ids[ this.turn ], 'action id')
-    this.debuger.log(totalBat, 'totalBat')
-		this.debuger.log(bat, 'bat')
 
 		totalBat = bat + totalBat
 		if( totalBat > this.gameBat ) {
@@ -215,6 +225,7 @@ export default class Stage extends Component {
 
   nextRound() {
     this.status ++
+		this.blindCount = 1
 		this.roundPot = 0
 		this.gameBat = 0
 		this.count = 0
@@ -270,12 +281,8 @@ export default class Stage extends Component {
   }
 
   getActions():Array{
-    if(this.status == Status.FreeFlop){
-      if( this.count == 1 ) return [ Action.SmallBlind ]
-      if( this.count == 2 ) return [ Action.BigBlind ]
-    } else {
-      if( this.count == 1 ) return [ Action.BigBlind ]
-    }
+		if( this.blindCount == 2 ) return [ Action.SmallBlind ]
+    if( this.blindCount == 1 ) return [ Action.BigBlind ]
     if( !this.didBat ) return [ Action.Bat, Action.Check, Action.Fold ]
     return [ Action.Raise, Action.Call, Action.Fold ]
   }

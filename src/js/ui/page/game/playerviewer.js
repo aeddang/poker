@@ -4,7 +4,6 @@ import * as Util from 'Skeleton/util';
 import Player from './player';
 import Position from './position';
 
-
 class PlayerViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
@@ -61,7 +60,6 @@ export default class PlayerViewer extends SyncPropsComponent {
       this.positions.push(position);
     }
     this.onResize();
-    this.debuger.log(playerNum , 'onCreatePositions');
   }
 
   onUiEvent(event) {
@@ -80,33 +78,36 @@ export default class PlayerViewer extends SyncPropsComponent {
     let posY = centerY - (height/2) + marginY;
     let radiusX = centerX - width - Math.abs(marginX);
     let radiusY = centerY - height - Math.abs(marginY);
-    let len = this.positions.length + 1;
-    var rotate = -90;
+    var posLen = this.positions.length;
+    var len = posLen  + 1 ;
+    var rotate = 90;
     var sumRotate = 360 / len;
-    rotate += (sumRotate * this.info.myPosition);
-    this.positions.forEach( p => {
+    let start = this.info.myPosition;
+    let end = len + start;
+    let dealler = Math.ceil( posLen / 2 ) + this.info.myPosition;
+    var pos = this.info.myPosition;
+    for(var i = start; i < end; ++ i){
+      if( i != dealler) {
+        let posIdx  = pos % posLen;
+        let position = this.positions[ posIdx ];
+        let r = rotate * Math.PI/180
+        position.x = posX + (Math.cos(r) *radiusX);
+        position.y = posY + (Math.sin(r) *radiusY);
+        pos++;
+      }
       rotate += sumRotate
-      let r = rotate * Math.PI/180
-      let x = posX + (Math.cos(r) *radiusX);
-      let y = posY + (Math.sin(r) *radiusY);
-      let pbd = p.getBody();
-      pbd.x = x;
-      pbd.y = y;
-    });
+    }
   }
 
   onJoin(id, syncProps, itsMe) {
-    this.debuger.log(syncProps , 'onJoin');
     this.onCreatePlayer( id, syncProps, itsMe );
   }
 
   onCreatePlayer( id, syncProps, itsMe ){
     let player = new Player();
-    this.debuger.log( player , 'onCreatePlayer');
     player.init( this.getBody(), itsMe ).subscribe ( this.onUiEvent.bind(this) );
     player.onUpdateSyncProps( syncProps );
     this.players[id] = player;
-    this.debuger.log(id , 'onCreatePlayer');
   }
 
   onLeave(id) {

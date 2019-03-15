@@ -17,6 +17,8 @@ export default class Player extends Component {
   status:Status = Status.Absence
   positionStatus:PositionStatus = PositionStatus.None
   gameBat:number = 0
+  checkBat:number = 0
+  minBat:number = 0
   mainPot:number = 0
   winPot:number = 0
   time:number = 0
@@ -134,6 +136,8 @@ export default class Player extends Component {
     this.time = 0
     this.mainPot = 0
     this.gameBat = 0
+    this.checkBat = 0
+    this.minBat = 0
     this.winPot = 0
     this.positionStatus = PositionStatus.None;
     this.currentBlindAction = -1
@@ -185,7 +189,6 @@ export default class Player extends Component {
     }
     this.finalAction = command.t
     this.time = 0
-    this.checkBat = 0
     this.resetAction()
     this.isActionComplete = true
   }
@@ -199,7 +202,6 @@ export default class Player extends Component {
 
   updatePot(){
     this.bankroll += this.winPot
-    this.debuger.log(this.gameBat,'gameBat ' + this.name)
     if( this.gameBat < this.winPot ){
       this.isWinner = true
       this.debuger.log(this.winPot,'win ' + this.name)
@@ -218,8 +220,16 @@ export default class Player extends Component {
   }
 
   setActivePlayer(action:Array,call:number, minBat:number){
+    this.isActive = true
+    this.debuger.log(this.isActive ,'isActive')
+    this.isActionComplete = false
+    this.debuger.log(this.isActionAble(),'CurrentPlayer ' + this.status)
+    if( !this.isActionAble() ) return;
     let bat = call + minBat
     let isBlindAc = false
+
+    this.checkBat = call;
+    this.minBat = minBat;
     let currentAction = action.map( ac => {
       switch(ac){
         case Action.Check:
@@ -249,12 +259,11 @@ export default class Player extends Component {
     })
 
     this.currentBlindAction = isBlindAc ? currentAction[0] : -1
-    this.isActive = true
-    this.debuger.log(this.isActive ,'isActive')
-    this.isActionComplete = false
   }
 
   setPassivePlayer(){
+    this.checkBat = 0
+    this.minBat = 0
     this.isActive = false
     this.debuger.log(this.isActive ,'isActive')
     this.time = 0

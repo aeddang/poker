@@ -2,6 +2,7 @@ import SyncPropsComponent from 'Component/syncpropscomponent';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import { decoratorDynamicDom } from 'Skeleton/uielement';
+import Card from './card'
 
 class GameViewerBody extends ElementProvider {
   writeHTML() {
@@ -24,8 +25,8 @@ class GameViewerBody extends ElementProvider {
   }
 }
 
-const CARD_WIDTH = 50;
-const CARD_HEIGHT = 80;
+const CARD_WIDTH = 80;
+const CARD_HEIGHT = 120;
 
 export default class GameViewer extends SyncPropsComponent {
   constructor() {
@@ -36,6 +37,7 @@ export default class GameViewer extends SyncPropsComponent {
 
   remove() {
     super.remove();
+    this.cards.forEach( c => c.remove() );
     this.cards = null;
     this.cardArea = null;
     this.ante = null;
@@ -63,12 +65,7 @@ export default class GameViewer extends SyncPropsComponent {
 
   createCards(elementProvider){
     for(var i=0; i<5; ++i) {
-      let card = elementProvider.createElement("div");
-      card.classList.add("card");
-      card.width = CARD_WIDTH;
-      card.height = CARD_HEIGHT;
-      card.innerHTML = 'hidden';
-      this.cardArea.appendChild( card );
+      let card = new Card().init( this.cardArea, CARD_WIDTH, CARD_HEIGHT);
       this.cards.push( card );
     }
   }
@@ -138,12 +135,13 @@ export default class GameViewer extends SyncPropsComponent {
   burnCard( id , cardData ){
     let idx = Number(id);
     let card = this.cards[ idx ];
-    card.innerHTML = cardData.suit + " : " + cardData.num;
+    this.debuger.log(cardData, 'burnCard');
+    card.burn( cardData );
 	}
   hideCard( id  ){
     let idx = Number(id);
     let card = this.cards[ idx ];
-    card.innerHTML = 'hidden';
+    card.hidden();
 	}
 }
 

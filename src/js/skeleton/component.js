@@ -1,10 +1,11 @@
 import { Subject, interval } from 'rxjs';
 import { take } from 'rxjs/operators';
 import Debugger from './log';
+import ElementProvider from './elementprovider';
 
 export default class Component {
   constructor(delegate = new Subject()) {
-    this.debuger = new Debugger(this);
+    this.debuger = new Debugger();
     this.delegate = delegate;
     this.body = null;
     this.cell = null;
@@ -129,11 +130,40 @@ export class AnimationComponent extends Component {
   }
 }
 
+export class DomBody extends ElementProvider {
+  constructor(body, className = "") {
+    super(body);
+    this.className = className;
+  }
+  writeHTML() {
+    var cell = document.createElement("div");
+    cell.id = this.id+'cell';
+    cell.classList.add(this.className);
+    this.body.appendChild(cell);
+  }
+}
 
-class AttachEvent
-{
-  constructor(element,event,handler)
-  {
+export class DomComponent extends Component {
+  getClassName() { return '' }
+  getElementProvider() { return new DomBody(this.body, this.getClassName()); }
+
+  set x( v ){ this.cell.x = v; }
+  get x(){ return this.cell.x }
+  set y( v ){ this.cell.y = v; }
+  get y(){ return this.cell.y }
+
+  set width( v ){ this.cell.width = v; }
+  get width(){ return this.cell.width }
+
+  set height( v ){ this.cell.height = v; }
+  get height(){ return this.cell.height }
+
+  set visible( v ){ this.cell.visible = v; }
+  get visible(){ return this.cell.visible }
+}
+
+class AttachEvent {
+  constructor(element,event,handler) {
     this.element = element;
     this.event = event;
     this.handler = handler;

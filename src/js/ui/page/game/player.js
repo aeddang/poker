@@ -2,7 +2,8 @@ import SyncPropsComponent from 'Component/syncpropscomponent';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import { Action } from  "Util/command";
-
+import { Status, PositionStatus, NetworkStatus } from  "./playerstatus";
+import Card from './card'
 
 class PlayerBody extends ElementProvider {
   writeHTML() {
@@ -28,12 +29,7 @@ class PlayerBody extends ElementProvider {
         <p id='${this.id}blind' class='blind'></p>
         <div id='${this.id}timeBar' class='time-bar'></div>
       </div>
-      <div class='show-down'>
-        <div id='${this.id}card0' class='card'></div>
-        <div id='${this.id}card1' class='card'></div>
-        <div id='${this.id}card2' class='card'></div>
-        <div id='${this.id}card3' class='card'></div>
-        <div id='${this.id}card4' class='card'></div>
+      <div id='${this.id}showDown' class='show-down'>
       </div>
     `;
     this.body.appendChild(cell);
@@ -60,6 +56,8 @@ export default class Player extends SyncPropsComponent {
   }
   remove() {
     super.remove();
+    this.cards.forEach( c => c.remove() );
+    this.showDown = null;
     this.profileImg = null;
     this.name = null;
     this.bankroll = null;
@@ -71,6 +69,27 @@ export default class Player extends SyncPropsComponent {
     this.timeBar = null;
     this.cards = null;
     this.networkStatus = null;
+  }
+
+  getElementProvider() { return new PlayerBody(this.body); }
+  onCreate(elementProvider) {
+    this.profileImg = elementProvider.getElement('profileImg');
+    this.name = elementProvider.getElement('name');
+    this.bankroll = elementProvider.getElement('bankroll');
+    this.networkStatus = elementProvider.getElement('networkStatus');
+    this.action = elementProvider.getElement('action');
+    this.status = elementProvider.getElement('status');
+    this.bat = elementProvider.getElement('bat');
+    this.positionStatus = elementProvider.getElement('positionStatus');
+    this.blind = elementProvider.getElement('blind');
+    this.timeBar = elementProvider.getElement('timeBar');
+    this.showDown = elementProvider.getElement('showDown');
+    if ( this.me ) this.getBody().classList.add("player-me");
+    for(var i=0; i<5; ++i) {
+      let card = new Card().init( this.showDown, CARD_WIDTH, CARD_HEIGHT, i * (CARD_WIDTH + 5));
+      this.cards.push( card );
+      card.visible = false;
+    }
   }
 
   setupWatchs(){
@@ -193,28 +212,6 @@ export default class Player extends SyncPropsComponent {
     };
   }
 
-  getElementProvider() { return new PlayerBody(this.body); }
-  onCreate(elementProvider) {
-    this.profileImg = elementProvider.getElement('profileImg');
-    this.name = elementProvider.getElement('name');
-    this.bankroll = elementProvider.getElement('bankroll');
-    this.networkStatus = elementProvider.getElement('networkStatus');
-    this.action = elementProvider.getElement('action');
-    this.status = elementProvider.getElement('status');
-    this.bat = elementProvider.getElement('bat');
-    this.positionStatus = elementProvider.getElement('positionStatus');
-    this.blind = elementProvider.getElement('blind');
-    this.timeBar = elementProvider.getElement('timeBar');
-
-    if ( this.me ) this.getBody().classList.add("player-me");
-    for(var i=0; i<5; ++i) {
-      let card = elementProvider.getElement('card'+i);
-      card.width = CARD_WIDTH;
-      card.height = CARD_HEIGHT;
-      this.cards.push(card);
-    }
-  }
-
   onGameJoin( ) {
     this.getBody().classList.remove("player-position-wait");
     this.getBody().classList.add("player-position-join");
@@ -223,41 +220,14 @@ export default class Player extends SyncPropsComponent {
   showCard( id, cardData ) {
     let idx = Number(id);
     let card = this.cards[ idx ];
-    card.innerHTML = cardData.suit + " : " + cardData.num;
-    card.x = idx * CARD_WIDTH;
+    card.burn( cardData );
     card.visible = true;
   }
 
   hideCard( id ) {
     let idx = Number(id);
     let card = this.cards[ idx ];
-    card.innerHTML = 'hidden';
-    card.x = 0;
+    card.hidden();
     card.visible = false;
   }
 }
-
-
-export const Status = Object.freeze ({
-  Wait: 1,
-  Impossible: 2,
-  Fold: 3,
-	Play: 4,
-  AllIn: 5,
-  ShowDown: 6,
-  Absence: 7,
-  WaitBigBlind: 8
-});
-
-const PositionStatus= Object.freeze ({
-  None: 1,
-  DeallerButton: 2,
-  SmallBlind: 3,
-  BigBlind: 4
-});
-
-export const NetworkStatus = Object.freeze ({
-  Connected: 1,
-  DisConnected: 2,
-  Wait: 3
-});

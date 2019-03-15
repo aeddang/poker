@@ -12,10 +12,10 @@ export class Card {
 }
 
 enum Suit{
-  Spade = 0,
+  Diamond = 0,
+  Club,
   Heart,
-  Diamond,
-  Club
+  Spade
 }
 
 interface HandValue {
@@ -75,7 +75,7 @@ export default class Dealler extends Component {
     this.cards.sort(() => Math.random() - 0.5)
   }
   createCards(suit:Suit){
-    for(var i=1; i<=13; ++i) this.cards.push(new Card(suit, i))
+    for(var i=0; i<13; ++i) this.cards.push(new Card(suit, i))
   }
   getPopCards(len:number):Array<Card> {
     let popIdx = this.cards.length - len

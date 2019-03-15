@@ -15,6 +15,7 @@ import Dealler from  "./dealler"
 const WAIT_TIME:number = 5000
 const NEXT_ROUND_TIME:number = 3000
 const SHOW_TIME:number = 2000
+const REJOIN_PUSH_TIME:number = 200
 const MIN_GAME_PLAYER:number = 2
 
 
@@ -23,7 +24,8 @@ const SUBSCRIPTION = Object.freeze ({
 	STAGE: "stage",
 	NEXT: "next",
 	SHOW_DOWN: "showDown",
-	COMPLETE: "complete"
+	COMPLETE: "complete",
+	REJOIN_PUSH: "rejoinPush"
 })
 
 export const GAME_EVENT = Object.freeze ({
@@ -165,8 +167,7 @@ export default class Game extends Component {
       let hand = this.dealler.getHand()
       player.start( hand )
 			this.onBatting(id, this.stage.ante)
-      if( player.isBlind ) return
-      this.delegate.next( new Event( GAME_EVENT.PUSH, {id:id, value:hand}) )
+    	this.onPushHand( id )
     })
     this.debuger.log('onGameStart')
   }
@@ -185,26 +186,33 @@ export default class Game extends Component {
   }
 	onTime(t:number){
 		this.currentPlayer.time = t
-		if( t == 1 && this.currentPlayer.currentBlindAction != -1 ) {
-			let command = {
-	      c: Cmd.CommandType.Action,
-	      t: this.currentPlayer.currentBlindAction
-	    }
-			this.debuger.log('force action')
-			this.action ( this.currentPlayer.id, command )
+		if( t == 0 ) {
+			if( this.currentPlayer.currentBlindAction != -1 ){
+				let command = {
+		      c: Cmd.CommandType.Action,
+		      t: this.currentPlayer.currentBlindAction
+		    }
+				this.debuger.log('force action')
+				this.action ( this.currentPlayer.id, command )
+			}else{
+				this.removeCurrentPlayer();
+			}
+
 		}
 	}
 
 	removeCurrentPlayer(){
 		if(this.currentPlayer == null) return
+		this.debuger.log(this.currentPlayer.name,'removeCurrentPlayer')
 		this.currentPlayer.setPassivePlayer()
 		this.currentPlayer = null
 	}
 
 	onCurrentPlayerChanged( id:string ) {
-		this.removeCurrentPlayer();
+		//this.removeCurrentPlayer();
 		this.currentPlayer = this.players[ id ]
 		let actions = this.stage.getActions()
+		this.debuger.log(actions,'CurrentPlayer actions')
 		let call = this.stage.getCallBat()
     this.currentPlayer.setActivePlayer(actions, call, this.stage.minBat)
 		this.debuger.log(this.currentPlayer.name,'onCurrentPlayerChanged')
@@ -241,6 +249,17 @@ export default class Game extends Component {
       this.stage.onTurnComplete()
       return
     }
+		var playPlayer = 0
+		this.stage.ids.forEach( id => {
+			let player = this.players[id]
+			if( player.isActionAble() ) playPlayer++
+		})
+		if( playPlayer < 2 ) {
+      this.debuger.log('all player pass')
+      this.stage.onTurnComplete()
+      return
+    }
+
     this.debuger.log('turn next')
 		this.stage.turnNext()
   }
@@ -250,12 +269,12 @@ export default class Game extends Component {
 		this.stage.nextRound()
 		var nextPlayer = 0
 		var playPlayer = 0
-		for (let id in this.players){
+		this.stage.ids.forEach( id => {
 			let player = this.players[id]
 			player.nextRound()
 			if( player.isActionAble() ) playPlayer++
 			if( player.isNextAble() ) nextPlayer++
-		}
+		})
 		if( playPlayer > 1){
 			this.disposable[ SUBSCRIPTION.NEXT ] = Rx.interval(NEXT_ROUND_TIME).pipe(take(1)).subscribe(e => {
 				this.debuger.log('onNextCheck')
@@ -271,7 +290,6 @@ export default class Game extends Component {
 
 	onShowDown( isOpen:boolean = true ) {
 		this.debuger.log('onShowDown')
-		this.currentPlayer = null;
 		if( isOpen ) {
 			this.dealler.showDown()
 			this.stage.showDown()
@@ -301,12 +319,16 @@ export default class Game extends Component {
   }
 
 	onShowDownComplete( handsValues ) {
-    for (let id in this.players) if( !this.players[id].isConnected() ) this.leaveCompleted(id)
+		this.debuger.log('onShowDownComplete')
 		this.onDivisionPots( handsValues )
+    for (let id in this.players) {
+			if( !this.players[id].isConnected() ) this.leaveCompleted(id)
+		}
 		this.disposable[ SUBSCRIPTION.COMPLETE ] = Rx.interval(WAIT_TIME).pipe(take(1)).subscribe( this.onComplete.bind(this) )
 	}
 
 	onDivisionPots( handsValues ){
+		if( handsValues.length == 0 ) return;
 		let results = this.dealler.sortHandValues( handsValues )
 		let totalPot = this.stage.getSidePot()
 		let len = results.length
@@ -353,6 +375,7 @@ export default class Game extends Component {
 
 	onComplete() {
 		this.debuger.log('onGameComplete')
+		this.currentPlayer = null
 		this.stage.complete()
 		this.start()
 	}
@@ -370,6 +393,19 @@ export default class Game extends Component {
 		}
     return true
   }
+
+	lazyPushHand( id ){
+		this.disposable[ SUBSCRIPTION.REJOIN_PUSH ] = Rx.interval( REJOIN_PUSH_TIME ).pipe(take(1)).subscribe(e => {
+			this.onPushHand( id )
+		})
+	}
+
+	onPushHand( id ){
+		let player = this.players[id]
+		if( player.isBlind ) return
+		if( player.hand == null ) return
+		this.delegate.next( new Event( GAME_EVENT.PUSH, {id:id, value:player.hand}) )
+	}
 
   join(id:string, options:JoinOption) {
 		if(this.players[ id ] == undefined) {
@@ -405,11 +441,13 @@ export default class Game extends Component {
 		if ( prevPlayer.position == -1 ) return
 		this.positions[ prevPlayer.position ] = id
 		this.stage.syncJoin(id, prevId)
-		if(this.currentPlayer != null && this.currentPlayer.id == prevId ) this.currentPlayer.id = id
+		if(this.currentPlayer != null && this.currentPlayer.id == prevId ) this.currentPlayer.id = id;
+		this.lazyPushHand(id);
 	}
 
   reJoin(id:string){
     this.players[ id ].reJoin()
+		this.lazyPushHand(id);
   }
 
   leave(id:string): string {
@@ -426,13 +464,13 @@ export default class Game extends Component {
 			this.debuger.log(player.name, 'leave')
 			if( player.isFoldenAble() ) this.stage.onTurnComplete()
     } else {
-			this.debuger.log(player.name, 'leaveComplete')
       this.leaveCompleted(id)
     }
     return nick
   }
 
   leaveCompleted(id:string) {
+		this.debuger.log( this.players[ id ].name, 'leaveComplete' )
 		this.positions[ this.players[ id ].position ] = null
     delete this.players[ id ]
   }

@@ -1,5 +1,10 @@
 import { Subject} from 'rxjs';
 import { convertRectFromDimension } from './util';
+import { AnimateEvent, ANIMATE_EVENT } from './event';
+import Debugger from './log';
+const debuger = new Debugger(this);
+debuger.tag = 'Paint'
+
 export default class Paint {
   constructor(delegate = new Subject()) {
     this.delegate = delegate;
@@ -9,6 +14,7 @@ export default class Paint {
     this.canvas = null;
     this.context = null;
     this.frm = 0;
+    this.totalFrame = -1;
     this.isAutoView = false;
     this.isDrawing = false;
     this.dpr = 1;
@@ -38,6 +44,12 @@ export default class Paint {
     this.context = null;
   }
 
+  rePlay() {
+    this.stop();
+    this.frm = 0;
+    this.play();
+  }
+
   play() {
     if(this.isAutoView) this.body.style.display = 'block';
     if(this.stream != null) window.cancelAnimationFrame(this.stream);
@@ -52,15 +64,26 @@ export default class Paint {
     this.stream = null;
   }
 
+  clear(){
+    if(this.context == null) return;
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
   onDraw() {
     if(this.context == null) {
       this.context = this.canvas.getContext('2d');
       this.context.scale(this.dpr, this.dpr);
       this.doInitDraw();
     }
+    if(this.frm == 1 ) this.delegate.next(new AnimateEvent(ANIMATE_EVENT.START));
     this.doDraw();
     this.frm ++;
-    this.context.restore();
+    if(this.frm == 1 ) this.delegate.next(new AnimateEvent(ANIMATE_EVENT.PROGRESS, this.frm));
+    if((this.totalFrame != -1) && ( this.frm >= this.totalFrame)){
+      this.frm = 0;
+      this.stop();
+      if(this.frm == 1 ) this.delegate.next(new AnimateEvent(ANIMATE_EVENT.COMPLETE));
+    }
     if(this.isDrawing == true) this.stream = window.requestAnimationFrame(this.onDraw.bind(this));
   }
 
@@ -68,6 +91,74 @@ export default class Paint {
   doDraw(){}
 }
 
+export class TextureFactory {
+  constructor() {
+    this.textures = {};
+  }
+  remove() {
+    for (let id in this.textures) this.textures[id].src = '';
+    this.textures = null;
+  }
+
+  getTexture( id ) {
+    var texture = this.textures[ id ];
+    if( texture == null ) {
+      texture = new Image();
+      this.textures[ id ] = texture;
+    }
+    return texture;
+  }
+}
+const ShareTextureFactory = new TextureFactory();
+
+
+export class FrameAnimation extends Paint {
+  init(body, path, low, column, totalFrame = -1, isAutoView = false) {
+    super.init(body, isAutoView);
+    this.totalFrame = (totalFrame == -1) ? low * column : totalFrame;
+    this.low = low;
+    this.column = column;
+    this.width = 0;
+    this.height = 0;
+    this.img = ShareTextureFactory.getTexture( path );
+    this.handler = e => { this.initSet(); }
+    this.img.addEventListener('load', this.handler);
+    if( this.img.src == '' ) this.img.src = path;
+    else this.initSet();
+  }
+
+  initSet(){
+    if( this.img.width == 0 ) return;
+    this.width = this.img.width / this.column;
+    this.height = this.img.height / this.low;
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+    this.img.removeEventListener('load', this.handler);
+  }
+
+  remove() {
+    this.img = null;
+    super.remove();
+  }
+
+  set frame( f ){
+    this.frm = f;
+    this.onDraw();
+  }
+
+  get frame(){
+    return this.frm;
+  }
+
+  doDraw() {
+    let idxX = this.frm % this.column;
+    let idxY = Math.floor( this.frm / this.column );
+    let tx = idxX*this.width;
+    let ty = idxY*this.height;
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.drawImage( this.img, -tx , -ty ,this.img.width, this.img.height);
+  }
+}
 
 export class LoadingSpiner extends Paint {
   init(body, width = 80, height = 80, depth = 6, isAutoView = true) {

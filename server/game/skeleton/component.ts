@@ -16,9 +16,10 @@ export default class Component {
   }
 
   remove () {
-    this.debuger.log("remove", '', 1)
-    this.debuger = null
     for (let id in this.disposable) this.disposable[id].unsubscribe()
     this.disposable = null
+    this.debuger.log("remove", '', 1)
+    this.debuger = null
+
   }
 }

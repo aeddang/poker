@@ -17,3 +17,10 @@ export const MOVE_EVENT = Object.freeze ({
 	MOVE: "move",
   END:"end"
 });
+
+export class AnimateEvent extends ComponentEvent {}
+export const ANIMATE_EVENT = Object.freeze ({
+	COMPLETE: "complete",
+	START: "start",
+  PROGRESS:"progress"
+});

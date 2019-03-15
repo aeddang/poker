@@ -123,7 +123,7 @@ export default class Play extends Room {
   }
 
   onPush(data) {
-    this.debuger.log(data, 'onPush', '', 0);
+    this.uiBox.pushHand(data);
   }
 
   onResize() {

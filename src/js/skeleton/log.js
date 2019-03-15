@@ -2,7 +2,7 @@ var colors = require('colors');
 
 const IS_DEBUG = true;
 const IS_WARNNING = true;
-const DEBUG_LEVEL = 0;
+const DEBUG_LEVEL = 1;
 const DEBUG_TAG = '';
 
 colors.setTheme({

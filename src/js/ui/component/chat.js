@@ -92,7 +92,7 @@ export default class Chat extends Component  {
     let bounceBox = Util.convertRectFromDimension(this.inputForm);
     this.viewer.height = bounce.height - bounceBox.height;
 		let bounceBtn = Util.convertRectFromDimension(this.inputBtn);
-		this.inputText.width = bounce.width - bounceBtn.width;
+		this.inputText.style.width = Util.getStyleUnit( bounce.width - bounceBtn.width );
   }
 
   onSendMessage(e) {
