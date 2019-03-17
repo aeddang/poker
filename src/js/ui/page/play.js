@@ -96,7 +96,7 @@ export default class Play extends Room {
     });
 
     this.room.listen("players/:id", e => {
-      this.debuger.log(e , 'players');
+      //this.debuger.log(e , 'players');
       if (e.operation === "add") {
         let itsMe = this.userInfo.id == e.value.userId;
         if( itsMe ) {

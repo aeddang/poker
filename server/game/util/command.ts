@@ -17,7 +17,7 @@ export enum Action{
 	BigBlind,
   Check,
 	Call,
-  Bat,
+  Bet,
   Raise,
   AllIn,
   Blind,

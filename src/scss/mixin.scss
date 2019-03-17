@@ -24,7 +24,7 @@ position
   left: 50%; top: 50%; @include position-center-alignment($width, $height, $marginX, $marginY)
 }
 @mixin position-absolute($width, $height, $top:0, $left:0){
-  top:$top; left:$left; @include position-center-alignment($width, $height)
+  top:$top; left:$left; position:absolute; width:$width; height:$height;
 }
 
 /*
@@ -51,4 +51,7 @@ ui
 @mixin btn-icon-size { width:$default-icon-width; height: $default-icon-height; @include bg-radius($default-btn-radius) }
 @mixin btn-default-size { width:$default-btn-width; height: $default-btn-height }
 @mixin btn-text { @include font-default($default-btn-font-color); @include btn-default($default-btn-bg-color);}
+@mixin btn-text-strong { @include font-default($default-btn-font-color); @include btn-default($color-red);}
+@mixin btn-text-weak { @include font-default($default-btn-font-color); @include btn-default($color-grey);}
+
 @mixin btn-image ($image){ @include btn-default(url($image) no-repeat); background-size:100% 100%;}

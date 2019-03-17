@@ -156,7 +156,7 @@ export class FrameAnimation extends Paint {
     let tx = idxX*this.width;
     let ty = idxY*this.height;
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.context.drawImage( this.img, -tx , -ty ,this.img.width, this.img.height);
+    this.context.drawImage( this.img, tx , ty , this.width*this.dpr, this.height*this.dpr, 0, 0, this.width , this.height);
   }
 }
 

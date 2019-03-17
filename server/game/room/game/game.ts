@@ -132,10 +132,11 @@ export default class Game extends Component {
 			let id = this.positions[ idx ]
 			if( id != null ){
 				let player = this.players[id]
+				this.debuger.log(player.status, 'posIdx : ' + posIdx)
 				let able = player.isPlayAble(this.stage.minBankroll, posIdx)
 				if( able ){
 					if(posIdx == 0){
-						this.deallerButton = idx
+						this.deallerButton = idx + 1
 						player.isDealler = true
 					}
 					player.setPosition( posIdx )
@@ -144,6 +145,7 @@ export default class Game extends Component {
 				}
 			}
 		}
+		this.debuger.log(this.deallerButton, 'deallerButton')
 		this.debuger.log(ids, 'getGameStartAblePlayers')
     return ids
   }
@@ -166,7 +168,7 @@ export default class Game extends Component {
 			let player = this.players[id]
       let hand = this.dealler.getHand()
       player.start( hand )
-			this.onBatting(id, this.stage.ante)
+			this.onBetting(id, this.stage.ante)
     	this.onPushHand( id )
     })
     this.debuger.log('onGameStart')
@@ -213,8 +215,8 @@ export default class Game extends Component {
 		this.currentPlayer = this.players[ id ]
 		let actions = this.stage.getActions()
 		this.debuger.log(actions,'CurrentPlayer actions')
-		let call = this.stage.getCallBat()
-    this.currentPlayer.setActivePlayer(actions, call, this.stage.minBat)
+		let call = this.stage.getCallBet()
+    this.currentPlayer.setActivePlayer(actions, call, this.stage.minBet)
 		this.debuger.log(this.currentPlayer.name,'onCurrentPlayerChanged')
   }
 
@@ -230,15 +232,15 @@ export default class Game extends Component {
 			this.debuger.log(player.bankroll, 'allin')
 		}
 		player.action(command)
-		this.onBatting( id, this.stage.action(command) )
+		this.onBetting( id, this.stage.action(command) )
 		if( command.t == Action.AllIn ) player.mainPot = this.stage.getMainPot(id)
 		this.removeCurrentPlayer();
 		this.stage.onTurnComplete()
 
   }
-	onBatting(id:String, amount:number){
-		this.players[ id ].batting(amount)
-		this.stage.batting(id, amount)
+	onBetting(id:String, amount:number){
+		this.players[ id ].betting(amount)
+		this.stage.betting(id, amount)
 	}
 
   onTurnNext( id:string ){
@@ -311,7 +313,7 @@ export default class Game extends Component {
 		let len = handsValues.length
 		this.disposable[ SUBSCRIPTION.SHOW_DOWN ] = Rx.interval(SHOW_TIME).pipe(take(len)).subscribe( {
       next :(t) => {
-				this.players[ handsValues[ t ].id ].showDown(  handsValues[ t ].cards )
+				this.players[ handsValues[ t ].id ].showDown(  handsValues[ t ] )
 			},
       complete :() => { this.onShowDownComplete( handsValues ) }
     })

@@ -16,9 +16,9 @@ export default class Player extends Component {
   isWinner:boolean = false
   status:Status = Status.Absence
   positionStatus:PositionStatus = PositionStatus.None
-  gameBat:number = 0
-  checkBat:number = 0
-  minBat:number = 0
+  gameBet:number = 0
+  checkBet:number = 0
+  minBet:number = 0
   mainPot:number = 0
   winPot:number = 0
   time:number = 0
@@ -26,6 +26,8 @@ export default class Player extends Component {
   finalAction:number = -1;
   isActive:boolean = false
   openHand:EntityMap<Any> = {}
+  resultValue = -1;
+  resultLevel = -1;
 
   actionBlind:boolean = false
   actionFold:boolean = false
@@ -33,7 +35,7 @@ export default class Player extends Component {
   actionBigBlind:boolean = false
   actionCheck:boolean = false
   actionCall:boolean = false
-  actionBat:boolean = false
+  actionBet:boolean = false
   actionRaise:boolean = false
   actionAllIn:boolean = false
 
@@ -135,10 +137,12 @@ export default class Player extends Component {
     this.isWinner = false
     this.time = 0
     this.mainPot = 0
-    this.gameBat = 0
-    this.checkBat = 0
-    this.minBat = 0
+    this.gameBet = 0
+    this.checkBet = 0
+    this.minBet = 0
     this.winPot = 0
+    this.resultValue = -1
+    this.resultLevel = -1
     this.positionStatus = PositionStatus.None;
     this.currentBlindAction = -1
     this.finalAction = -1;
@@ -153,7 +157,7 @@ export default class Player extends Component {
     this.actionBigBlind = false
     this.actionCheck = false
     this.actionCall = false
-    this.actionBat = false
+    this.actionBet = false
     this.actionRaise = false
     this.actionAllIn = false
   }
@@ -168,8 +172,8 @@ export default class Player extends Component {
     this.resetAction()
   }
 
-  batting(amount:number):boolean{
-    this.gameBat += amount
+  betting(amount:number):boolean{
+    this.gameBet += amount
     this.bankroll -= amount
     return true
   }
@@ -180,7 +184,7 @@ export default class Player extends Component {
       case Action.Raise: this.status = Status.Play; break
       case Action.Check: this.status = Status.Play; break
       case Action.Call: this.status = Status.Play; break
-      case Action.Bat: this.status = Status.Play; break
+      case Action.Bet: this.status = Status.Play; break
       case Action.AllIn: this.status = Status.AllIn; break
       case Action.SmallBlind:
       case Action.BigBlind:
@@ -193,19 +197,21 @@ export default class Player extends Component {
     this.isActionComplete = true
   }
 
-  showDown( cards:Array ){
+  showDown( handsValue ){
     if(this.status == Status.Impossible || this.status == Status.Wait) return
     this.resetAction()
+    this.resultValue = handsValue.value
+    this.resultLevel = handsValue.level
     this.status = Status.ShowDown
-    cards.forEach( (c, idx) => this.openHand[ idx ] = c )
+    handsValue.cards.forEach( (c, idx) => this.openHand[ idx ] = c )
   }
 
   updatePot(){
     this.bankroll += this.winPot
-    if( this.gameBat < this.winPot ){
+    if( this.gameBet < this.winPot ){
       this.isWinner = true
       this.debuger.log(this.winPot,'win ' + this.name)
-    } else if(this.gameBat > this.winPot) this.debuger.log(this.winPot,'lose ' + this.name)
+    } else if(this.gameBet > this.winPot) this.debuger.log(this.winPot,'lose ' + this.name)
     else this.debuger.log(this.winPot,'draw ' + this.name)
     this.winPot = 0
   }
@@ -219,17 +225,17 @@ export default class Player extends Component {
     }
   }
 
-  setActivePlayer(action:Array,call:number, minBat:number){
+  setActivePlayer(action:Array,call:number, minBet:number){
     this.isActive = true
     this.debuger.log(this.isActive ,'isActive')
     this.isActionComplete = false
     this.debuger.log(this.isActionAble(),'CurrentPlayer ' + this.status)
     if( !this.isActionAble() ) return;
-    let bat = call + minBat
+    let bet = call + minBet
     let isBlindAc = false
 
-    this.checkBat = call;
-    this.minBat = minBat;
+    this.checkBet = call;
+    this.minBet = minBet;
     let currentAction = action.map( ac => {
       switch(ac){
         case Action.Check:
@@ -238,9 +244,9 @@ export default class Player extends Component {
           break
         case Action.SmallBlind:
         case Action.BigBlind: isBlindAc = true
-        case Action.Bat:
+        case Action.Bet:
         case Action.Raise:
-          if( bat > this.bankroll) return Action.AllIn
+          if( bet > this.bankroll) return Action.AllIn
           break
       }
       return ac
@@ -252,7 +258,7 @@ export default class Player extends Component {
         case Action.BigBlind: this.actionBigBlind = true; break
         case Action.Check: this.actionCheck = true; break
         case Action.Call: this.actionCall = true; break
-        case Action.Bat: this.actionBat = true; break
+        case Action.Bet: this.actionBet = true; break
         case Action.Raise: this.actionRaise = true; break
         case Action.AllIn: this.actionAllIn = true; break
       }
@@ -262,8 +268,8 @@ export default class Player extends Component {
   }
 
   setPassivePlayer(){
-    this.checkBat = 0
-    this.minBat = 0
+    this.checkBet = 0
+    this.minBet = 0
     this.isActive = false
     this.debuger.log(this.isActive ,'isActive')
     this.time = 0

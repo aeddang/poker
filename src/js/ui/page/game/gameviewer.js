@@ -9,8 +9,8 @@ class GameViewerBody extends ElementProvider {
   this.body.innerHTML = `
     <div class='info'>
       <div id='${this.id}ante' class='ante'></div>
-      <div id='${this.id}minBat' class='min-bat'></div>
-      <div id='${this.id}gameBat' class='game-bat'></div>
+      <div id='${this.id}minBet' class='min-bet'></div>
+      <div id='${this.id}gameBet' class='game-bet'></div>
 
     </div>
     <div class='pot'>
@@ -43,10 +43,10 @@ export default class GameViewer extends SyncPropsComponent {
     this.ante = null;
     this.mainPot = null;
     this.sidePot = null;
-    this.minBat = null;
+    this.minBet = null;
     this.round = null;
     this.roundPot = null;
-    this.gameBat = null;
+    this.gameBet = null;
   }
 
   getElementProvider() { return new GameViewerBody(this.body); }
@@ -54,10 +54,10 @@ export default class GameViewer extends SyncPropsComponent {
     this.ante = elementProvider.getElement('ante');
     this.mainPot = elementProvider.getElement('mainPot');
     this.sidePot = elementProvider.getElement('sidePot');
-    this.minBat = elementProvider.getElement('minBat');
+    this.minBet = elementProvider.getElement('minBet');
     this.round = elementProvider.getElement('round');
     this.roundPot = elementProvider.getElement('roundPot');
-    this.gameBat = elementProvider.getElement('gameBat');
+    this.gameBet = elementProvider.getElement('gameBet');
     this.cardArea = elementProvider.getElement('cardArea');
     this.createCards(elementProvider);
     this.onResize();
@@ -78,14 +78,14 @@ export default class GameViewer extends SyncPropsComponent {
       gamePot: value =>{
         this.mainPot.innerHTML = 'MainPot: ' + value;
       },
-      minBat: value =>{
-        this.minBat.innerHTML = 'Bat : ' + value;
+      minBet: value =>{
+        this.minBet.innerHTML = 'Bet : ' + value;
       },
       roundPot: value =>{
         this.roundPot.innerHTML = 'RoundPot : ' + value;
       },
-      gameBat: value =>{
-        this.gameBat.innerHTML = 'GameBat : ' + value;
+      gameBet: value =>{
+        this.gameBet.innerHTML = 'GameBet : ' + value;
       },
       status: value =>{
         switch ( value ) {

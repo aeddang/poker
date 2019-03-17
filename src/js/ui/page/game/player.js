@@ -18,19 +18,19 @@ class PlayerBody extends ElementProvider {
         <div class='info'>
           <p id='${this.id}name' class='name'></p>
           <p id='${this.id}bankroll' class='bankroll'></p>
-          <p id='${this.id}networkStatus' class='networkStatus'></p>
+          <p id='${this.id}networkStatus' class='network-status'></p>
         </div>
       </div>
       <div class='play-data'>
         <p id='${this.id}action' class='action'></p>
         <p id='${this.id}status' class='status'></p>
-        <p id='${this.id}bat' class='bat'></p>
+        <p id='${this.id}bet' class='bet'></p>
         <p id='${this.id}positionStatus' class='position-status'></p>
         <p id='${this.id}blind' class='blind'></p>
         <div id='${this.id}timeBar' class='time-bar'></div>
       </div>
-      <div id='${this.id}showDown' class='show-down'>
-      </div>
+      <div id='${this.id}showDown' class='show-down'></div>
+      <div id='${this.id}resultValue' class='result-value'>
     `;
     this.body.appendChild(cell);
   }
@@ -63,11 +63,12 @@ export default class Player extends SyncPropsComponent {
     this.bankroll = null;
     this.action = null;
     this.status = null;
-    this.bat = null;
+    this.bet = null;
     this.positionStatus = null;
     this.blind = null;
     this.timeBar = null;
     this.cards = null;
+    this.resultValue = null;
     this.networkStatus = null;
   }
 
@@ -79,11 +80,12 @@ export default class Player extends SyncPropsComponent {
     this.networkStatus = elementProvider.getElement('networkStatus');
     this.action = elementProvider.getElement('action');
     this.status = elementProvider.getElement('status');
-    this.bat = elementProvider.getElement('bat');
+    this.bet = elementProvider.getElement('bet');
     this.positionStatus = elementProvider.getElement('positionStatus');
     this.blind = elementProvider.getElement('blind');
     this.timeBar = elementProvider.getElement('timeBar');
     this.showDown = elementProvider.getElement('showDown');
+    this.resultValue = elementProvider.getElement('resultValue');
     if ( this.me ) this.getBody().classList.add("player-me");
     for(var i=0; i<5; ++i) {
       let card = new Card().init( this.showDown, CARD_WIDTH, CARD_HEIGHT, i * (CARD_WIDTH + 5));
@@ -131,8 +133,8 @@ export default class Player extends SyncPropsComponent {
             break;
         }
       },
-      gameBat: value =>{
-        this.bat.innerHTML = 'GameBat -> ' + value;
+      gameBet: value =>{
+        this.bet.innerHTML = 'GameBet -> ' + value;
       },
       time: value =>{
         this.time = value;
@@ -151,6 +153,44 @@ export default class Player extends SyncPropsComponent {
       isActive: value =>{
         value ? this.getBody().classList.add("player-active") : this.getBody().classList.remove("player-active")
       },
+      resultValue: value =>{
+        switch ( value ) {
+          case Values.Highcard:
+            this.resultValue.innerHTML = 'Highcard'
+            break;
+          case Values.Pair:
+            this.resultValue.innerHTML = 'Pair'
+            break;
+          case Values.TwoPairs:
+            this.resultValue.innerHTML = 'TwoPairs'
+            break;
+          case Values.ThreeOfAKind:
+            this.resultValue.innerHTML = 'ThreeOfAKind'
+            break;
+          case Values.Straight:
+            this.resultValue.innerHTML = 'Straight'
+            break;
+          case Values.FourOfAKind:
+            this.resultValue.innerHTML = 'FourOfAKind'
+            break;
+          case Values.Flush:
+            this.resultValue.innerHTML = 'Flush'
+            break;
+          case Values.FullHouse:
+            this.resultValue.innerHTML = 'FullHouse'
+            break;
+          case Values.StraightFlush:
+            this.resultValue.innerHTML = 'StraightFlush'
+            break;
+          case Values.RoyalStraightFlush:
+            this.resultValue.innerHTML = 'RoyalStraightFlush'
+            break;
+          default:
+            this.resultValue.innerHTML = ''
+            break;
+        }
+      },
+
       finalAction: value =>{
         switch ( value ) {
           case Action.Fold:
@@ -168,8 +208,8 @@ export default class Player extends SyncPropsComponent {
           case Action.Call:
             this.action.innerHTML = 'Call'
             break;
-          case Action.Bat:
-            this.action.innerHTML = 'Bat'
+          case Action.Bet:
+            this.action.innerHTML = 'Bet'
             break;
           case Action.Raise:
             this.action.innerHTML = 'Raise'
@@ -231,3 +271,16 @@ export default class Player extends SyncPropsComponent {
     card.visible = false;
   }
 }
+
+const Values = Object.freeze ({
+  Highcard: 1,
+  Pair: 2,
+  TwoPairs: 3,
+  ThreeOfAKind: 4,
+  Straight: 5,
+  FourOfAKind: 6,
+  Flush: 7,
+  FullHouse: 8,
+  StraightFlush: 9,
+  RoyalStraightFlush: 10
+});

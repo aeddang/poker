@@ -15,7 +15,7 @@ export const Action = Object.freeze ({
 	BigBlind: 3,
   Check: 4,
 	Call: 5,
-  Bat: 6,
+  Bet: 6,
   Raise: 7,
   AllIn: 8,
   Blind: 9

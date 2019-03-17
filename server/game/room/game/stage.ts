@@ -37,9 +37,9 @@ export default class Stage extends Component {
   isLimited:boolean = false
   status:Status = Status.Wait
 
-  minBat:number = 0
+  minBet:number = 0
   roundPot:number = 0
-	gameBat:number = 0
+	gameBet:number = 0
 	gamePot:number = 0
 
 	@nosync
@@ -47,7 +47,7 @@ export default class Stage extends Component {
 	@nosync
 	startPlayer:number
 	@nosync
-	playerBats:Array<number>
+	playerBets:Array<number>
   @nosync
   turn:number
 	@nosync
@@ -62,13 +62,13 @@ export default class Stage extends Component {
   gameScheduler:Rx.Observable
 
   @nosync
-  didBat:boolean = false
+  didBet:boolean = false
 	@nosync
   blindCount:number = 2
   @nosync
-  smallBlindBat:number
+  smallBlindBet:number
   @nosync
-  bigBlindBat:number
+  bigBlindBet:number
   @nosync
   minBankroll:number
 
@@ -79,9 +79,9 @@ export default class Stage extends Component {
     super()
     this.ante = ante
     this.gameRule = gameRule
-    this.smallBlindBat = ante * gameRule
-    this.bigBlindBat = this.smallBlindBat * 2
-    this.minBankroll = this.bigBlindBat + ante
+    this.smallBlindBet = ante * gameRule
+    this.bigBlindBet = this.smallBlindBet * 2
+    this.minBankroll = this.bigBlindBet + ante
     this.status = Status.Wait
     this.turn = 0
     this.time = 0
@@ -95,7 +95,7 @@ export default class Stage extends Component {
     this.gameScheduler = null
     this.ids = null
     this.positions = null
-		this.playerBats = null
+		this.playerBets = null
   }
 
   hasPlayer( id:string ):boolean {
@@ -109,9 +109,9 @@ export default class Stage extends Component {
     this.time = 0
     this.status = Status.Wait
     this.ids = null
-		this.playerBats = null
-		this.didBat = false
-		this.gameBat = 0
+		this.playerBets = null
+		this.didBet = false
+		this.gameBet = 0
 		this.roundPot = 0
 		this.gamePot = 0
 		this.count = 0
@@ -120,7 +120,7 @@ export default class Stage extends Component {
   start(ids:Array):Rx.Subject {
     this.ids = ids
 		this.startPlayer = 0
-		this.playerBats = ids.map( id => 0 )
+		this.playerBets = ids.map( id => 0 )
     this.delegate = new Rx.Subject()
     this.status = Status.FreeFlop
 		this.blindCount = 2;
@@ -134,9 +134,9 @@ export default class Stage extends Component {
 	}
 
   turnStart() {
-    this.turnBat = 0
-    this.didBat = false
-    this.minBat = this.bigBlindBat
+    this.turnBet = 0
+    this.didBet = false
+    this.minBet = this.bigBlindBet
 		this.count = 1
 		this.startPlayer = 0
 		this.onTurnChange(1)
@@ -183,53 +183,53 @@ export default class Stage extends Component {
     return id
   }
 
-	batting(id:string, bat:number ){
-		if( this.minBat < bat ) this.minBat = bat
+	betting(id:string, bet:number ){
+		if( this.minBet < bet ) this.minBet = bet
 		let idx = this.ids.indexOf(id)
-		this.playerBats[ idx ] += bat
-    this.gamePot += bat
-		this.roundPot += bat
-    this.debuger.log(id, 'bat id')
-		this.debuger.log(this.playerBats[ idx ], 'totalBat changed')
+		this.playerBets[ idx ] += bet
+    this.gamePot += bet
+		this.roundPot += bet
+    this.debuger.log(id, 'bet id')
+		this.debuger.log(this.playerBets[ idx ], 'totalBet changed')
   }
 
 	action( command: Command ):number {
-		var bat = 0
-		var totalBat = this.playerBats[ this.turn ]
+		var bet = 0
+		var totalBet = this.playerBets[ this.turn ]
 		switch(command.t) {
-      case Action.Bat: this.didBat = true
-			case Action.Raise: command.d = this.minBat * command.d
-			case Action.AllIn: bat = command.d
+      case Action.Bet: this.didBet = true
+			case Action.Raise:
+			case Action.AllIn: bet = command.d
 				break
 			case Action.SmallBlind:
-				bat = this.smallBlindBat
+				bet = this.smallBlindBet
 				this.blindCount--
 				break
 			case Action.BigBlind:
 				this.blindCount--
-				bat = this.bigBlindBat
+				bet = this.bigBlindBet
 				break
-      case Action.Fold: bat = 0; break
-			default: bat = this.gameBat - totalBat; break
+      case Action.Fold: bet = 0; break
+			default: bet = this.gameBet - totalBet; break
     }
 
-		totalBat = bat + totalBat
-		if( totalBat > this.gameBat ) {
-			this.gameBat = totalBat
-			this.debuger.log(this.gameBat, 'gameBat changed')
+		totalBet = bet + totalBet
+		if( totalBet > this.gameBet ) {
+			this.gameBet = totalBet
+			this.debuger.log(this.gameBet, 'gameBet changed')
 			this.startPlayer = this.turn
 			this.debuger.log(this.startPlayer, 'startPlayer changed')
 		}
-		return bat
+		return bet
   }
 
   nextRound() {
     this.status ++
 		this.blindCount = 1
 		this.roundPot = 0
-		this.gameBat = 0
+		this.gameBet = 0
 		this.count = 0
-		this.didBat = false
+		this.didBet = false
   }
 
 	nextCheck() {
@@ -254,15 +254,15 @@ export default class Stage extends Component {
     this.delegate = null
   }
 
-	getCallBat():number {
-    return this.gameBat - this.playerBats[ this.turn ]
+	getCallBet():number {
+    return this.gameBet - this.playerBets[ this.turn ]
   }
 
 	getMainPot(id:string):number {
 		let idx = this.ids.indexOf(id)
-		let myBat =  this.playerBats[ idx ]
-		let sum = (a, b) => a + ( (b > myBat) ? myBat : b )
-		let pot = this.playerBats.reduce(sum,0)
+		let myBet =  this.playerBets[ idx ]
+		let sum = (a, b) => a + ( (b > myBet) ? myBet : b )
+		let pot = this.playerBets.reduce(sum,0)
     return pot
   }
 
@@ -283,7 +283,7 @@ export default class Stage extends Component {
   getActions():Array{
 		if( this.blindCount == 2 ) return [ Action.SmallBlind ]
     if( this.blindCount == 1 ) return [ Action.BigBlind ]
-    if( !this.didBat ) return [ Action.Bat, Action.Check, Action.Fold ]
+    if( !this.didBet ) return [ Action.Bet, Action.Check, Action.Fold ]
     return [ Action.Raise, Action.Call, Action.Fold ]
   }
 

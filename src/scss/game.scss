@@ -11,17 +11,19 @@
 .poker .player-active { background-color: $color-light-red; }
 .poker .player .profile { width:100%; height:50px; }
 .poker .player .profile .profile-img { @include position-left; width:50px; height:50px }
-.poker .player .profile .info { @include position-left; padding:$margin-tiny }
+.poker .player .profile .info { @include position-left; padding:$margin-tiny; width:90px}
 .poker .player .profile .info .name { @include font-default($color-grey) }
 .poker .player .profile .info .bankroll { @include font-default($color-black) }
+.poker .player .profile .info .network-status { @include font-default($color-grey) }
 .poker .player .play-data { @include position-clear; @include position-horizontal(); width:140px; height:90px; padding:$margin-tiny }
 .poker .player .play-data .action { @include font-default($color-black) }
 .poker .player .play-data .status { @include font-default($color-blue) }
 .poker .player .play-data .position-status { @include font-default($color-grey) }
 .poker .player .play-data .blind { @include font-default($color-grey) }
-.poker .player .play-data .bat { @include font-default($color-grey) }
+.poker .player .play-data .bet { @include font-default($color-grey) }
 .poker .player .play-data .time-bar { width:0%; height:10px;  background-color: $color-blue; }
-.poker .player .show-down {}
+.poker .player .show-down { position: absolute; left:-30px; top:160px}
+.poker .player .result-value{ @include font-big($color-blue) position: absolute; top:-30px; width: 100%; text-align: center;}
 
 .poker .position { position: absolute; background-color: $color-grey; width:150px; height:150px; @include bg-radius(20px);}
 .poker .position .title { @include position-top-left($margin-tiny, $margin-tiny);  @include font-default($color-white) }
@@ -33,8 +35,8 @@
 .poker .game-viewer .cards{}
 .poker .game-viewer .info{ @include position-top-left($margin-default, $margin-default); background-color: $color-grey; padding:$margin-tiny }
 .poker .game-viewer .info .ante{  @include font-default($color-black)  }
-.poker .game-viewer .info .min-bat{  @include font-default($color-blue) }
-.poker .game-viewer .info .game-bat{  @include font-default($color-black) }
+.poker .game-viewer .info .min-bet{  @include font-default($color-blue) }
+.poker .game-viewer .info .game-bet{  @include font-default($color-black) }
 .poker .game-viewer .pot{ @include position-center(200,50, 0, -100)}
 .poker .game-viewer .pot .round{ @include font-big($color-blue); text-align: center }
 .poker .game-viewer .pot .main-pot{ @include font-big($color-white); text-align: center }
@@ -49,20 +51,28 @@
 .poker .ui-box .info .bankroll { @include font-default($color-black) }
 .poker .ui-box .info .position-status { @include font-default($color-grey) }
 .poker .ui-box .info .status { @include font-default($color-blue) }
-.poker .ui-box .info .game-bat { @include font-default($color-grey) }
+.poker .ui-box .info .game-bet { @include font-default($color-grey) }
+
+.poker .ui-box .action .betting{ @include position-absolute(200, 200); background-color:$color-black; padding:$margin-tiny }
+.poker .ui-box .action .betting .bet{ @include font-default($color-white) }
+.poker .ui-box .action .betting .btn-multiply { @include btn-text; @include btn-icon-size }
+.poker .ui-box .action .betting .btn-increase { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
+.poker .ui-box .action .betting .btn-decrease { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
+.poker .ui-box .action .betting .btn-bet { @include position-clear; @include btn-text-strong; @include btn-icon-size }
+.poker .ui-box .action .betting .btn-reset { @include position-left($margin-tiny); @include btn-text-weak; @include btn-icon-size }
 
 
 .poker .ui-box .action {  @include position-left }
-.poker .ui-box .action .bat { padding:$margin-tiny }
-.poker .ui-box .action .bat .check-bat { @include font-default($color-blue) }
-.poker .ui-box .action .bat .min-bat { @include font-default($color-red) }
+.poker .ui-box .action .bet { padding:$margin-tiny }
+.poker .ui-box .action .bet .check-bet { @include font-default($color-blue) }
+.poker .ui-box .action .bet .min-bet { @include font-default($color-red) }
 .poker .ui-box .action .btn-blind { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
 .poker .ui-box .action .btn-fold { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
 .poker .ui-box .action .btn-small-blind { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
 .poker .ui-box .action .btn-big-blind { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
 .poker .ui-box .action .btn-check { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
 .poker .ui-box .action .btn-call { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
-.poker .ui-box .action .btn-bat { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
+.poker .ui-box .action .btn-bet { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
 .poker .ui-box .action .btn-raise { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
 .poker .ui-box .action .btn-all-in { @include position-left($margin-tiny); @include btn-text; @include btn-icon-size }
 
