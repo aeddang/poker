@@ -13,6 +13,7 @@ export function decoratorDynamicDom(element, id) {
   overoadProperty(element, 'y', 'top', 'px');
   overoadProperty(element, 'width', 'width', 'px');
   overoadProperty(element, 'height', 'height', 'px');
+
   function overoadProperty( ele, prop, attribute, unit = '' ){
     if( element[ prop ] != undefined ) return; //log( 'decoratorDynamicDom' , 'warn', prop , id + 'prop exist');
     Object.defineProperty(ele, prop, {
@@ -29,7 +30,17 @@ export function decoratorDynamicDom(element, id) {
       get: function(){ return this._visible || true; },
       set: function(visible) {
         this._visible = visible;
-        visible ? this.style.display = display : this.style.display = 'none';
+        this.style.display = visible ?  display : 'none';
+      }
+    });
+  }
+
+  if( element.alpha == undefined ) {
+    Object.defineProperty(element, 'alpha', {
+      get: function(){ return this.style.opacity; },
+      set: function(alpha) {
+        this.style.opacity = alpha;
+        this.visible = (alpha == 0) ?  false : true;
       }
     });
   }

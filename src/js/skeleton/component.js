@@ -160,6 +160,10 @@ export class DomComponent extends Component {
 
   set visible( v ){ this.cell.visible = v; }
   get visible(){ return this.cell.visible }
+
+  set alpha( v ){ this.cell.alpha = v; }
+  get alpha(){ return this.cell.alpha }
+
 }
 
 class AttachEvent {

@@ -87,12 +87,13 @@ export default class PlayerViewer extends SyncPropsComponent {
     let dealler = Math.ceil( posLen / 2 ) + this.info.myPosition;
     var pos = this.info.myPosition;
     for(var i = start; i < end; ++ i){
+
       if( i != dealler) {
         let posIdx  = pos % posLen;
         let position = this.positions[ posIdx ];
+        position.onResize(posX, posY, radiusX, radiusY);
         let r = rotate * Math.PI/180
-        position.x = posX + (Math.cos(r) *radiusX);
-        position.y = posY + (Math.sin(r) *radiusY);
+        position.rotate = r;
         pos++;
       }
       rotate += sumRotate

@@ -128,7 +128,6 @@ export default class Game extends Component {
 		var posIdx = 0
 		let ids = []
 		let isBigBlindCheck = this.playerNum > 3
-		this.debuger.log(this.playerNum, 'isBigBlindCheck : ' + isBigBlindCheck)
 		for ( var i = start; i < end; ++i){
 			let idx = i % len
 			let id = this.positions[ idx ]

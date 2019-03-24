@@ -20,37 +20,66 @@ class PositionBody extends ElementProvider {
   }
 }
 
+class PositionInfo {
+  constructor() {
+    this.reset();
+		this.idx = -1;
+    this.posX = 0;
+    this.posY = 0;
+    this.radiusX = 0;
+    this.radiusY = 0;
+		this.rotate = 0;
+  }
+  reset() {}
+}
+
 export default class Position extends DomComponent {
   constructor() {
     super();
     this.debuger.tag = 'Position';
-    this.idx = -1;
+		this.info = new PositionInfo()
+    this.info.idx = -1;
   }
 
   init(body,idx) {
-    this.idx = idx;
+    this.info.idx = idx;
     return super.init(body);
   }
   remove() {
     super.remove();
     this.btnJoin = null;
 		this.title = null;
+		this.info = null;
   }
+
+
 
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
 		this.title = elementProvider.getElement('title');
     this.btnJoin = elementProvider.getElement('btnJoin');
-		this.title.innerHTML = this.idx;
+		this.title.innerHTML = this.info.idx;
   }
 
   setupEvent() {
     this.attachEvent(this.btnJoin, "click", this.onJoin.bind(this));
   }
+	onResize(posX, posY, radiusX, radiusY){
+		this.info.posX = posX;
+		this.info.posY = posY;
+		this.info.radiusX = radiusX;
+		this.info.radiusY = radiusY;
+	}
+
+	set rotate(rotate){
+		this.info.rotate = rotate;
+		this.x = this.info.posX + (Math.cos(rotate) *this.info.radiusX);
+		this.y = this.info.posY + (Math.sin(rotate) *this.info.radiusY);
+	}
 
   onJoin() {
-		this.debuger.log(this.idx, 'onJoin');
-    this.delegate.next(new ComponentEvent( POSITION_EVENT.JOIN_GAME, this.idx ));
+		this.debuger.log(this.info.idx, 'onJoin');
+    this.delegate.next(new ComponentEvent( POSITION_EVENT.JOIN_GAME, this.info.idx ));
   }
 
   joinPlayer(){
