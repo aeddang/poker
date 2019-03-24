@@ -127,13 +127,15 @@ export default class Game extends Component {
 		let end = len + start
 		var posIdx = 0
 		let ids = []
+		let isBigBlindCheck = this.playerNum > 3
+		this.debuger.log(this.playerNum, 'isBigBlindCheck : ' + isBigBlindCheck)
 		for ( var i = start; i < end; ++i){
 			let idx = i % len
 			let id = this.positions[ idx ]
 			if( id != null ){
 				let player = this.players[id]
 				this.debuger.log(player.status, 'posIdx : ' + posIdx)
-				let able = player.isPlayAble(this.stage.minBankroll, posIdx)
+				let able = player.isPlayAble(this.stage.minBankroll, posIdx, isBigBlindCheck)
 				if( able ){
 					if(posIdx == 0){
 						this.deallerButton = idx + 1

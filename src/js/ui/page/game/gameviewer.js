@@ -143,6 +143,7 @@ export default class GameViewer extends SyncPropsComponent {
     let card = this.cards[ idx ];
     card.hidden();
 	}
+
 }
 
 export const Status = Object.freeze ({

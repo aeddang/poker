@@ -100,10 +100,10 @@ export default class Player extends Component {
     this.status = Status.Fold
   }
 
-  isPlayAble(minBankroll:number, posIdx:int):boolean {
+  isPlayAble(minBankroll:number, posIdx:int, isBigBlindCheck:boolean):boolean {
     if( this.networkStatus != NetworkStatus.Connected ) return false
     if( this.status == Status.Absence ) return false
-    if( this.status == Status.WaitBigBlind && posIdx != 2 ) return false
+    if( isBigBlindCheck && this.status == Status.WaitBigBlind && posIdx != 2 ) return false
     if( minBankroll > this.bankroll ) {
       this.status = Status.Impossible
       return false
