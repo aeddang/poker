@@ -3,6 +3,7 @@ import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import Player from './player';
 import Position from './position';
+import { animationValue } from 'Skeleton/animation';
 
 class PlayerViewerBody extends ElementProvider {
   writeHTML() {
@@ -66,7 +67,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     this.delegate.next(event);
   }
 
-  onResize() {
+  onResize(isAni = false) {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let marginX = 0;
     let marginY = -100;
@@ -84,16 +85,28 @@ export default class PlayerViewer extends SyncPropsComponent {
     var sumRotate = 360 / len;
     let start = this.info.myPosition;
     let end = len + start;
-    let dealler = Math.ceil( posLen / 2 ) + this.info.myPosition;
+    let center = Math.ceil( posLen / 2 )
+    let dealler = center + this.info.myPosition;
     var pos = this.info.myPosition;
+    let dr = pos >= center;
     for(var i = start; i < end; ++ i){
-
       if( i != dealler) {
         let posIdx  = pos % posLen;
         let position = this.positions[ posIdx ];
         position.onResize(posX, posY, radiusX, radiusY);
-        let r = rotate * Math.PI/180
-        position.rotate = r;
+        var r = rotate * Math.PI/180
+        if(isAni){
+          if(dr == true){
+            if( r < position.rotate ) r += (Math.PI * 2);
+          }else {
+            if( r > position.rotate ) r -= (Math.PI * 2);
+          }
+          animationValue( position, "rotate", r );
+          //position.rotate = r;
+        }else{
+          position.rotate = r;
+        }
+
         pos++;
       }
       rotate += sumRotate
@@ -137,7 +150,7 @@ export default class PlayerViewer extends SyncPropsComponent {
   onSelectedMyposition( position ){
     this.positions.forEach( p => { p.joinPlayer(); } );
     this.info.myPosition = position;
-    this.onResize();
+    this.onResize(true);
   }
 
   onShowCard( id, idx, cardData ) {

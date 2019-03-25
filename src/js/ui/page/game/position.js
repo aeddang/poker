@@ -2,7 +2,6 @@ import { DomComponent } from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import ComponentEvent from 'Skeleton/event';
 
-
 export const POSITION_EVENT = Object.freeze ({
 	JOIN_GAME: 10,
 });
@@ -72,9 +71,14 @@ export default class Position extends DomComponent {
 	}
 
 	set rotate(rotate){
-		this.info.rotate = rotate;
-		this.x = this.info.posX + (Math.cos(rotate) *this.info.radiusX);
-		this.y = this.info.posY + (Math.sin(rotate) *this.info.radiusY);
+
+		this.info.rotate = ( rotate > 0) ? rotate%(Math.PI * 2) : rotate + (Math.PI * 2)
+		this.x = this.info.posX + (Math.cos(this.info.rotate) *this.info.radiusX);
+		this.y = this.info.posY + (Math.sin(this.info.rotate) *this.info.radiusY);
+	}
+
+	get rotate(){
+		return this.info.rotate;
 	}
 
   onJoin() {
