@@ -2,9 +2,9 @@ import SyncPropsComponent from 'Component/syncpropscomponent';
 import ComponentEvent from 'Skeleton/event';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
-import Card from './card'
+import Card from '../card'
 import Betting from './betting'
-import { Status, PositionStatus, NetworkStatus } from  "./playerstatus";
+import { Status, PositionStatus, NetworkStatus } from  "../playerstatus";
 
 export const UI_EVENT = Object.freeze ({
 	FOLD: 1,
@@ -235,11 +235,11 @@ export default class UiBox extends SyncPropsComponent {
 
 	pushHand(cardDatas){
 		//this.debuger.log(cardDatas, 'pushHand');
-		this.cards.forEach( (c, idx) => c.burn( cardDatas[idx] ) );
+		this.cards.forEach( (c, idx) => c.setData( cardDatas[idx], true ) );
 	}
 
 	resetHand(){
-		this.cards.forEach( c => c.hidden( false ) );
+		this.cards.forEach( c => c.hidden( true ) );
 	}
 
 	setActionButton( btn , value ) {

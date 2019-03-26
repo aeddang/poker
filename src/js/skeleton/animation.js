@@ -4,6 +4,10 @@ import Debugger from './log';
 const debuger = new Debugger(this);
 debuger.tag = 'Animation';
 
+export function animationStop(view) {
+  Velocity(view,"stop");
+}
+
 export function animation(view, options, duration = 300, ease = "easeInSine") {
   Velocity(view,"stop");
   Velocity(view, options, { duration: duration }, ease );

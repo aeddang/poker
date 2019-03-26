@@ -63,6 +63,7 @@ export default class Component {
     let evt = new AttachEvent(element,event,handler);
     this.attachEvents.push(evt);
     element.addEventListener(event, handler, useCapture);
+    return evt;
   }
 
   detachEvent(elements, handler = null) {

@@ -2,8 +2,8 @@ import SyncPropsComponent from 'Component/syncpropscomponent';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import { Action } from  "Util/command";
-import { Status, PositionStatus, NetworkStatus } from  "./playerstatus";
-import Card from './card'
+import { Status, PositionStatus, NetworkStatus } from  "../playerstatus";
+import Card from '../card'
 
 class PlayerBody extends ElementProvider {
   writeHTML() {
@@ -260,15 +260,14 @@ export default class Player extends SyncPropsComponent {
   showCard( id, cardData ) {
     let idx = Number(id);
     let card = this.cards[ idx ];
-    card.burn( cardData );
-    card.visible = true;
+    card.setData( cardData, true );
+    card.burn();
   }
 
   hideCard( id ) {
     let idx = Number(id);
     let card = this.cards[ idx ];
-    card.hidden();
-    card.visible = false;
+    card.hidden( true );
   }
 }
 

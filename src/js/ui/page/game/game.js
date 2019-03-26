@@ -1,3 +1,3 @@
-export { default as GameViewer } from './gameviewer'
-export { default as PlayerViewer } from './playerviewer'
-export { default as UiBox } from './uibox'
+export { default as GameViewer } from './stage/gameviewer'
+export { default as PlayerViewer } from './player/playerviewer'
+export { default as UiBox } from './ui/uibox'

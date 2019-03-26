@@ -2,7 +2,7 @@ import SyncPropsComponent from 'Component/syncpropscomponent';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import { decoratorDynamicDom } from 'Skeleton/uielement';
-import Card from './card'
+import Card from '../card'
 
 class GameViewerBody extends ElementProvider {
   writeHTML() {
@@ -67,6 +67,7 @@ export default class GameViewer extends SyncPropsComponent {
     for(var i=0; i<5; ++i) {
       let card = new Card().init( this.cardArea, CARD_WIDTH, CARD_HEIGHT);
       this.cards.push( card );
+      card.hidden();
     }
   }
 
@@ -136,8 +137,10 @@ export default class GameViewer extends SyncPropsComponent {
     let idx = Number(id);
     let card = this.cards[ idx ];
     this.debuger.log(cardData, 'burnCard');
-    card.burn( cardData );
+    card.setData( cardData );
+    card.burn();
 	}
+
   hideCard( id  ){
     let idx = Number(id);
     let card = this.cards[ idx ];
