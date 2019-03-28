@@ -3,7 +3,6 @@ import { Rect, Point, convertRectFromDimension, convertPointFromDimension } from
 import { MoveEvent, MOVE_EVENT } from './event';
 import { log } from './log';
 
-
 export function decoratorDynamicDom(element, id) {
   if( element == null ) {
     //log( "decoratorDynamicDom" , 'warn', id , "element undefined");
@@ -13,21 +12,26 @@ export function decoratorDynamicDom(element, id) {
   overoadProperty(element, 'y', 'top', 'px');
   overoadProperty(element, 'width', 'width', 'px');
   overoadProperty(element, 'height', 'height', 'px');
+  overoadProperty(element, 'opacity', 'opacity', '');
 
   function overoadProperty( ele, prop, attribute, unit = '' ){
     if( element[ prop ] != undefined ) return; //log( 'decoratorDynamicDom' , 'warn', prop , id + 'prop exist');
+    element['_' + prop] = 0;
     Object.defineProperty(ele, prop, {
-      get: function(){ return this['_' + prop] || 0; },
+      get: function(){ return this['_' + prop] },
       set: function( value ){
         this['_' + prop] = value;
         this.style[ attribute ] = value + unit;
       }
     })
   }
+
+
   if( element.visible == undefined ) {
-    let display = ( element.style.display == 'none' ) ? element.style.display : 'block';
+    element.visible =  element.style.display != 'none';
+    let display = ( element.visible ) ? element.style.display : 'block';
     Object.defineProperty(element, 'visible', {
-      get: function(){ return this._visible || true; },
+      get: function(){ return this._visible },
       set: function(visible) {
         this._visible = visible;
         this.style.display = visible ?  display : 'none';
@@ -43,6 +47,25 @@ export function decoratorDynamicDom(element, id) {
         this.visible = (alpha == 0) ?  false : true;
       }
     });
+  }
+
+  if( element.rotateX == undefined ) {
+    element._rotateX = 0;
+    element._rotateY = 0;
+    element._rotateZ = 0;
+    overoadTransformProperty( element, 'rotateX' );
+    overoadTransformProperty( element, 'rotateY' );
+    overoadTransformProperty( element, 'rotateZ' );
+
+  }
+  function overoadTransformProperty( ele, prop ){
+    Object.defineProperty(ele, prop, {
+      get: function(){ return this['_' + prop] },
+      set: function( value ){
+        this['_' + prop] = value;
+        this.style.transform = "rotateX("+this._rotateX+"deg) rotateY("+this._rotateY+"deg) rotateZ("+this._rotateZ+"deg)";
+      }
+    })
   }
   return element;
 }

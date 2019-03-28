@@ -29,8 +29,8 @@ export default class Card extends DomComponent {
   }
 
   remove() {
+    animationStop( this.cell );
     super.remove();
-    animationStop( this.view );
     this.view.remove();
     this.view = null;
     this.cardData = null;

@@ -29,7 +29,9 @@
 .poker .position .title { @include position-top-left($margin-tiny, $margin-tiny);  @include font-default($color-white) }
 .poker .position .btn-join { @include position-center($default-icon-width,$default-icon-height) @include btn-text; @include btn-icon-size }
 
-.poker .card{  @include font-default($color-black); position:absolute; background-color:$color-light-grey }
+.poker .card{  @include font-default($color-black); position:absolute; background-color:$color-light-grey; border:0.5px solid $color-white; }
+
+.poker .card-show { @include position-cover; pointer-events:none }
 
 .poker .game-viewer { @include position-cover; }
 .poker .game-viewer .cards{}

@@ -3,7 +3,7 @@ import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import { decoratorDynamicDom } from 'Skeleton/uielement';
 import Card from '../card'
-
+import { Status } from '../gamestatus'
 class GameViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
@@ -25,13 +25,20 @@ class GameViewerBody extends ElementProvider {
   }
 }
 
-const CARD_WIDTH = 80;
-const CARD_HEIGHT = 120;
+class GameViewerInfo {
+  constructor(cardWidth, cardHeight) {
+    this.reset();
+    this.cardWidth = cardWidth;
+		this.cardHeight = cardHeight;
+  }
+  reset() {}
+}
 
 export default class GameViewer extends SyncPropsComponent {
-  constructor() {
+  constructor(cardWidth, cardHeight) {
     super();
     this.debuger.tag = 'GameViewer';
+    this.info = new GameViewerInfo(cardWidth, cardHeight)
     this.cards = [];
   }
 
@@ -47,6 +54,7 @@ export default class GameViewer extends SyncPropsComponent {
     this.round = null;
     this.roundPot = null;
     this.gameBet = null;
+    this.info = null;
   }
 
   getElementProvider() { return new GameViewerBody(this.body); }
@@ -61,11 +69,12 @@ export default class GameViewer extends SyncPropsComponent {
     this.cardArea = elementProvider.getElement('cardArea');
     this.createCards(elementProvider);
     this.onResize();
+    this.detachCard()
   }
 
   createCards(elementProvider){
     for(var i=0; i<5; ++i) {
-      let card = new Card().init( this.cardArea, CARD_WIDTH, CARD_HEIGHT);
+      let card = new Card().init( this.cardArea, this.info.cardWidth, this.info.cardHeight);
       this.cards.push( card );
       card.hidden();
     }
@@ -112,8 +121,8 @@ export default class GameViewer extends SyncPropsComponent {
 
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());
-    let width = CARD_WIDTH;
-    let height = CARD_HEIGHT;
+    let width = this.info.cardWidth;
+    let height = this.info.cardHeight;
     let margin = 10;
     let len = this.cards.length;
     var posX = (bounce.width - (width * len) - (margin * (len-1))) /2;
@@ -133,6 +142,14 @@ export default class GameViewer extends SyncPropsComponent {
     this.sidePot.innerHTML = 'sidePot : ' + pot;
   }
 
+  attachCard(){
+    this.cards.forEach( card => card.visible = true);
+	}
+
+  detachCard(){
+    this.cards.forEach( card => card.visible = false);
+	}
+
   burnCard( id , cardData ){
     let idx = Number(id);
     let card = this.cards[ idx ];
@@ -147,12 +164,8 @@ export default class GameViewer extends SyncPropsComponent {
     card.hidden();
 	}
 
-}
+  getCardPositions(){
+    return this.cards.map( c=>{ return {x:c.x, y:c.y} });
+  }
 
-export const Status = Object.freeze ({
-  Wait: 1,
-  FreeFlop: 2,
-  Flop: 3,
-  Turn: 4,
-  ShowDown: 5,
-});
+}

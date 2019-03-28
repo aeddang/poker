@@ -16,6 +16,7 @@ class PlayBody extends ElementProvider {
     <div id='${this.id}playArea' class='play-area'>
       <div id='${this.id}gameViewer' class='game-viewer'></div>
       <div id='${this.id}playerViewer' class='player-viewer'></div>
+      <div id='${this.id}cardShow' class='card-show'></div>
       <div id='${this.id}uiBox' class='ui-box'></div>
       <button id='${this.id}btnExit' class='btn-exit'>exit</button>
     </div>
@@ -24,6 +25,9 @@ class PlayBody extends ElementProvider {
     this.body.appendChild(cell);
   }
 }
+
+const CARD_WIDTH = 80;
+const CARD_HEIGHT = 120;
 
 class PlayInfo {
   constructor() {
@@ -38,8 +42,9 @@ export default class Play extends Room {
     super();
     this.ROOM_KEY= "play";
     this.info = new PlayInfo();
-    this.gameViewer = new Game.GameViewer();
+    this.gameViewer = new Game.GameViewer(CARD_WIDTH, CARD_HEIGHT);
     this.playerViewer = new Game.PlayerViewer();
+    this.cardShow = new Game.CardShow(CARD_WIDTH, CARD_HEIGHT);
     this.uiBox = new Game.UiBox();
     this.loadingBar = new LoadingSpiner();
   }
@@ -53,11 +58,13 @@ export default class Play extends Room {
     this.gameViewer.remove();
     this.playerViewer.remove();
     this.uiBox.remove();
+    this.cardShow.remove();
     this.loadingBar = null;
     this.gameViewer = null;
     this.playerViewer = null;
     this.uiBox = null;
     this.me = null;
+    this.cardShow = null;
   }
 
   getElementProvider() { return new PlayBody(this.body); }
@@ -74,9 +81,12 @@ export default class Play extends Room {
 
     this.playerViewer.init(elementProvider.getElement('playerViewer')).subscribe ( this.onUiEvent.bind(this) );
     this.uiBox.init(elementProvider.getElement('uiBox')).subscribe ( this.onUiEvent.bind(this) );
+    this.cardShow.init(elementProvider.getElement('cardShow')).subscribe ( this.onShowEvent.bind(this) );
     super.onCreate(elementProvider);
     this.onResize();
     this.join();
+
+
   }
   setupEvent() {
     this.attachEvent(this.btnExit, "click", this.onExit.bind(this));
@@ -92,6 +102,7 @@ export default class Play extends Room {
       this.gameViewer.onUpdateSyncProps(e.value);
     });
     this.room.listen("stage/:attribute", e => {
+      if( e.path.attribute == "status") this.onGameStatusChange(e.value);
       this.gameViewer.onUpdateSyncProp (e.path.attribute, e.value);
     });
 
@@ -135,6 +146,39 @@ export default class Play extends Room {
     this.gameViewer.onResize();
     this.playerViewer.onResize();
     this.uiBox.onResize();
+    this.cardShow.onResize();
+  }
+
+  onGameStatusChange( status ){
+
+    switch ( status ) {
+      case Game.Status.Wait:
+        this.gameViewer.detachCard();
+        this.cardShow.discard(this.gameViewer.getCardPositions(), this.playerViewer.getPlayerPositions()) ;
+        break;
+      case Game.Status.FreeFlop:
+        this.cardShow.shuffle(this.gameViewer.getCardPositions(), this.playerViewer.getPlayerPositions()) ;
+        break;
+      case Game.Status.Flop:
+        break;
+      case Game.Status.Turn:
+        break;
+      case Game.Status.ShowDown:
+        break;
+    }
+  }
+
+  onShowEvent( event ) {
+    this.debuger.log(event.type, 'event.type');
+    switch( event.type ){
+      case Game.SHOW_EVENT.SHUFFLE_COMPLETED:
+        this.debuger.log(Game.SHOW_EVENT.SHUFFLE_COMPLETED, 'attachCard');
+        this.gameViewer.attachCard();
+        break;
+      case Game.SHOW_EVENT.DISCARD_COMPLETED:
+        break;
+    }
+
   }
 
   onUiEvent(event) {
@@ -158,6 +202,7 @@ export default class Play extends Room {
   }
 
   onExit() {
+    //this.cardShow.shuffle(this.gameViewer.getCardPositions(), this.playerViewer.getPlayerPositions()) ;
     Poker.onPageChange(Config.Page.Join);
   }
 

@@ -20,6 +20,9 @@ class PlayerViewerInfo {
   reset() {}
 }
 
+const POSITION_WIDTH = 150;
+const POSITION_HEIGHT = 80;
+
 export default class PlayerViewer extends SyncPropsComponent {
   constructor() {
     super();
@@ -71,8 +74,8 @@ export default class PlayerViewer extends SyncPropsComponent {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let marginX = 0;
     let marginY = -100;
-    let width = 150;
-    let height = 80;
+    let width = POSITION_WIDTH;
+    let height = POSITION_HEIGHT;
     let centerX = bounce.width/2;
     let centerY = bounce.height/2;
     let posX = centerX - (width/2);
@@ -102,7 +105,6 @@ export default class PlayerViewer extends SyncPropsComponent {
             if( r > position.rotate ) r -= (Math.PI * 2);
           }
           animationValue( position, "rotate", r );
-          //position.rotate = r;
         }else{
           position.rotate = r;
         }
@@ -159,5 +161,11 @@ export default class PlayerViewer extends SyncPropsComponent {
 
   onHideCard( id, idx) {
     this.players[id].hideCard( idx );
+  }
+
+  getPlayerPositions(){
+    return this.positions.map( p => {
+      return { x:p.x+(POSITION_WIDTH/2), y:p.y+(POSITION_HEIGHT/2) }
+    });
   }
 }

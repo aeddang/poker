@@ -1,3 +1,6 @@
 export { default as GameViewer } from './stage/gameviewer'
+export { default as CardShow } from './stage/cardshow'
 export { default as PlayerViewer } from './player/playerviewer'
 export { default as UiBox } from './ui/uibox'
+export { Status } from './gamestatus'
+export { SHOW_EVENT } from './stage/cardshow'
