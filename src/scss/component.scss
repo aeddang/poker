@@ -1,6 +1,7 @@
 @import 'element';
 @import 'mixin';
 
+.poker .sound-area{@include screen-out}
 
 .poker .header {position:relative; width:100%; height:50px; background:$color-white }
 .poker .header .title {@include position-left($margin-default, 10px); @include font-big($color-black)}

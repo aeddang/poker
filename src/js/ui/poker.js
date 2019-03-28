@@ -6,11 +6,13 @@ import * as Config from "Util/config";
 import * as Login from "ViewModel/login";
 import Header from 'Component/header';
 import * as Page from 'Page/page';
+import * as SoundFactory from './soundfactory';
 
 class PokerBody extends ElementProvider {
   writeHTML() {
     this.body.classList.add("poker");
     this.body.innerHTML =`
+    <div id='${this.id}soundArea' class ='sound-area'></div>
     <div id='${this.id}header' class ='header'></div>
     <div id='${this.id}pageArea' class ='page-area'></div>
     `;
@@ -57,10 +59,13 @@ export default class Poker extends Component {
 
   getElementProvider() { return new PokerBody(this.body); }
   onCreate(elementProvider) {
+    SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
     this.header.init(elementProvider.getElement('header'));
     this.onResize();
     this.onPageChange(Config.Page.Home);
+
+    SoundFactory.getInstence().playBgm(SoundFactory.BGM.DEFAULT);
   }
 
   setupEvent() {
