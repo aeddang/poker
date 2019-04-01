@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs';
 import ComponentEvent from 'Skeleton/event';
-
+import uuidv4 from 'uuid/v4';
 
 export const EVENT = Object.freeze ({
 	LOGIN: "login",
@@ -27,10 +27,10 @@ class UserInfo {
   }
 
   setData(userData) {
-		this.name = userData.name;
-		this.id = userData.id;
-		//this.name = 'name : '+instenceID;
-		//this.id = instenceID;
+		//this.name = userData.name;
+		//this.id = userData.id;
+		this.name = 'N'+uuidv4();
+		this.id = "ID"+uuidv4();
   }
 
   getStatus() {
@@ -60,21 +60,25 @@ class LoginModel {
 
   login () {
     this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
-
+		/*
 		FB.login( (response) => {
       ( response.status === 'connected' ) ? this.onLogin(response.authResponse.accessToken) : this.onLoginError();
     }, {scope: 'public_profile,email'});
-
-		//this.onLogin('accessToken');
+		*/
+		this.onLogin('accessToken');
     return this.delegate;
   }
 
   getProFile () {
     this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
-    FB.api('/me', (response) => {
+		/*
+		FB.api('/me', (response) => {
       this.info.setData(response)
       this.delegate.next(new ComponentEvent( EVENT.ON_PROFILE, this.info));
     });
+		*/
+		this.info.setData();
+		this.delegate.next(new ComponentEvent( EVENT.ON_PROFILE, this.info));
     return this.delegate;
   }
 
