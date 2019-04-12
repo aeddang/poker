@@ -1,9 +1,6 @@
 @import 'element';
 @import 'mixin';
 
-
-
-
 .poker .player {}
 .poker .player-position-wait { @include position-bottom-right($margin-tiny); width:150px; height:50px;  background-color: $color-light-grey; overflow: hidden;}
 .poker .player-position-join { @include position-cover;  background-color: $color-light-grey; @include bg-radius(20px);}

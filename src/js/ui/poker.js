@@ -123,6 +123,7 @@ export default class Poker extends Component {
         this.pageArea.height = bounce.height - headerBounce.height;
         if(this.currentPage != null) this.currentPage.onResize();
     }
+    this.info.finalSize = bounce;
   }
 
   onFullScreenEnter(data) {

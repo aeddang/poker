@@ -8,7 +8,8 @@ import * as Login from "ViewModel/login";
 class HeaderBody extends ElementProvider {
   writeHTML() {
     this.body.innerHTML =`
-    <p class='title'>Texas hold'em</p>
+    <div class='logo'></div>
+    <div class='obj'></div>
     <button id='${this.id}btnJoin' class='btn-join'></button>
     <div id='${this.id}loadingBar' class='loading-bar'></div>
     `;
@@ -50,7 +51,7 @@ export default class Header extends Component {
 
   onLoginStatusChange() {
     this.loadingBar.stop();
-    this.btnJoin.innerHTML = Login.model.getStatus() == Login.STATUS.LOGIN ? "logout" : "login"
+    this.btnJoin.innerHTML = Login.model.getStatus() == Login.STATUS.LOGIN ? "LOGOUT" : "LOGIN"
   }
 
   onLoginEvent(event) {

@@ -3,8 +3,8 @@
 @import 'room';
 @import 'component';
 
-.poker {@include position-cover(relative) background:$color-black; overflow:hidden;}
-.poker .page-area { @include position-cover(relative) background:$color-black; overflow:hidden;}
+.poker {@include position-cover(relative); @include bg-image($image-bg); overflow:hidden;}
+.poker .page-area { @include position-cover(relative); overflow:hidden;}
 
 
 .poker ::-moz-selection { background: transparent}
