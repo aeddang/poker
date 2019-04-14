@@ -10,6 +10,7 @@ class JoinBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("join");
     cell.innerHTML =`
+    <div class ='logo-center'></div>
     <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}infoBox' class='info-box'>
       <p id='${this.id}userInfoBox' class='user'></p>

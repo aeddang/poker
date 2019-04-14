@@ -5,24 +5,24 @@
 body, html{
 	height:100%;
 	box-sizing: border-box;
-	scrollbar-arrow-color: #fff;
-	scrollbar-Face-Color: #e5e5e5;
-	scrollbar-Track-Color: #fff;
-	scrollbar-Shadow-Color: #e5e5e5;
+	scrollbar-arrow-color: #666;
+	scrollbar-Face-Color: #333;
+	scrollbar-Track-Color: #666;
+	scrollbar-Shadow-Color: #333;
 }
 ::-webkit-scrollbar-track{
 	border-radius: 10px;
-	background-color: #fff;
+	background-color: #333;
 }
 ::-webkit-scrollbar{
 	width: 8px;
 	height:8px;
-	background-color: #e5e5e5;
+	background-color: #666;
 }
 ::-webkit-scrollbar-thumb{
 	border-radius: 10px;
 	height:8px;
-	background-color: #e5e5e5;
+	background-color: #666;
 }
 *{
 	margin:0;
@@ -93,6 +93,18 @@ img{
 }
 em, p, span {
 	font-style:normal;
+}
+
+input{border: none; border-bottom: 1px solid #9da6b2}
+input:focus{border-bottom: 1px solid #ff7e7e; outline: none;}
+textarea{border: none; border-bottom: 1px solid #9da6b2}
+textarea:focus{border-bottom: 1px solid #ff7e7e; outline: none;}
+input[type="password"]
+{
+  -webkit-text-security: disc;
+}
+input:-webkit-autofill {
+    -webkit-box-shadow: inset 0 0 0px 9999px #e6e9ed;
 }
 
 /* font style */

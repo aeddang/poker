@@ -73,7 +73,7 @@ export default class PlayerViewer extends SyncPropsComponent {
   onResize(isAni = false) {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let marginX = 0;
-    let marginY = -100;
+    let marginY = 0;
     let width = POSITION_WIDTH;
     let height = POSITION_HEIGHT;
     let centerX = bounce.width/2;

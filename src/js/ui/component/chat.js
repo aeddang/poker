@@ -15,10 +15,10 @@ class ChatBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("chat");
     cell.innerHTML =`
-    <div id='${this.id}viewer' class='viewer'></div>
+    <div id='${this.id}viewer' class='viewer scroll-info'></div>
     <form id='${this.id}inputForm' class='input'>
       <input type="text" id='${this.id}inputText' class='text' value="" autofocus/>
-      <input type="submit" id='${this.id}inputBtn' value="send" class='btn' />
+      <input type="submit" id='${this.id}inputBtn' value="SEND" class='btn' />
     </form>
     `;
     this.body.appendChild(cell);
@@ -89,10 +89,8 @@ export default class Chat extends Component  {
 	onResize() {
     super.onResize();
 		let bounce = Util.convertRectFromDimension(this.getBody());
-    let bounceBox = Util.convertRectFromDimension(this.inputForm);
-    this.viewer.height = bounce.height - bounceBox.height;
-		let bounceBtn = Util.convertRectFromDimension(this.inputBtn);
-		this.inputText.style.width = Util.getStyleUnit( bounce.width - bounceBtn.width );
+		this.inputForm.x = - (Math.floor(bounce.x / 2));
+
   }
 
   onSendMessage(e) {
