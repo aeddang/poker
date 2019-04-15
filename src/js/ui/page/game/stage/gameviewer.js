@@ -7,6 +7,7 @@ import { Status } from '../gamestatus'
 class GameViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
+    <div class ='logo-center'></div>
     <div class='info'>
       <div id='${this.id}ante' class='ante'></div>
       <div id='${this.id}minBet' class='min-bet'></div>

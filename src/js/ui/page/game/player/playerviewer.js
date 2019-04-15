@@ -20,8 +20,8 @@ class PlayerViewerInfo {
   reset() {}
 }
 
-const POSITION_WIDTH = 150;
-const POSITION_HEIGHT = 80;
+const POSITION_WIDTH = 371;
+const POSITION_HEIGHT = 91;
 
 export default class PlayerViewer extends SyncPropsComponent {
   constructor() {
@@ -72,16 +72,16 @@ export default class PlayerViewer extends SyncPropsComponent {
 
   onResize(isAni = false) {
     let bounce = Util.convertRectFromDimension(this.getBody());
-    let marginX = 0;
-    let marginY = 0;
+    let marginX = -150;
+    let marginY = -80;
     let width = POSITION_WIDTH;
     let height = POSITION_HEIGHT;
     let centerX = bounce.width/2;
     let centerY = bounce.height/2;
     let posX = centerX - (width/2);
-    let posY = centerY - (height/2) + marginY;
-    let radiusX = centerX - width - Math.abs(marginX);
-    let radiusY = centerY - height - Math.abs(marginY);
+    let posY = centerY - (height/2);
+    let radiusX = centerX - width - marginX;
+    let radiusY = centerY - height - marginY;
     var posLen = this.positions.length;
     var len = posLen  + 1 ;
     var rotate = 90;
@@ -96,6 +96,13 @@ export default class PlayerViewer extends SyncPropsComponent {
       if( i != dealler) {
         let posIdx  = pos % posLen;
         let position = this.positions[ posIdx ];
+        if(0 <= rotate && rotate < 180) {
+          position.getBody().classList.remove("position-l");
+          position.getBody().classList.add("position-r");
+        }else{
+          position.getBody().classList.remove("position-r");
+          position.getBody().classList.add("position-l");
+        }
         position.onResize(posX, posY, radiusX, radiusY);
         var r = rotate * Math.PI/180
         if(isAni){
@@ -108,7 +115,6 @@ export default class PlayerViewer extends SyncPropsComponent {
         }else{
           position.rotate = r;
         }
-
         pos++;
       }
       rotate += sumRotate

@@ -13,7 +13,7 @@
 
 .poker .chat {position:relative; width:100%; height:100%; background:$color-transparent-black45;}
 .poker .chat .viewer  {@include font-small($color-white); height:100%; overflow-y:auto; overflow-x: hidden;}
-.poker .chat .input { @include position-bottom-left(800px,0); width:417px; height:264px; margin-left:420px ;@include bg-image($image-chat-send-bg)}
+.poker .chat .input { @include position-bottom-left(800px,0); width:417px; height:264px; margin-left:320px ;@include bg-image($image-chat-send-bg)}
 .poker .chat .input .text {@include position-center(200px, 30px, 40px, -20px); @include font-small($color-black)}
 .poker .chat .input .btn {@include position-center(200px, 30px, 40px, 20px) @include btn-default; @include font-big($color-blue)}
 .poker .chat .row{ padding: $margin-tiny}

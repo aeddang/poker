@@ -12,8 +12,11 @@ class PositionBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("position");
     cell.innerHTML = `
-			<div id='${this.id}title' class='title'>select</div>
-      <button id='${this.id}btnJoin' class='btn-join'>select</button>
+			<div class='card'></div>
+		  <div class='profile'></div>
+			<div class='box'>
+				<button id='${this.id}btnJoin' class='btn-join'>JOIN</button>
+			</div>
     `;
     this.body.appendChild(cell);
   }
@@ -47,7 +50,6 @@ export default class Position extends DomComponent {
   remove() {
     super.remove();
     this.btnJoin = null;
-		this.title = null;
 		this.info = null;
   }
 
@@ -55,9 +57,7 @@ export default class Position extends DomComponent {
 
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
-		this.title = elementProvider.getElement('title');
     this.btnJoin = elementProvider.getElement('btnJoin');
-		this.title.innerHTML = this.info.idx;
   }
 
   setupEvent() {
@@ -82,7 +82,6 @@ export default class Position extends DomComponent {
 	}
 
   onJoin() {
-		this.debuger.log(this.info.idx, 'onJoin');
     this.delegate.next(new ComponentEvent( POSITION_EVENT.JOIN_GAME, this.info.idx ));
   }
 

@@ -16,5 +16,5 @@
 .poker .play { @include page }
 .poker .play .chat-area { @include position-top-right($margin-default,$margin-default); @include chat}
 .poker .play .play-area { @include position-left($margin-default); width:0; height:100%;}
-.poker .play .play-area .btn-exit{@include position-top-right($margin-default, $margin-default); @include btn-text; @include btn-icon-size}
+.poker .play .play-area .btn-exit{@include position-top-right($margin-big, $margin-default); @include btn-default; @include font-big($color-white)}
 .poker .play .loading-bar { @include loading-bar }
