@@ -12,25 +12,17 @@ class PlayerBody extends ElementProvider {
     cell.classList.add("player");
     cell.classList.add("player-position-wait");
     cell.innerHTML = `
-
-      <div class='profile'>
-        <img id='${this.id}profileImg' class='profile-img'></img>
-        <div class='info'>
-          <p id='${this.id}name' class='name'></p>
-          <p id='${this.id}bankroll' class='bankroll'></p>
-          <p id='${this.id}networkStatus' class='network-status'></p>
-        </div>
-      </div>
-      <div class='play-data'>
-        <p id='${this.id}action' class='action'></p>
+      <div class='box'>
+        <p id='${this.id}name' class='name'></p>
+        <p id='${this.id}bankroll' class='bankroll'></p>
+        <p id='${this.id}networkStatus' class='network-status'></p>
         <p id='${this.id}status' class='status'></p>
-        <p id='${this.id}bet' class='bet'></p>
-        <p id='${this.id}positionStatus' class='position-status'></p>
         <p id='${this.id}blind' class='blind'></p>
-        <div id='${this.id}timeBar' class='time-bar'></div>
       </div>
+      <div id='${this.id}timeBar' class='time-bar'></div>
       <div id='${this.id}showDown' class='show-down'></div>
-      <div id='${this.id}resultValue' class='result-value'>
+      <div id='${this.id}resultValue' class='result-value'></div>
+      <div id='${this.id}action' class='action'></div>
     `;
     this.body.appendChild(cell);
   }
@@ -58,15 +50,12 @@ export default class Player extends SyncPropsComponent {
     super.remove();
     this.cards.forEach( c => c.remove() );
     this.showDown = null;
-    this.profileImg = null;
     this.name = null;
     this.bankroll = null;
-    this.action = null;
     this.status = null;
-    this.bet = null;
-    this.positionStatus = null;
     this.blind = null;
     this.timeBar = null;
+    this.action = null;
     this.cards = null;
     this.resultValue = null;
     this.networkStatus = null;
@@ -74,14 +63,12 @@ export default class Player extends SyncPropsComponent {
 
   getElementProvider() { return new PlayerBody(this.body); }
   onCreate(elementProvider) {
-    this.profileImg = elementProvider.getElement('profileImg');
+
     this.name = elementProvider.getElement('name');
     this.bankroll = elementProvider.getElement('bankroll');
     this.networkStatus = elementProvider.getElement('networkStatus');
-    this.action = elementProvider.getElement('action');
     this.status = elementProvider.getElement('status');
-    this.bet = elementProvider.getElement('bet');
-    this.positionStatus = elementProvider.getElement('positionStatus');
+    this.action = elementProvider.getElement('action');
     this.blind = elementProvider.getElement('blind');
     this.timeBar = elementProvider.getElement('timeBar');
     this.showDown = elementProvider.getElement('showDown');
@@ -134,7 +121,7 @@ export default class Player extends SyncPropsComponent {
         }
       },
       gameBet: value =>{
-        this.bet.innerHTML = 'GameBet -> ' + value;
+        //this.bet.innerHTML = 'GameBet -> ' + value;
       },
       time: value =>{
         this.time = value;
@@ -232,6 +219,7 @@ export default class Player extends SyncPropsComponent {
             break;
         }
       },
+      /*
       positionStatus: value =>{
         switch ( value ) {
           case PositionStatus.DeallerButton:
@@ -248,7 +236,7 @@ export default class Player extends SyncPropsComponent {
             break;
         }
       },
-
+      */
     };
   }
 

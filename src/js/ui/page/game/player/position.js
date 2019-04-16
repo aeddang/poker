@@ -13,8 +13,10 @@ class PositionBody extends ElementProvider {
     cell.classList.add("position");
     cell.innerHTML = `
 			<div class='card'></div>
-		  <div class='profile'></div>
-			<div class='box'>
+		  <div class='profile'>
+				<img id='${this.id}profileImg' class='profile-img'></img>
+			</div>
+			<div id='${this.id}box' class='box'>
 				<button id='${this.id}btnJoin' class='btn-join'>JOIN</button>
 			</div>
     `;
@@ -58,6 +60,10 @@ export default class Position extends DomComponent {
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
     this.btnJoin = elementProvider.getElement('btnJoin');
+		this.box = elementProvider.getElement('box');
+		this.profileImg = elementProvider.getElement('profileImg');
+		this.profileImg.visible = false;
+		this.profileImg.src = "./static/resource/obj_alien2.png"
   }
 
   setupEvent() {
@@ -68,6 +74,11 @@ export default class Position extends DomComponent {
 		this.info.posY = posY;
 		this.info.radiusX = radiusX;
 		this.info.radiusY = radiusY;
+	}
+
+	addPlayer(player){
+		this.box.appendChild(player);
+		this.profileImg.visible = true;
 	}
 
 	set rotate(rotate){
@@ -90,6 +101,7 @@ export default class Position extends DomComponent {
   }
 
   leavePlayer() {
+		this.profileImg.visible = false;
     //this.btnJoin.style.display = 'block';
   }
 }

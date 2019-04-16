@@ -84,7 +84,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     let radiusY = centerY - height - marginY;
     var posLen = this.positions.length;
     var len = posLen  + 1 ;
-    var rotate = 90;
+    var rotate = 180;
     var sumRotate = 360 / len;
     let start = this.info.myPosition;
     let end = len + start;
@@ -96,7 +96,9 @@ export default class PlayerViewer extends SyncPropsComponent {
       if( i != dealler) {
         let posIdx  = pos % posLen;
         let position = this.positions[ posIdx ];
-        if(0 <= rotate && rotate < 180) {
+        //position.btnJoin.innerHTML = "rotate : " + rotate;
+        if(90 <= rotate && rotate < 270) {
+
           position.getBody().classList.remove("position-l");
           position.getBody().classList.add("position-r");
         }else{
@@ -148,7 +150,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     if( prop == 'position') {
       let position = this.positions[ value ];
       if( position == null ) return;
-      position.getBody().appendChild( player.getBody() );
+      position.addPlayer( player.getBody() );
       if( player.me ) this.onSelectedMyposition( value );
       else position.joinPlayer();
     }
