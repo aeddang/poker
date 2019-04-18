@@ -5,24 +5,24 @@
 body, html{
 	height:100%;
 	box-sizing: border-box;
-	scrollbar-arrow-color: #fff;
-	scrollbar-Face-Color: #e5e5e5;
-	scrollbar-Track-Color: #fff;
-	scrollbar-Shadow-Color: #e5e5e5;
+	scrollbar-arrow-color: #666;
+	scrollbar-Face-Color: #333;
+	scrollbar-Track-Color: #666;
+	scrollbar-Shadow-Color: #333;
 }
 ::-webkit-scrollbar-track{
 	border-radius: 10px;
-	background-color: #fff;
+	background-color: #333;
 }
 ::-webkit-scrollbar{
 	width: 8px;
 	height:8px;
-	background-color: #e5e5e5;
+	background-color: #666;
 }
 ::-webkit-scrollbar-thumb{
 	border-radius: 10px;
 	height:8px;
-	background-color: #e5e5e5;
+	background-color: #666;
 }
 *{
 	margin:0;
@@ -95,12 +95,43 @@ em, p, span {
 	font-style:normal;
 }
 
+input{border: none; border-bottom: 1px solid #9da6b2}
+input:focus{border-bottom: 1px solid #ff7e7e; outline: none;}
+textarea{border: none; border-bottom: 1px solid #9da6b2}
+textarea:focus{border-bottom: 1px solid #ff7e7e; outline: none;}
+input[type="password"]
+{
+  -webkit-text-security: disc;
+}
+input:-webkit-autofill {
+    -webkit-box-shadow: inset 0 0 0px 9999px #e6e9ed;
+}
 
-/* font style
+/* font style */
 @font-face {
 font-family:'NanumSquare';
 src:url(../font/NanumSquareR.woff2) format('woff2'),
 		url(../font/NanumSquareR.woff) format('woff'),
 		url(../font/NanumSquareR.otf) format('opentype');
 }
-*/
+
+@font-face {
+font-family:'NanumSquareB';
+src:url(../font/NanumSquareB.woff2) format('woff2'),
+		url(../font/NanumSquareB.woff) format('woff'),
+		url(../font/NanumSquareB.otf) format('opentype');
+}
+
+@font-face {
+font-family: 'Futura Std Heavy';
+src:url(../font/FuturaStdHeavy.woff2) format('woff2'),
+		url(../font/FuturaStdHeavy.woff) format('woff'),
+		url(../font/FuturaStdHeavy.otf) format('opentype');
+}
+
+@font-face {
+font-family: 'FuturaBT Heavy';
+src:url(../font/FuturaBTHeavy.woff2) format('woff2'),
+		url(../font/FuturaBTHeavy.woff) format('woff'),
+		url(../font/FuturaBTHeavy.otf) format('opentype');
+}

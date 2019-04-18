@@ -1,4 +1,5 @@
 import { Subject } from 'rxjs';
+import Component from './component';
 import { Rect, Point, convertRectFromDimension, convertPointFromDimension } from './util';
 import { MoveEvent, MOVE_EVENT } from './event';
 import { log } from './log';
@@ -8,8 +9,12 @@ export function decoratorDynamicDom(element, id) {
     //log( "decoratorDynamicDom" , 'warn', id , "element undefined");
     return null;
   }
+  overoadProperty(element, 'ratioX', 'left', '%');
+  overoadProperty(element, 'ratioY', 'top', '%');
   overoadProperty(element, 'x', 'left', 'px');
   overoadProperty(element, 'y', 'top', 'px');
+  overoadProperty(element, 'ratioW', 'width', '%');
+  overoadProperty(element, 'ratioH', 'height', '%');
   overoadProperty(element, 'width', 'width', 'px');
   overoadProperty(element, 'height', 'height', 'px');
   overoadProperty(element, 'opacity', 'opacity', '');

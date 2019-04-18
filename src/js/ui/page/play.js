@@ -12,23 +12,23 @@ class PlayBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("play");
     cell.innerHTML =`
-    <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}playArea' class='play-area'>
+      <div id='${this.id}uiBox' class='ui-box'></div>
       <div id='${this.id}gameViewer' class='game-viewer'></div>
       <div id='${this.id}playerViewer' class='player-viewer'></div>
       <div id='${this.id}cardShow' class='card-show'></div>
-      <div id='${this.id}uiBox' class='ui-box'></div>
-      <button id='${this.id}btnExit' class='btn-exit'>exit</button>
+      <button id='${this.id}btnExit' class='btn-exit'>EXIT</button>
     </div>
+    <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}loadingBar' class='loading-bar'></div>
     `;
     this.body.appendChild(cell);
   }
 }
 
-const CARD_WIDTH = 80;
-const CARD_HEIGHT = 120;
-
+const CARD_WIDTH = 70;
+const CARD_HEIGHT = 105;
+const BOTTOM_HEIGHT = 210;
 class PlayInfo {
   constructor() {
     this.reset();
@@ -140,7 +140,15 @@ export default class Play extends Room {
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let bounceBox = Util.convertRectFromDimension(this.chatArea);
-    this.playArea.width = bounce.width - bounceBox.width;
+    let margin = bounceBox.y - bounce.y;
+    this.playArea.width = bounce.width - bounceBox.width - margin;
+    this.chatArea.height = bounce.height - (margin*2);
+
+    let gameHeight = bounce.height - BOTTOM_HEIGHT;
+    this.gameViewer.getBody().height = gameHeight;
+    this.playerViewer.getBody().height = gameHeight;
+    this.cardShow.getBody().height = gameHeight;
+
     super.onResize();
     this.chat.onResize();
     this.gameViewer.onResize();

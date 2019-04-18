@@ -3,19 +3,18 @@
 @import 'game';
 
 .poker .home { @include page }
-.poker .home .title {@include position-center(300px, 60px, 0px, -40px); @include font-big($color-white); text-align:center }
-.poker .home .btn-join { @include position-center(200px, 60px ,0px, 40px); @include btn-text }
+.poker .home .btn-join { @include position-center(200px, 60px ,0px, 0px); @include btn-text }
 
 
 .poker .join { @include page }
-.poker .join .chat-area { @include position-right; @include chat }
+.poker .join .chat-area { @include position-right($margin-default, 250px); @include chat }
 .poker .join .info-box { @include position-left; width:0;  height:100%}
 .poker .join .info-box .user {@include font-big($color-white); width:100%; padding:$margin-default}
 .poker .join .info-box .btn-play { @include position-bottom-right($margin-default, $margin-default); @include btn-text; @include btn-default-size }
 .poker .join .loading-bar { @include loading-bar  }
 
 .poker .play { @include page }
-.poker .play .chat-area { @include position-right; @include chat}
-.poker .play .play-area { @include position-left; width:0; height:100%; background:$color-black;}
-.poker .play .play-area .btn-exit{@include position-top-right($margin-default, $margin-default); @include btn-text; @include btn-icon-size}
+.poker .play .chat-area { @include position-top-right($margin-default,$margin-default); @include chat}
+.poker .play .play-area { @include position-left($margin-default); width:0; height:100%;}
+.poker .play .play-area .btn-exit{@include position-top-right($margin-big, $margin-default); @include btn-default; @include font-big($color-white)}
 .poker .play .loading-bar { @include loading-bar }

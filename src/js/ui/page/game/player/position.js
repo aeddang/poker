@@ -12,8 +12,13 @@ class PositionBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("position");
     cell.innerHTML = `
-			<div id='${this.id}title' class='title'>select</div>
-      <button id='${this.id}btnJoin' class='btn-join'>select</button>
+			<div class='card'></div>
+		  <div class='profile'>
+				<img id='${this.id}profileImg' class='profile-img'></img>
+			</div>
+			<div id='${this.id}box' class='box'>
+				<button id='${this.id}btnJoin' class='btn-join'>JOIN</button>
+			</div>
     `;
     this.body.appendChild(cell);
   }
@@ -47,7 +52,6 @@ export default class Position extends DomComponent {
   remove() {
     super.remove();
     this.btnJoin = null;
-		this.title = null;
 		this.info = null;
   }
 
@@ -55,9 +59,11 @@ export default class Position extends DomComponent {
 
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
-		this.title = elementProvider.getElement('title');
     this.btnJoin = elementProvider.getElement('btnJoin');
-		this.title.innerHTML = this.info.idx;
+		this.box = elementProvider.getElement('box');
+		this.profileImg = elementProvider.getElement('profileImg');
+		this.profileImg.visible = false;
+		this.profileImg.src = "./static/resource/obj_alien2.png"
   }
 
   setupEvent() {
@@ -68,6 +74,11 @@ export default class Position extends DomComponent {
 		this.info.posY = posY;
 		this.info.radiusX = radiusX;
 		this.info.radiusY = radiusY;
+	}
+
+	addPlayer(player){
+		this.box.appendChild(player);
+		this.profileImg.visible = true;
 	}
 
 	set rotate(rotate){
@@ -82,7 +93,6 @@ export default class Position extends DomComponent {
 	}
 
   onJoin() {
-		this.debuger.log(this.info.idx, 'onJoin');
     this.delegate.next(new ComponentEvent( POSITION_EVENT.JOIN_GAME, this.info.idx ));
   }
 
@@ -91,6 +101,7 @@ export default class Position extends DomComponent {
   }
 
   leavePlayer() {
+		this.profileImg.visible = false;
     //this.btnJoin.style.display = 'block';
   }
 }

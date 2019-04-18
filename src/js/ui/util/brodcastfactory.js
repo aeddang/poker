@@ -20,16 +20,25 @@ class Brodcast {
     let className = '';
     let header = '';
     switch( this.sender ){
-      case Sender.AdminLv1 : className='admin-lv1'; header='NOTICE : '; break;
-      case Sender.AdminLv2 : className='admin-lv2'; header='NOTICE : '; break;
-      case Sender.AdminLv3 : className='admin-lv3'; header='NOTICE : '; break;
-      case Sender.User : className='user'; break;
+      case Sender.AdminLv1 : className='admin-lv1'; header='<span class="title">Roccat<br> :</span>'; break;
+      case Sender.AdminLv2 : className='admin-lv2'; header='<span class="title">Roccat<br> :</span>'; break;
+      case Sender.AdminLv3 : className='admin-lv3'; header='<span class="title">Roccat<br> :</span>'; break;
+      case Sender.User :
+        className='user';
+        let msgss = this.message.split("-> ");
+        let user = msgss[0];
+        let msg = this.message.slice( this.message.indexOf(msgss[1]) );
+        header='<span class="title">' + user + '<br> :</span>';
+        this.message = msg;
+        break;
       case Sender.Individual : className='individual'; break;
       case Sender.Push : this.message = JSON.parse(this.message); return;
       default : return;
     }
+    this.message = '<span class="text">' + this.message + '</span>';
     this.header = header;
     this.row = document.createElement("p");
+    this.row.classList.add("row")
     this.row.classList.add(className);
   }
 
