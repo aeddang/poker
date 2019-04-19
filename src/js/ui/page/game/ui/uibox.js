@@ -18,8 +18,8 @@ export const UI_EVENT = Object.freeze ({
 	BLIND: 9
 });
 
-const CARD_WIDTH = 135;
-const CARD_HEIGHT = 210;
+const CARD_WIDTH = 100;
+const CARD_HEIGHT = 150;
 
 class UiBoxInfo {
   constructor() {

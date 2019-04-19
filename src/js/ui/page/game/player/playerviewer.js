@@ -84,7 +84,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     let radiusY = centerY - height - marginY;
     var posLen = this.positions.length;
     var len = posLen  + 1 ;
-    var rotate = 180;
+    var rotate = 90;
     var sumRotate = 360 / len;
     let start = this.info.myPosition;
     let end = len + start;
@@ -160,6 +160,7 @@ export default class PlayerViewer extends SyncPropsComponent {
   onSelectedMyposition( position ){
     this.positions.forEach( p => { p.joinPlayer(); } );
     this.info.myPosition = position;
+    this.positions[ position ].visible = false;
     this.onResize(true);
   }
 
