@@ -14,8 +14,8 @@ class BettingBody extends ElementProvider {
   	<button id='${this.id}btnMultiply' class='btn-multiply'>X</button>
   	<button id='${this.id}btnIncrease' class='btn-increase'>+</button>
   	<button id='${this.id}btnDecrease' class='btn-decrease'>-</button>
-    <button id='${this.id}btnBet' class='btn-bet'>Confirm</button>
-  	<button id='${this.id}btnReset' class='btn-reset'>Reset</button>
+    <button id='${this.id}btnBet' class='btn-bet'>OK</button>
+  	<button id='${this.id}btnReset' class='btn-reset'>C</button>
     `;
   }
 }
@@ -75,7 +75,7 @@ export default class Betting extends Component {
     if( v < this.minBet ) v = this.minBet;
     if( v > this.maxBet ) v = this.maxBet;
     this._currentBet = v;
-    this.bet.innerHTML = "bet: "+this._currentBet
+    this.bet.innerHTML = "bet-> $"+this._currentBet
     this.debuger.log(this._currentBet, 'this._currentBet');
   }
   get currentBet(){ return this. _currentBet}

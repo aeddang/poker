@@ -7,10 +7,13 @@
 
 
 .poker .join { @include page }
-.poker .join .chat-area { @include position-right($margin-default, 250px); @include chat }
-.poker .join .info-box { @include position-left; width:0;  height:100%}
-.poker .join .info-box .user {@include font-big($color-white); width:100%; padding:$margin-default}
-.poker .join .info-box .btn-play { @include position-bottom-right($margin-default, $margin-default); @include btn-text; @include btn-default-size }
+.poker .join .chat-area { @include position-top-right($margin-default,$margin-default); @include chat }
+.poker .join .info-box { @include position-bottom-center(875px, -100px); margin-left:-580px; height:371px; @include bg-image($image-me-bg) }
+.poker .join .info-box .profile-image { @include position-absolute(92px, 100px, 124px, 206px);}
+.poker .join .info-box .info {  @include position-left(360px, 160px); width:350px; }
+.poker .join .info-box .name { @include font-default($color-white);}
+.poker .join .info-box .bankroll { @include font-default($color-yellow) }
+.poker .join .info-box .btn-play { @include position-bottom-right(35px, 110px); @include btn-text; @include btn-default-size }
 .poker .join .loading-bar { @include loading-bar  }
 
 .poker .play { @include page }

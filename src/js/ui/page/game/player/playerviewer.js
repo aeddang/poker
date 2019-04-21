@@ -3,7 +3,7 @@ import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import Player from './player';
 import Position from './position';
-import { animationValue } from 'Skeleton/animation';
+import { animationValue, animationValueAndComplete } from 'Skeleton/animation';
 
 class PlayerViewerBody extends ElementProvider {
   writeHTML() {
@@ -113,7 +113,7 @@ export default class PlayerViewer extends SyncPropsComponent {
           }else {
             if( r > position.rotate ) r -= (Math.PI * 2);
           }
-          animationValue( position, "rotate", r );
+          animationValueAndComplete(position, "rotate", r, p => { position.onAnimationCompleted() });
         }else{
           position.rotate = r;
         }
@@ -160,7 +160,7 @@ export default class PlayerViewer extends SyncPropsComponent {
   onSelectedMyposition( position ){
     this.positions.forEach( p => { p.joinPlayer(); } );
     this.info.myPosition = position;
-    this.positions[ position ].visible = false;
+    this.positions[ position ].setMe();
     this.onResize(true);
   }
 

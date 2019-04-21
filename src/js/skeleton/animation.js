@@ -13,11 +13,21 @@ export function animation(view, options, duration = 300, ease = "easeInSine") {
   Velocity(view, options, { duration: duration }, ease );
 }
 
+export function animationWithDelay(view, options, delay ,duration = 300, ease = "easeInSine") {
+  Velocity(view,"stop");
+  Velocity(view, options, { duration: duration, delay:delay }, ease );
+}
+
 //function(elements)
 export function animationAndComplete(view, options, complete, duration = 300, ease = "easeInSine") {
   Velocity(view,"stop");
   Velocity(view, options, { complete:complete }, { duration: duration }, ease );
 }
+export function animationAndCompleteWithDelay(view, options, complete, delay, duration = 300, ease = "easeInSine") {
+  Velocity(view,"stop");
+  Velocity(view, options, { complete:complete }, { duration: duration, delay:delay }, ease );
+}
+
 
 //function(elements)
 export function animationAndBegin(view, options, begin, duration = 300, ease = "easeInSine") {

@@ -13,10 +13,10 @@ class PlayBody extends ElementProvider {
     cell.classList.add("play");
     cell.innerHTML =`
     <div id='${this.id}playArea' class='play-area'>
-      <div id='${this.id}uiBox' class='ui-box'></div>
       <div id='${this.id}gameViewer' class='game-viewer'></div>
       <div id='${this.id}playerViewer' class='player-viewer'></div>
       <div id='${this.id}cardShow' class='card-show'></div>
+      <div id='${this.id}uiBox' class='ui-box'></div>
       <button id='${this.id}btnExit' class='btn-exit'>EXIT</button>
     </div>
     <div id='${this.id}chatArea' class='chat-area'></div>

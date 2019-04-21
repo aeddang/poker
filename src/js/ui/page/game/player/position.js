@@ -1,6 +1,8 @@
 import { DomComponent } from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import ComponentEvent from 'Skeleton/event';
+import { animation } from 'Skeleton/animation';
+
 
 export const POSITION_EVENT = Object.freeze ({
 	JOIN_GAME: 10,
@@ -12,7 +14,7 @@ class PositionBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("position");
     cell.innerHTML = `
-			<div class='card'></div>
+			<div class='card-icon'></div>
 		  <div class='profile'>
 				<img id='${this.id}profileImg' class='profile-img'></img>
 			</div>
@@ -27,6 +29,7 @@ class PositionBody extends ElementProvider {
 class PositionInfo {
   constructor() {
     this.reset();
+		this.itsMe = false;
 		this.idx = -1;
     this.posX = 0;
     this.posY = 0;
@@ -81,15 +84,24 @@ export default class Position extends DomComponent {
 		this.profileImg.visible = true;
 	}
 
-	set rotate(rotate){
+	setMe(){
+		this.info.itsMe = true;
+	}
 
+	set rotate(rotate){
 		this.info.rotate = ( rotate > 0) ? rotate%(Math.PI * 2) : rotate + (Math.PI * 2)
 		this.x = this.info.posX + (Math.cos(this.info.rotate) *this.info.radiusX);
-		this.y = this.info.posY + (Math.sin(this.info.rotate) *this.info.radiusY);
+		var posY = this.info.posY + (Math.sin(this.info.rotate) *this.info.radiusY);
+		posY = this.info.itsMe ? (posY + 150) : posY
+		this.y = posY;
 	}
 
 	get rotate(){
 		return this.info.rotate;
+	}
+
+	onAnimationCompleted(){
+		if(this.info.itsMe) animation( this.getBody(),{ opacity:0, scale:1.5});
 	}
 
   onJoin() {

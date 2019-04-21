@@ -18,8 +18,8 @@ export const UI_EVENT = Object.freeze ({
 	BLIND: 9
 });
 
-const CARD_WIDTH = 100;
-const CARD_HEIGHT = 150;
+const CARD_WIDTH = 80;
+const CARD_HEIGHT = 120;
 
 class UiBoxInfo {
   constructor() {
@@ -33,13 +33,13 @@ class UiBoxInfo {
 class UiBoxBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
+	    <img id='${this.id}profileImg' class='profile-image'></img>
 			<div id='${this.id}infoArea' class='info'>
 				<p id='${this.id}name' class='name'></p>
 				<p id='${this.id}bankroll' class='bankroll'></p>
 				<p id='${this.id}positionStatus' class='position-status'></p>
 				<p id='${this.id}status' class='status'></p>
 				<p id='${this.id}gameBet' class='game-bet'></p>
-
 			</div>
 			<div id='${this.id}actionArea' class='action'>
 				<p class='bet'>
@@ -60,6 +60,7 @@ class UiBoxBody extends ElementProvider {
 			<div id='${this.id}handArea' class='hand'>
 			  <p id='${this.id}handStatus' class='hand-status'></p>
 			</div>
+			<div id='${this.id}actionInfo' class='action-info'></div>
     `;
   }
 }
@@ -78,6 +79,7 @@ export default class UiBox extends SyncPropsComponent {
 		this.betting.remove();
 		this.cards.forEach( c => c.remove() );
 		this.betting = null;
+		this.profileImg = null;
     this.name = null;
     this.bankroll = null;
 		this.status = null;
@@ -99,6 +101,7 @@ export default class UiBox extends SyncPropsComponent {
 	  this.bettingArea = null;
 		this.infoArea = null;
 		this.actionArea = null;
+		this.actionInfo = null;
   }
 
   getElementProvider() { return new UiBoxBody(this.body); }
@@ -124,6 +127,9 @@ export default class UiBox extends SyncPropsComponent {
 		this.infoArea = elementProvider.getElement('infoArea');
 		this.actionArea = elementProvider.getElement('actionArea');
 		this.handStatus = elementProvider.getElement('handStatus');
+		this.profileImg = elementProvider.getElement('profileImg');
+		this.actionInfo = elementProvider.getElement('actionInfo');
+		this.profileImg.src = "./static/resource/obj_alien1.png"
 		for(var i=0; i<2; ++i) {
       let card = new Card().init( this.handArea, CARD_WIDTH, CARD_HEIGHT, i * ( CARD_WIDTH + 5), -30);
 			card.visible = false;
@@ -141,7 +147,7 @@ export default class UiBox extends SyncPropsComponent {
 			},
 			bankroll: value =>{
 				this.info.bankroll = value;
-				this.bankroll.innerHTML = 'Bankroll -> ' + value;
+				this.bankroll.innerHTML = '$' + value;
 			},
 			status: value =>{
 				switch ( value ) {
@@ -189,24 +195,23 @@ export default class UiBox extends SyncPropsComponent {
         }
       },
 			gameBet: value =>{
-        this.gameBet.innerHTML = 'GameBet -> ' + value;
+        this.gameBet.innerHTML = 'Bet $' + value;
       },
 			checkBet: value =>{
-        this.checkBet.innerHTML = 'Call -> ' + value;
+        this.checkBet.innerHTML = 'Call-> $' + value;
       },
 	    minBet: value =>{
 				this.info.minBet = value;
-        this.minBet.innerHTML = 'Bet -> ' + value;
+        this.minBet.innerHTML = 'Bet-> $' + value;
       },
       isBlind: value =>{
-				this.handStatus.innerHTML = value ? 'Blind Action' : '';
+				this.handStatus.innerHTML = value ? 'Blind' : '';
       },
       isWinner: value =>{
 				this.resetHand();
 				this.handStatus.innerHTML = value ? 'Win!!' : '';
       },
       time: value =>{
-        //this.debuger.log(value, 'time');
 				if(value == 0) this.betting.passive();
       },
 			actionBlind: value => { this.setActionButton( this.btnBlind,  value ) },
@@ -261,10 +266,6 @@ export default class UiBox extends SyncPropsComponent {
 
 	onResize() {
     super.onResize();
-		let bounce = Util.convertRectFromDimension(this.getBody());
-    let bounceLeft = Util.convertRectFromDimension(this.infoArea);
-		let bounceRight = Util.convertRectFromDimension(this.handArea);
-		this.actionArea.width = bounce.width - bounceLeft.width - bounceRight.width;
   }
 	onBetSelect(evtType) {
 		this.betting.active(this.info.minBet, this.info.bankroll, evtType);
@@ -276,6 +277,14 @@ export default class UiBox extends SyncPropsComponent {
 	onBetCancel() {
 		this.betting.passive();
 	}
+
+	viewActionInfo(info){
+		this.actionInfo.innerHTML = info;
+    animationAndComplete(this.actionInfo, { opacity:1, scale:1 }, p => {
+      animationWithDelay(this.actionInfo, { opacity:0, scale:1.5 }, 500)
+    });
+  }
+
 
 	onBlind() { this.delegate.next(new ComponentEvent( UI_EVENT.BLIND )); }
   onFold() { this.delegate.next(new ComponentEvent( UI_EVENT.FOLD )); }

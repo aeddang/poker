@@ -11,11 +11,15 @@ class JoinBody extends ElementProvider {
     cell.classList.add("join");
     cell.innerHTML =`
     <div class ='logo-center'></div>
-    <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}infoBox' class='info-box'>
-      <p id='${this.id}userInfoBox' class='user'></p>
+      <img id='${this.id}profileImg' class='profile-image'></img>
+      <div class='info'>
+        <p id='${this.id}name' class='name'></p>
+        <p id='${this.id}bankroll' class='bankroll'></p>
+      </div>
       <button id='${this.id}btnPlay' class='btn-play'>play</button>
     </div>
+    <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}loadingBar' class='loading-bar'></div>
     `;
     this.body.appendChild(cell);
@@ -45,12 +49,13 @@ export default class Join extends Room {
     super.remove();
     this.info = null;
     this.btnPlay = null;
-    this.infoBox = null;
+    this.name = null;
+    this.bankroll = null;
     this.chatArea = null;
     this.userInfoBox = null;
     this.loadingBar.remove();
     this.loadingBar = null;
-
+    this.profileImg = null;
   }
 
   getElementProvider() { return new JoinBody(this.body); }
@@ -60,9 +65,12 @@ export default class Join extends Room {
     this.loadingBar.init(loadingBarBody, bounce.width, bounce.height);
     this.btnPlay = elementProvider.getElement('btnPlay');
     this.infoBox = elementProvider.getElement('infoBox');
-    this.userInfoBox = elementProvider.getElement('userInfoBox');
+    this.name = elementProvider.getElement('name');
+    this.bankroll = elementProvider.getElement('bankroll');
     this.chatArea = elementProvider.getElement('chatArea');
     this.chat.init(this.chatArea).subscribe ( this.onChatEvent.bind(this) );
+    this.profileImg = elementProvider.getElement('profileImg');
+		this.profileImg.src = "./static/resource/obj_alien1.png"
     super.onCreate(elementProvider);
     this.onResize();
     this.join();
@@ -74,15 +82,18 @@ export default class Join extends Room {
   }
 
   onResize() {
+    /*
     let bounce = Util.convertRectFromDimension(this.getBody());
     let bounceBox = Util.convertRectFromDimension(this.chatArea);
     this.infoBox.width =  bounce.width - bounceBox.width;
+    */
     super.onResize();
     this.chat.onResize();
   }
 
   onUpdateUserInfo() {
-    this.userInfoBox.innerHTML =   this.userInfo.name + '<br>' +  this.userInfo.id;
+    this.name.innerHTML =   this.userInfo.name + '<br>' +  this.userInfo.id;
+    this.bankroll.innerHTML = "$1000";
   }
 
   join() {
