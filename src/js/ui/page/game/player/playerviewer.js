@@ -124,7 +124,7 @@ export default class PlayerViewer extends SyncPropsComponent {
   }
 
   onJoin(id, syncProps, itsMe) {
-    this.onCreatePlayer( id, syncProps, itsMe );
+    return this.onCreatePlayer( id, syncProps, itsMe );
   }
 
   onCreatePlayer( id, syncProps, itsMe ){
@@ -132,6 +132,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     player.init( this.getBody(), itsMe ).subscribe ( this.onUiEvent.bind(this) );
     player.onUpdateSyncProps( syncProps );
     this.players[id] = player;
+    return player;
   }
 
   onLeave(id) {
@@ -150,9 +151,14 @@ export default class PlayerViewer extends SyncPropsComponent {
     if( prop == 'position') {
       let position = this.positions[ value ];
       if( position == null ) return;
-      position.addPlayer( player.getBody() );
-      if( player.me ) this.onSelectedMyposition( value );
-      else position.joinPlayer();
+
+      if( player.me ) {
+        this.onSelectedMyposition( value );
+      }
+      else {
+        position.addPlayer( player.getBody() );
+        position.joinPlayer();
+      }
     }
     player.onUpdateSyncProp( prop, value);
   }

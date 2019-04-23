@@ -5,6 +5,8 @@ import { Action } from  "Util/command";
 import { Status, PositionStatus, NetworkStatus } from  "../playerstatus";
 import { animation, animationAndComplete, animationWithDelay } from 'Skeleton/animation';
 import Card from '../card'
+import * as Rx from 'rxjs'
+import { take } from 'rxjs/operators'
 
 class PlayerBody extends ElementProvider {
   writeHTML() {
@@ -25,7 +27,7 @@ class PlayerBody extends ElementProvider {
         </div>
       </div>
       <div id='${this.id}timeBar' class='time-bar'></div>
-      <div id='${this.id}action' class='action'></div>
+      <div id='${this.id}action' class='action-info'></div>
     `;
     this.body.appendChild(cell);
   }
@@ -42,6 +44,7 @@ export default class Player extends SyncPropsComponent {
     this.time = 0
     this.isShowDown = false;
     this.cards = [];
+    this.rxViewAction = null
   }
 
   init(body, itsMe) {
@@ -50,6 +53,7 @@ export default class Player extends SyncPropsComponent {
   }
   remove() {
     super.remove();
+    this.removeViewAction();
     this.cards.forEach( c => c.remove() );
     this.showDown = null;
     this.name = null;
@@ -62,7 +66,9 @@ export default class Player extends SyncPropsComponent {
     this.resultValue = null;
     this.positionStatus = null;
     this.networkStatus = null;
+
   }
+
 
   getElementProvider() { return new PlayerBody(this.body); }
   onCreate(elementProvider) {
@@ -256,19 +262,26 @@ export default class Player extends SyncPropsComponent {
     };
   }
 
+  removeViewAction(){
+    if( this.rxViewAction != null ) this.rxViewAction.unsubscribe();
+    this.rxViewAction = null
+  }
   viewAction(){
-    animationAndComplete(this.action, { opacity:1, scale:1 }, p => {
-      animationWithDelay(this.action, { opacity:0, scale:1.5 }, 500)
-    });
+    if( this.rxViewAction != null ) this.rxViewAction.unsubscribe();
+    animation(this.action, { opacity:1, scale:1 });
+    this.rxViewAction = Rx.interval(1500).pipe(take(1)).subscribe( {
+      next :(t) => { animation(this.action, { opacity:0, scale:1.5 }); },
+      complete :() => { }
+    })
   }
 
   onGameJoin( ) {
+    this.removeViewAction()
     this.getBody().classList.remove("player-position-wait");
     this.getBody().classList.add("player-position-join");
     let margin = 5;
     let len = 5;
-    let bounce = Util.convertRectFromDimension(this.getBody());
-
+    let bounce = Util.convertRectFromDimension(this.getBody().parentNode);
     var wid = ( bounce.width - ((len+1) * margin) ) / len;
     var hei = wid * 1.5;
     var tx = margin;
@@ -278,7 +291,7 @@ export default class Player extends SyncPropsComponent {
     tx = Math.floor(tx);
     ty = Math.floor(ty);
     for(var i=0; i<len; ++i) {
-      let card = new Card().init( this.showDown, wid, hei, tx ,margin);
+      let card = new Card().init( this.showDown, wid, hei, tx ,ty);
       this.cards.push( card );
       card.visible = false;
       tx += (wid+margin)

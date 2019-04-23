@@ -1,7 +1,7 @@
 import { DomComponent } from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import ComponentEvent from 'Skeleton/event';
-import { animation } from 'Skeleton/animation';
+import { animationAndComplete } from 'Skeleton/animation';
 
 
 export const POSITION_EVENT = Object.freeze ({
@@ -101,7 +101,8 @@ export default class Position extends DomComponent {
 	}
 
 	onAnimationCompleted(){
-		if(this.info.itsMe) animation( this.getBody(),{ opacity:0, scale:1.5});
+		if(this.info.itsMe) animationAndComplete( this.getBody(),{ opacity:0, scale:1.5},
+		p => { this.getBody().visible = false});
 	}
 
   onJoin() {

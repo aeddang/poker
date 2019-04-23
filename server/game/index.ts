@@ -10,7 +10,7 @@ import Debugger from './skeleton/log'
 import Dealler from './room/game/dealler'
 
 //const test = new Dealler()
-const port = Number(process.env.PORT || 2567)
+const port = Number(process.env.PORT || 2568)
 const app = express()
 const debuger = new Debugger("Index")
 const gameServer = new Server({

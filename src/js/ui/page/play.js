@@ -14,9 +14,9 @@ class PlayBody extends ElementProvider {
     cell.innerHTML =`
     <div id='${this.id}playArea' class='play-area'>
       <div id='${this.id}gameViewer' class='game-viewer'></div>
+      <div id='${this.id}uiBox' class='ui-box'></div>
       <div id='${this.id}playerViewer' class='player-viewer'></div>
       <div id='${this.id}cardShow' class='card-show'></div>
-      <div id='${this.id}uiBox' class='ui-box'></div>
       <button id='${this.id}btnExit' class='btn-exit'>EXIT</button>
     </div>
     <div id='${this.id}chatArea' class='chat-area'></div>
@@ -110,11 +110,13 @@ export default class Play extends Room {
       //this.debuger.log(e , 'players');
       if (e.operation === "add") {
         let itsMe = this.userInfo.id == e.value.userId;
+        let player = this.playerViewer.onJoin(e.path.id, e.value, itsMe);
         if( itsMe ) {
           this.me = e.path.id;
+          this.uiBox.onJoin(player);
           this.uiBox.onUpdateSyncProps(e.value);
         }
-        this.playerViewer.onJoin(e.path.id, e.value, itsMe);
+
       }
       else if (e.operation === "remove") { this.playerViewer.onLeave(e.path.id, e.value); }
     });

@@ -1,4 +1,4 @@
-export const SERVER_HOST = "ws://localhost:2567";
+export const SERVER_HOST = "ws://localhost:2568";
 
 export const Page = Object.freeze ({
   Home: 1,
