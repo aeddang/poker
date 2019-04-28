@@ -64,8 +64,6 @@ export default class Poker extends Component {
     this.header.init(elementProvider.getElement('header'));
     this.onResize();
     this.onPageChange(Config.Page.Home);
-
-    SoundFactory.getInstence().playBgm(SoundFactory.BGM.DEFAULT);
   }
 
   setupEvent() {

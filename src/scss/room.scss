@@ -13,7 +13,7 @@
 .poker .join .info-box .info {  @include position-left(360px, 160px); width:350px; }
 .poker .join .info-box .name { @include font-default($color-white);}
 .poker .join .info-box .bankroll { @include font-default($color-yellow) }
-.poker .join .info-box .btn-play { @include position-bottom-right(35px, 110px); @include btn-text; @include btn-default-size }
+.poker .join .info-box .btn-play { @include position-bottom-right(35px, 110px); @include btn-text; @include btn-default-size; z-index:9999 }
 .poker .join .loading-bar { @include loading-bar  }
 
 .poker .play { @include page }

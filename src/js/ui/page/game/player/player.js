@@ -7,6 +7,7 @@ import { animation, animationAndComplete, animationWithDelay } from 'Skeleton/an
 import Card from '../card'
 import * as Rx from 'rxjs'
 import { take } from 'rxjs/operators'
+import * as SoundFactory from 'Root/soundfactory';
 
 class PlayerBody extends ElementProvider {
   writeHTML() {
@@ -26,7 +27,9 @@ class PlayerBody extends ElementProvider {
           <div id='${this.id}resultValue' class='result-value'></div>
         </div>
       </div>
-      <div id='${this.id}timeBar' class='time-bar'></div>
+      <div class='time-range'>
+        <div id='${this.id}timeBar' class='time-bar'></div>
+      </div>
       <div id='${this.id}action' class='action-info'></div>
     `;
     this.body.appendChild(cell);
@@ -141,8 +144,9 @@ export default class Player extends SyncPropsComponent {
         this.blind.visible = value;
       },
       isWinner: value =>{
+        if(value == null || value == "") return;
         this.action.innerHTML = value  ? 'Win' : '';
-        animation(this.action, {scale:1, opacity:1});
+        this.viewAction();
       },
 
       isActive: value =>{
@@ -214,6 +218,8 @@ export default class Player extends SyncPropsComponent {
           case Action.AllIn:
             this.action.innerHTML = 'AllIn'
             break;
+          default:
+            return;
         }
         this.viewAction();
       },
@@ -282,6 +288,11 @@ export default class Player extends SyncPropsComponent {
     let margin = 5;
     let len = 5;
     let bounce = Util.convertRectFromDimension(this.getBody().parentNode);
+    if(bounce.width > 300){
+      bounce.width = 193;
+      bounce.height = 91;
+    }
+    this.debuger.log(bounce, 'bounce');
     var wid = ( bounce.width - ((len+1) * margin) ) / len;
     var hei = wid * 1.5;
     var tx = margin;
@@ -299,6 +310,7 @@ export default class Player extends SyncPropsComponent {
   }
 
   showCard( id, cardData ) {
+
     let idx = Number(id);
     let card = this.cards[ idx ];
     card.setData( cardData, true );

@@ -1,7 +1,7 @@
 @import 'element';
 @import 'mixin';
 
-.poker .sound-area{@include screen-out}
+.poker .sound-area{@include screen-out; height:1px; width:1px}
 
 .poker .logo-center{ @include position-center(960px, 517px) ; @include bg-image($image-logo-center)}
 

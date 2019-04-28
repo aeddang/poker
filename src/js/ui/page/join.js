@@ -3,6 +3,7 @@ import ElementProvider from 'Skeleton/elementprovider';
 import { LoadingSpiner } from 'Skeleton/paint';
 import * as Util from 'Skeleton/util';
 import * as Config from 'Util/config';
+import * as SoundFactory from 'Root/soundfactory';
 
 class JoinBody extends ElementProvider {
   writeHTML() {
@@ -17,7 +18,7 @@ class JoinBody extends ElementProvider {
         <p id='${this.id}name' class='name'></p>
         <p id='${this.id}bankroll' class='bankroll'></p>
       </div>
-      <button id='${this.id}btnPlay' class='btn-play'>play</button>
+      <button id='${this.id}btnPlay' class='btn-play'>START</button>
     </div>
     <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}loadingBar' class='loading-bar'></div>
@@ -60,6 +61,7 @@ export default class Join extends Room {
 
   getElementProvider() { return new JoinBody(this.body); }
   onCreate(elementProvider) {
+    SoundFactory.getInstence().stopBgm();
     let loadingBarBody = elementProvider.getElement('loadingBar');
     let bounce = Util.convertRectFromDimension(loadingBarBody);
     this.loadingBar.init(loadingBarBody, bounce.width, bounce.height);
@@ -102,6 +104,7 @@ export default class Join extends Room {
   }
 
   onPlay() {
+    SoundFactory.getInstence().playBgm(SoundFactory.BGM.DEFAULT);
     Poker.onPageChange(Config.Page.Play);
   }
 

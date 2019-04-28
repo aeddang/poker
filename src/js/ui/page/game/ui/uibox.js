@@ -6,6 +6,7 @@ import Card from '../card'
 import Betting from './betting'
 import { animation, animationAndComplete, animationWithDelay } from 'Skeleton/animation';
 import { Status, PositionStatus, NetworkStatus } from  "../playerstatus";
+import * as SoundFactory from 'Root/soundfactory';
 
 export const UI_EVENT = Object.freeze ({
 	FOLD: 1,
@@ -25,6 +26,7 @@ const CARD_HEIGHT = 120;
 class UiBoxInfo {
   constructor() {
     this.reset();
+		this.checkPot = 0;
     this.minBet = 0;
 		this.bankroll = 0;
   }
@@ -126,12 +128,25 @@ export default class UiBox extends SyncPropsComponent {
 	setupWatchs(){
 		this.watchs = {
 			checkBet: value =>{
+				this.info.checkPot = value;
         this.checkBet.innerHTML = 'Call-> $' + value;
+      },
+			bankroll: value =>{
+        this.info.bankroll = value;
       },
 	    minBet: value =>{
 				this.info.minBet = value;
-        this.minBet.innerHTML = 'Bet-> $' + value;
+        this.minBet.innerHTML = 'Bet-> $' + (this.info.checkPot + value);
+				this.debuger.log(this.info.minBet, 'minBet');
       },
+			status: value =>{
+        switch ( value ) {
+          case Status.Wait:
+					this.resetHand();
+					break;
+				}
+			},
+
 			actionBlind: value => { this.setActionButton( this.btnBlind,  value ) },
 			actionFold: value => { this.setActionButton( this.btnFold,  value ) },
 	    actionSmallBlind: value => { this.setActionButton( this.btnSmallBlind,  value ) },
@@ -161,7 +176,7 @@ export default class UiBox extends SyncPropsComponent {
 	}
 
 	pushHand(cardDatas){
-		this.btnBlind.visible = false;
+		this.setActionButton( this.btnBlind,  false );
 		this.cards.forEach( (c, idx) => c.setData( cardDatas[idx], true ) );
 	}
 
@@ -191,11 +206,10 @@ export default class UiBox extends SyncPropsComponent {
   }
 
 	onBetSelect(evtType) {
-		this.betting.active(this.info.minBet, this.info.bankroll, evtType);
+		this.betting.active(this.info.checkPot, this.info.minBet, this.info.bankroll, evtType);
 		let target = ( evtType == UI_EVENT.BET ) ? this.btnBet : this.btnRaise;
 		let bounce = Util.convertRectFromDimension(target , true);
 		this.bettingArea.x = bounce.x;
-		this.bettingArea.y = 0;
 	}
 
 	onBetCancel() {
@@ -203,24 +217,31 @@ export default class UiBox extends SyncPropsComponent {
 	}
 
 	onBlind() {
+		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.BLIND ));
 	}
   onFold() {
+		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.WATER_BOOM );
 		this.delegate.next(new ComponentEvent( UI_EVENT.FOLD ));
 	}
 	onSmallBlind() {
+		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.SAMALL_BLIND ));
 	}
 	onBigBlind() {
+		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.BIG_BLIND ));
 	}
   onCheck() {
+		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.CHECK ));
 	}
 	onCall() {
+		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.CALL ));
 	}
   onAllIn() {
+		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.ALL_IN ));
 	}
 }

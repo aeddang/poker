@@ -227,7 +227,6 @@ export default class Stage extends Component {
     this.status ++
 		this.blindCount = 1
 		this.roundPot = 0
-		this.gameBet = 0
 		this.count = 0
 		this.didBet = false
   }

@@ -19,7 +19,8 @@ module.exports = {
       Component: path.resolve(__dirname, 'src/js/ui/component/'),
       Util: path.resolve(__dirname, 'src/js/ui/util/'),
       ViewModel: path.resolve(__dirname, 'src/js/ui/viewmodel/'),
-      Page: path.resolve(__dirname, 'src/js/ui/page/')
+      Page: path.resolve(__dirname, 'src/js/ui/page/'),
+      Root: path.resolve(__dirname, 'src/js/ui/')
     }
   },
 

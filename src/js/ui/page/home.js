@@ -1,7 +1,7 @@
 import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Login from "ViewModel/login";
-
+import * as SoundFactory from 'Root/soundfactory';
 class HomeBody extends ElementProvider {
   writeHTML() {
     var cell = document.createElement("div");
@@ -9,7 +9,7 @@ class HomeBody extends ElementProvider {
     cell.classList.add("home");
     cell.innerHTML =`
     <div class ='logo-center'></div>
-    <button id='${this.id}btnJoin' class='btn-join'>GAME START</button>
+    <button id='${this.id}btnJoin' class='btn-join'>JOIN GAME</button>
     `;
     this.body.appendChild(cell);
   }
@@ -32,11 +32,15 @@ export default class Home extends Component {
 
   getElementProvider() { return new HomeBody(this.body); }
   onCreate(elementProvider) {
+    SoundFactory.getInstence().stopBgm();
     this.btnJoin = elementProvider.getElement('btnJoin');
     super.onCreate(elementProvider);
   }
 
   setupEvent() {
-    this.attachEvent(this.btnJoin, "click", e => {Login.model.login();} );
+    this.attachEvent(this.btnJoin, "click", e => {
+      SoundFactory.getInstence().playBgm(SoundFactory.BGM.DEFAULT);
+      Login.model.login();
+    } );
   }
 }

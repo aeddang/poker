@@ -8,7 +8,7 @@ class MusicBoxBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("position");
     cell.innerHTML = `
-      <audio preload='metadata' loop id='${this.id}bgmPlayer' width='1' height='1'></audio>
+      <audio preload='metadata' id='${this.id}bgmPlayer' autoplay loop></audio>
       <audio preload='metadata' id='${this.id}mainPlayer'></audio>
       <audio preload='metadata' id='${this.id}subPlayer'></audio>
     `;
@@ -51,6 +51,7 @@ export default class MusicBox extends Component {
 		this.bgmPlayer = elementProvider.getElement('bgmPlayer');
     this.mainPlayer = elementProvider.getElement('mainPlayer');
     this.subPlayer = elementProvider.getElement('subPlayer');
+    //this.bgmPlayer.loop = true;
   }
 
   setupEvent() {
@@ -78,28 +79,31 @@ export default class MusicBox extends Component {
 
   playBgm(path) {
       this.bgmPlayer.src = this.info.path + path + this.info.extension;
+      this.debuger.log(this.bgmPlayer.src, 'this.bgmPlayer.src');
       this.bgmPlayer.load();
-      this.bgmPlayer.play();
-      this.isBgmPlay = true;
+      this.info.isBgmPlay = true;
   }
 
   stopBgm() {
       this.bgmPlayer.pause();
-      this.isBgmPlay = false;
+      this.info.isBgmPlay = false;
   }
 
   play(id) {
+    this.debuger.log('play ' + id);
     this.staticPlayers[id].currentTime = 0;
     this.staticPlayers[id].play();
   }
 
   playEffect(path) {
+    this.debuger.log('play ' + path);
     this.mainPlayer.src = this.info.path + path + this.info.extension;
     this.mainPlayer.load();
     this.mainPlayer.play();
   }
 
   playSideEffect(path) {
+    this.debuger.log('playSide ' + path);
     this.subPlayer.src = this.info.path + path + this.info.extension;
     this.subPlayer.load();
     this.subPlayer.play();

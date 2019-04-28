@@ -23,6 +23,7 @@ class BettingBody extends ElementProvider {
 export default class Betting extends Component {
   constructor() {
     super();
+    this.checkpot = 0;
     this.minBet = 0;
     this.maxBet = 0;
     this.eventType = -1;
@@ -58,12 +59,12 @@ export default class Betting extends Component {
     this.attachEvent(this.btnReset, "click", this.onReset.bind(this));
   }
 
-  active(minBet, maxBet, eventType){
+  active(checkPot, minBet, maxBet, eventType){
+    this.checkPot = checkPot;
     this.minBet = minBet;
     this.maxBet = maxBet;
     this.eventType = eventType;
     this.currentBet = minBet;
-    this.debuger.log(this.currentBet, 'this.currentBet');
     this.getBody().visible = true;
   }
 
@@ -76,12 +77,11 @@ export default class Betting extends Component {
     if( v > this.maxBet ) v = this.maxBet;
     this._currentBet = v;
     this.bet.innerHTML = "bet-> $"+this._currentBet
-    this.debuger.log(this._currentBet, 'this._currentBet');
   }
   get currentBet(){ return this. _currentBet}
 
   onBet() {
-    this.delegate.next(new ComponentEvent( this.eventType , this._currentBet ));
+    this.delegate.next(new ComponentEvent( this.eventType , (this.checkPot + this._currentBet) ));
     this.passive();
   }
   onMultiply() { this.currentBet = this._currentBet * 2; }
