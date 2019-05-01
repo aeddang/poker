@@ -47,6 +47,7 @@ export default class Card extends DomComponent {
   onBurn(){
     if(this.cardData == null) return;
     if( this.isBurn ) return;
+    SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
     this.burn();
   }
 

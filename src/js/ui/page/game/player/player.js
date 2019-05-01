@@ -135,7 +135,9 @@ export default class Player extends SyncPropsComponent {
       },
       time: value =>{
         this.time = value;
-        if(this.limitTime > 0) this.timeBar.style.width =  Util.getStyleRatio( this.time/ this.limitTime * 100 );
+        if(this.limitTime <= 0) return;
+        this.timeBar.style.width =  Util.getStyleRatio( this.time/ this.limitTime * 100 );
+        if(this.limitTime > 5 && this.time <= 5) SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.TICK_TIME );
       },
       limitTime: value =>{
         this.limitTime = value;
@@ -195,27 +197,35 @@ export default class Player extends SyncPropsComponent {
       finalAction: value =>{
         switch ( value ) {
           case Action.Fold:
+            SoundFactory.getInstence().playEffect( SoundFactory.SOUND.FOLD );
             this.action.innerHTML = 'Fold'
             break;
           case Action.SmallBlind:
+            SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
             this.action.innerHTML = 'SmallBlind'
             break;
           case Action.BigBlind:
+            SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
             this.action.innerHTML = 'BigBlind'
             break;
           case Action.Check:
+            SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
             this.action.innerHTML = 'Check'
             break;
           case Action.Call:
+            SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
             this.action.innerHTML = 'Call'
             break;
           case Action.Bet:
+            SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
             this.action.innerHTML = 'Bet'
             break;
           case Action.Raise:
+            SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
             this.action.innerHTML = 'Raise'
             break;
           case Action.AllIn:
+            SoundFactory.getInstence().playEffect( SoundFactory.SOUND.ALL_IN );
             this.action.innerHTML = 'AllIn'
             break;
           default:
@@ -310,13 +320,13 @@ export default class Player extends SyncPropsComponent {
   }
 
   showCard( id, cardData ) {
-
     let idx = Number(id);
     let card = this.cards[ idx ];
     card.setData( cardData, true );
     card.burn();
     if(this.isShowDown) return;
     this.isShowDown = true;
+    SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
     animation(this.showDown, { opacity:1 });
   }
 

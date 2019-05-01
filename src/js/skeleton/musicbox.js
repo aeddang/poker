@@ -22,6 +22,7 @@ class MusicBoxInfo {
     this.path = path;
     this.extension = ".mp3";
 		this.isBgmPlay = false;
+    this.isFocus = true;
   }
   reset() {}
 }
@@ -71,10 +72,12 @@ export default class MusicBox extends Component {
 
   onPause() {
     this.bgmPlayer.pause();
+    this.info.isFocus = false;
   }
 
   onResume() {
     if(this.info.isBgmPlay) this.bgmPlayer.play();
+    this.info.isFocus = true;
   }
 
   playBgm(path) {
@@ -91,12 +94,14 @@ export default class MusicBox extends Component {
 
   play(id) {
     this.debuger.log('play ' + id);
+    if(!this.info.isFocus) return;
     this.staticPlayers[id].currentTime = 0;
     this.staticPlayers[id].play();
   }
 
   playEffect(path) {
     this.debuger.log('play ' + path);
+    if(!this.info.isFocus) return;
     this.mainPlayer.src = this.info.path + path + this.info.extension;
     this.mainPlayer.load();
     this.mainPlayer.play();
@@ -104,6 +109,7 @@ export default class MusicBox extends Component {
 
   playSideEffect(path) {
     this.debuger.log('playSide ' + path);
+    if(!this.info.isFocus) return;
     this.subPlayer.src = this.info.path + path + this.info.extension;
     this.subPlayer.load();
     this.subPlayer.play();

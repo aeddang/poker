@@ -4,7 +4,7 @@ import ComponentEvent from 'Skeleton/event';
 import * as Util from 'Skeleton/util';
 import { animation, animationAndComplete } from 'Skeleton/animation';
 import Card from '../card'
-
+import * as SoundFactory from 'Root/soundfactory';
 class CardShowBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
@@ -81,6 +81,7 @@ export default class CardShow extends Component {
   }
 
   shuffleStap1(communityCards, players){
+    SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.SHUFFLE_CARD );
     let len = this.cards.length - 1;
     let deltaRotation = 360/len;
     this.cards.forEach( (card, idx) => {
@@ -95,6 +96,7 @@ export default class CardShow extends Component {
   }
 
   shuffleStap2(communityCards, players){
+    SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.SHUFFLE_CARD );
     let len = this.cards.length - 1;
     let viewWidth = 500;
     let deltaX = viewWidth/len;
@@ -114,6 +116,7 @@ export default class CardShow extends Component {
   }
 
   shuffleStap3(communityCards, players){
+    SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.SHUFFLE_CARD );
     let len = this.cards.length - 1;
     this.cards.forEach( (card, idx) => {
       animationAndComplete(
@@ -126,7 +129,7 @@ export default class CardShow extends Component {
   }
 
   distribution(communityCards, players){
-
+    SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.THROW_CARD );
     var cardIdx = 0;
     players.forEach( player => {
       let card = this.cards[cardIdx];

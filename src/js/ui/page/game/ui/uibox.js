@@ -146,6 +146,15 @@ export default class UiBox extends SyncPropsComponent {
 					break;
 				}
 			},
+			isWinner: value =>{
+        if(value == null || value == "") return;
+        let key = value  ? SoundFactory.SOUND.WIN : SoundFactory.SOUND.LOSE;
+        SoundFactory.getInstence().playEffect( key );
+      },
+
+			isActive: value =>{
+        if(value) SoundFactory.getInstence().playEffect( SoundFactory.SOUND.TURN );
+      },
 
 			actionBlind: value => { this.setActionButton( this.btnBlind,  value ) },
 			actionFold: value => { this.setActionButton( this.btnFold,  value ) },
@@ -176,6 +185,7 @@ export default class UiBox extends SyncPropsComponent {
 	}
 
 	pushHand(cardDatas){
+		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.THROW_CARD );
 		this.setActionButton( this.btnBlind,  false );
 		this.cards.forEach( (c, idx) => c.setData( cardDatas[idx], true ) );
 	}
@@ -217,31 +227,24 @@ export default class UiBox extends SyncPropsComponent {
 	}
 
 	onBlind() {
-		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.BLIND ));
 	}
   onFold() {
-		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.WATER_BOOM );
 		this.delegate.next(new ComponentEvent( UI_EVENT.FOLD ));
 	}
 	onSmallBlind() {
-		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.SAMALL_BLIND ));
 	}
 	onBigBlind() {
-		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.BIG_BLIND ));
 	}
   onCheck() {
-		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.CHECK ));
 	}
 	onCall() {
-		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.CALL ));
 	}
   onAllIn() {
-		SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.SHOT );
 		this.delegate.next(new ComponentEvent( UI_EVENT.ALL_IN ));
 	}
 }

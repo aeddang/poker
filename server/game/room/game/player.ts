@@ -211,7 +211,10 @@ export default class Player extends Component {
     if( this.gameBet < this.winPot ){
       this.isWinner = true
       this.debuger.log(this.winPot,'win ' + this.name)
-    } else if(this.gameBet > this.winPot) this.debuger.log(this.winPot,'lose ' + this.name)
+    } else if(this.gameBet > this.winPot) {
+      this.isWinner = false
+      this.debuger.log(this.winPot,'lose ' + this.name)
+    }
     else this.debuger.log(this.winPot,'draw ' + this.name)
     this.winPot = 0
   }

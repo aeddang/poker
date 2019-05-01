@@ -4,6 +4,7 @@ import * as Util from 'Skeleton/util';
 import { decoratorDynamicDom } from 'Skeleton/uielement';
 import Card from '../card'
 import { Status } from '../gamestatus'
+import * as SoundFactory from 'Root/soundfactory';
 class GameViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
@@ -93,6 +94,7 @@ export default class GameViewer extends SyncPropsComponent {
       },
 
       gamePot: value =>{
+        SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.DROP_POT );
         this.mainPot.innerHTML = '$' + value;
       },
       roundPot: value =>{
@@ -108,9 +110,11 @@ export default class GameViewer extends SyncPropsComponent {
             this.round.innerHTML = 'Free Flop'
             break;
           case Status.Flop:
+            SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
             this.round.innerHTML = 'Flop'
             break;
           case Status.Turn:
+            SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
             this.round.innerHTML = 'Turn'
             break;
           case Status.ShowDown:
