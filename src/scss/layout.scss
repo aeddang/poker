@@ -3,10 +3,10 @@
 @import 'room';
 @import 'component';
 
-.poker {@include position-cover(relative); @include bg-image($image-bg); overflow:hidden;}
-
-.poker .page-area { @include position-cover(relative); overflow:hidden;}
-
+.poker {@include position-relative; @include size; overflow:hidden }
+.poker .page-area { @include position-relative; @include size; overflow:hidden }
+.poker .sound-area{@include screen-out; height:1px; width:1px}
+.poker .logo{ @include position-top-left($margin-big, $margin-default) ; @include icon-logo}
 
 .poker ::-moz-selection { background: transparent}
 .poker ::-webkit-selection {background: transparent}

@@ -1,7 +1,7 @@
 @import 'element';
 @import 'mixin';
 
-
+/*
 @mixin text-padding { padding:0 $margin-default 0 $margin-default; }
 @mixin icon-text { width:30px; height:30px; @include bg-radius; line-height:2.3; text-align: center; @include font-small($color-white); background-color: $color-transparent-black70; }
 @mixin action-info {@include position-absolute(81px,42px); @include font-default($color-black); text-align: center; padding:35px 15px 30px 25px; @include bg-image($image-bg-action); z-index:777 }
@@ -103,3 +103,4 @@
 .poker .ui-box .action .time-bar-range { @include position-bottom-left(0,0); @include bg-radius(3px); width:100%; height:15px;  background-color: $color-transparent-black15;  }
 .poker .ui-box .action .time-bar { width:0%; height:100%;  background-color: $color-blue;  }
 .poker .ui-box .hand { @include position-top-left(660px,50px); width:280px; cursor:pointer }
+*/

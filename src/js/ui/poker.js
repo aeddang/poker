@@ -4,7 +4,6 @@ import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import * as Config from "Util/config";
 import * as Login from "ViewModel/login";
-import Header from 'Component/header';
 import * as Page from 'Page/page';
 import * as SoundFactory from './soundfactory';
 
@@ -13,7 +12,6 @@ class PokerBody extends ElementProvider {
     this.body.classList.add("poker");
     this.body.innerHTML =`
     <div id='${this.id}soundArea' class ='sound-area'></div>
-    <div id='${this.id}header' class ='header'></div>
     <div id='${this.id}pageArea' class ='page-area'></div>
     `;
   }
@@ -22,7 +20,6 @@ class PokerBody extends ElementProvider {
 class PokerInfo {
   constructor() {
     this.reset();
-    this.isFullScreen = false;
     this.finalSize = {width:0, height:0};
   }
 
@@ -36,7 +33,6 @@ export default class Poker extends Component {
     super();
     this.info = new PokerInfo();
     this.client = new Colyseus.Client(Config.SERVER_HOST);
-    this.header = new Header();
     Login.model.delegate.subscribe ( this.onLoginEvent.bind(this) );
   }
   remove() {
@@ -61,7 +57,6 @@ export default class Poker extends Component {
   onCreate(elementProvider) {
     SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
-    this.header.init(elementProvider.getElement('header'));
     this.onResize();
     this.onPageChange(Config.Page.Home);
   }
@@ -84,7 +79,6 @@ export default class Poker extends Component {
 
   onPageEvent (event) {
 
-
   }
 
   onLoginEvent(event) {
@@ -94,41 +88,13 @@ export default class Poker extends Component {
     }
   }
 
-  checkFullscreen() {
-    var isFullScreen = ((typeof document.webkitIsFullScreen) !== 'undefined') ? document.webkitIsFullScreen : document.mozFullScreen;
-    if(this.info.isFullScreen == isFullScreen) return;
-    this.info.isFullScreen = isFullScreen;
-    (isFullScreen == true) ? this.onFullScreenEnter() : this.onFullScreenExit();
-  }
-
-  enterFullscreen() {
-    if (this.body.requestFullscreen) this.body.requestFullscreen();
-    if (this.body.mozRequestFullScreen) this.body.mozRequestFullScreen();
-    if (this.body.webkitRequestFullscreen) this.body.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-  }
-
-  exitFullscreen() {
-    if (document.cancelFullScreen) document.cancelFullScreen();
-    if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-    if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
-  }
-
   onResize(data) {
     let bounce = Util.convertRectFromDimension(this.body);
     if( bounce.width != this.info.finalSize.width || bounce.height != this.info.finalSize.height ) {
-        this.checkFullscreen();
-        let headerBounce = Util.convertRectFromDimension(this.header.getBody());
-        this.pageArea.height = bounce.height - headerBounce.height;
+        this.pageArea.height = bounce.height;
         if(this.currentPage != null) this.currentPage.onResize();
     }
     this.info.finalSize = bounce;
   }
 
-  onFullScreenEnter(data) {
-    this.info.isFullScreen = true;
-  }
-
-  onFullScreenExit(data) {
-    this.info.isFullScreen = false;
-  }
 }

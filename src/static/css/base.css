@@ -95,7 +95,7 @@ em, p, span {
 	font-style:normal;
 }
 
-input{border: none; border-bottom: 1px solid #9da6b2}
+input{border: none; border-bottom: 1px solid #faf97c}
 input:focus{border-bottom: 1px solid #ff7e7e; outline: none;}
 textarea{border: none; border-bottom: 1px solid #9da6b2}
 textarea:focus{border-bottom: 1px solid #ff7e7e; outline: none;}

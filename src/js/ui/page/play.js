@@ -29,6 +29,7 @@ class PlayBody extends ElementProvider {
 const CARD_WIDTH = 70;
 const CARD_HEIGHT = 105;
 const BOTTOM_HEIGHT = 210;
+const BOTTOM_MARGIN = 20;
 class PlayInfo {
   constructor() {
     this.reset();
@@ -142,9 +143,8 @@ export default class Play extends Room {
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let bounceBox = Util.convertRectFromDimension(this.chatArea);
-    let margin = bounceBox.y - bounce.y;
-    this.playArea.width = bounce.width - bounceBox.width - margin;
-    this.chatArea.height = bounce.height - (margin*2);
+    let margin = bounceBox.y - bounce.y + BOTTOM_MARGIN;
+    this.chatArea.height = bounce.height - margin;
 
     let gameHeight = bounce.height - BOTTOM_HEIGHT;
     this.gameViewer.getBody().height = gameHeight;

@@ -1,26 +1,20 @@
 @import 'element';
 @import 'mixin';
+@import 'ui';
 
-.poker .sound-area{@include screen-out; height:1px; width:1px}
-
-.poker .logo-center{ @include position-center(960px, 517px) ; @include bg-image($image-logo-center)}
-
-.poker .header {position:relative; width:100%; height:125px; background:$color-transparent-black70 }
-.poker .header .logo {@include position-left($margin-big, 32px); @include bg-image($image-logo);  width:160px; height:60px;}
-.poker .header .obj { @include position-top-right(-20px, -100px); width:490px; height:326px; @include bg-image($image-obj-ship); }
-.poker .header .loading-bar { @include position-right($margin-default, 40px); width:45px; height:45px}
-.poker .header .btn-join { @include position-right(500px, 55px); @include btn-default; @include font-big($color-white)}
-
-.poker .chat {position:relative; width:100%; height:100%; background:$color-transparent-black45;}
-.poker .chat .viewer  {@include font-small($color-white); height:100%; overflow-y:auto; overflow-x: hidden;}
-.poker .chat .input { @include position-bottom-left(800px,0); width:417px; height:264px; margin-left:320px ;@include bg-image($image-chat-send-bg)}
-.poker .chat .input .text {@include position-center(200px, 30px, 40px, -20px); @include font-small($color-black)}
-.poker .chat .input .btn {@include position-center(200px, 30px, 40px, 20px) @include btn-default; @include font-big($color-blue)}
-.poker .chat .row{ padding: $margin-tiny}
-.poker .chat .admin-lv1 {@include font-small($color-red);}
-.poker .chat .admin-lv2 {@include font-small($color-red);}
-.poker .chat .admin-lv3 {@include font-small($color-light-grey);}
-.poker .chat .user {@include font-small($color-white);}
-.poker .chat .individual {@include font-default($color-blue);}
-.poker .chat .viewer .title { font-size:15px}
-.poker .chat .viewer .text { font-size:13px}
+.poker .chat { @include position-relative; @include size }
+.poker .chat .btn-chat { @include btn-chat; @include position-absolute; }
+.poker .chat .body { @include position-relative($margin-small); @include size(120px,100%); @include bg-image($image-bg-chat) }
+.poker .chat .body .viewer  { position:relative; @include position-side-margin($margin-small, $margin-small); @include text-small($color-white); overflow-y:auto; overflow-x: hidden;}
+.poker .chat .body .bottom { @include position-bottom-left(0, 0); @include size(100%, 64px) }
+.poker .chat .body .bottom .input {  @include position-relative; @include position-side-margin($margin-small, $margin-small); text-align: center }
+.poker .chat .body .bottom .input .text { @include position-relative; width:100%; @include text-small($color-white); background:none }
+.poker .chat .body .bottom .input .btn { @include position-relative(0, $margin-tiny); @include btn-text; @include text-default($color-sky)}
+.poker .chat .body .row{ padding: $margin-tiny}
+.poker .chat .body .admin-lv1 {@include text-small($color-red) }
+.poker .chat .body .admin-lv2 {@include text-small($color-red) }
+.poker .chat .body .admin-lv3 {@include text-small($color-grey) }
+.poker .chat .body .user {@include text-small($color-white) }
+.poker .chat .body .individual {@include text-default($color-sky) }
+.poker .chat .body .viewer .title { font-size:$font-tiny }
+.poker .chat .body .viewer .text { font-size:$font-small}

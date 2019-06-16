@@ -2,60 +2,53 @@
 /*
 position
 */
-@mixin position-horizontal($margin:0) { position:relative; display:block; margin-top:$margin}
-@mixin position-horizontal-center($width, $marginY:0){position: absolute; margin:0 auto; margin-left:-($width/2); width:$width; margin-top:$marginY}
-@mixin position-left($marginX:0, $marginY:0) { float:left; margin-left:$marginX; @include position-horizontal($marginY) }
-@mixin position-right($marginX:0, $marginY:0) { float:right; margin-right:$marginX; @include position-horizontal($marginY) }
+@mixin position-side-margin($marginL:0, $marginR:0, $marginY:0) { margin-left:$marginL; margin-right:$marginR; margin-top:$marginY }
+@mixin position-relative($marginX:0, $marginY:0) { position:relative; margin-left:$marginX; margin-top:$marginY }
+@mixin position-left($marginX:0, $marginY:0) { position:relative; float:left; margin-left:$marginX; margin-top:$marginY }
+@mixin position-right($marginX:0, $marginY:0) { position:relative; float:right; margin-right:$marginX; margin-top:$marginY }
 @mixin position-clear {clear: both}
-@mixin position-top($margin:0){position: absolute; top: 0; margin-top:$margin}
-@mixin position-top-left($marginX:0, $marginY:0){ left:$marginX; @include position-top($marginY)}
-@mixin position-top-right($marginX:0, $marginY:0){ right:$marginX; @include position-top($marginY)}
-@mixin position-top-center($width, $margin:0){ left: 50%;  width:$width; margin-left:-($width/2); @include position-top($margin)}
-@mixin position-bottom($margin:0){position: absolute; bottom: 0; margin-bottom:$margin}
-@mixin position-bottom-left($marginX:0, $marginY:0){ left:$marginX; @include position-bottom($marginY)}
-@mixin position-bottom-right($marginX:0, $marginY:0){ right:$marginX; @include position-bottom($marginY)}
-@mixin position-bottom-center($width, $margin:0){ left: 50%; width:$width; margin-left:-($width/2); @include position-bottom($margin)}
-@mixin position-cover($position:absolute){position: $position; width: 100%; height:100%; left:0; top:0}
-@mixin position-center-alignment($width, $height, $marginX, $marginY) {
-  position:absolute; width:$width; height:$height;
-  margin-left:-($width/2)+$marginX; margin-top:-($height/2)+$marginY
-}
-@mixin position-center($width, $height, $marginX:0, $marginY:0,) {
-  left: 50%; top: 50%; @include position-center-alignment($width, $height, $marginX, $marginY)
-}
-@mixin position-absolute($width, $height, $top:0, $left:0){
-  top:$top; left:$left; position:absolute; width:$width; height:$height;
-}
+
+@mixin position-absolute($top:0, $left:0){ top:$top; left:$left; position:absolute }
+@mixin position-horizontal-center($width, $marginY:0){position: absolute; margin:0 auto; margin-left:-($width/2); margin-top:$marginY }
+@mixin position-top($marginY:0){position: absolute; top:$marginY }
+@mixin position-top-left($marginX:0, $marginY:0){ left:$marginX; @include position-top($marginY) }
+@mixin position-top-right($marginX:0, $marginY:0){ right:$marginX; @include position-top($marginY) }
+@mixin position-top-center($width, $margin:0){ left: 50%; margin-left:-($width/2); @include position-top($margin) }
+@mixin position-bottom($marginY:0){position: absolute; bottom:$marginY; }
+@mixin position-bottom-left($marginX:0, $marginY:0){ left:$marginX; @include position-bottom($marginY) }
+@mixin position-bottom-right($marginX:0, $marginY:0){ right:$marginX; @include position-bottom($marginY) }
+@mixin position-bottom-center($width, $margin:0){ left: 50%; width:$width; margin-left:-($width/2); @include position-bottom($margin) }
+@mixin position-center-alignment($width, $height, $marginX, $marginY) { margin-left:-($width/2)+$marginX; margin-top:-($height/2)+$marginY }
+@mixin position-center($width, $height, $marginX:0, $marginY:0) { @include position-absolute(50%, 50%); @include position-center-alignment($width, $height, $marginX, $marginY) }
+
+@mixin size($width:100%, $height:100%){ width:$width; height:$height }
+/*
+util
+*/
 @mixin text-line-limit{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 @mixin screen-out{ overflow:hidden; position:absolute; left:-1000px; height:0; padding:1px 0 0 0; line-height:0; font-size:0 }
+@mixin bg-image ($image){ background: url($image) no-repeat; background-size:100% 100%;}
+@mixin bg-radius ($radius:$default-btn-radius) { -webkit-border-radius:$radius;moz-border-radius:$radius;border-radius:$radius }
+@mixin icon-image ($image, $width, $height){ @include bg-image($image); @include size($width, $height)}
+@mixin btn-default () { padding:0; border:0; cursor:pointer }
+@mixin btn-trensparent { @include position-absolute(); @include size(); @include btn-default() ;opacity:0 }
+@mixin btn-text () { @include btn-default(); background:none }
+@mixin btn-image ($image, $width, $height){ @include btn-default(); @include icon-image($image, $width, $height) }
+@mixin btn-bg ($image){ @include btn-image ($image);  @include font-out() }
 /*
 font
 */
 @mixin font-out {text-indent: -9999px}
-@mixin font-tiny ($color) { font: { family: $font-family; size: 9px; } color: $color }
-@mixin font-small ($color) { font: { family: $font-family-R; size: 13px; } color: $color }
-@mixin font-default ($color) { font: { family: $font-family-B; size: 15px; } color: $color }
-@mixin font-big ($color) { font: { family: $font-family-B; size: 20px; } color: $color }
-@mixin font-ultra ($color) { font: { family: $font-family-B; size: 30px; } color: $color }
+@mixin text-tiny ($color) { font: { family: $font-text-R; size: $font-tiny; } color: $color }
+@mixin text-small ($color) { font: { family: $font-text-R; size: $font-small; } color: $color }
+@mixin text-default ($color) { font: { family: $font-text-R; size: $font-default; } color: $color }
+@mixin text-big ($color) { font: { family: $font-text-B; size: $font-big; } color: $color }
+@mixin text-ultra ($color) { font: { family: $font-text-B; size: $font-ultra; } color: $color }
+@mixin number-tiny ($color) { font: { family: $font-number-R; size: $font-tiny; } color: $color }
+@mixin number-small ($color) { font: { family: $font-number-R; size: $font-small; } color: $color }
+@mixin number-default ($color) { font: { family: $font-number-B; size: $font-default; } color: $color }
+@mixin number-big ($color) { font: { family: $font-number-B; size: $font-big; } color: $color }
+@mixin number-ultra ($color) { font: { family: $font-number-B; size: $font-ultra; } color: $color }
 /*
-ui
+
 */
-@mixin page($background:$default-background){ @include position-cover(relative); background:$background }
-@mixin chat($width:300px,$height:100%){ width:$width; height:$height }
-@mixin loading-bar { @include position-center(100px, 100px) }
-@mixin bg-image ($image){ background: url($image) no-repeat; background-size:100% 100%;}
-@mixin bg-radius ($radius:$default-btn-radius) { -webkit-border-radius:$radius;moz-border-radius:$radius;border-radius:$radius }
-
-@mixin btn-trensparent { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer }
-@mixin btn-default ($background:none) { padding:0; border:0; background:$background; cursor:pointer }
-@mixin btn-round ($background:$default-btn-color, $radius:$default-btn-radius) { @include btn-default($color); @include bg-radius($radius) }
-@mixin btn-board ($color:$default-btn-color, $background:none,$radius:$default-btn-radius ) { border:0.5px solid $color; @include btn-default($background); @include bg-radius($radius) }
-
-@mixin btn-small-icon-size { width:$default-small-icon-width; height: $default-small-icon-width; @include bg-radius($default-btn-radius) }
-@mixin btn-icon-size { width:$default-icon-width; height: $default-icon-height; @include bg-radius($default-btn-radius) }
-@mixin btn-default-size { width:$default-btn-width; height: $default-btn-height }
-@mixin btn-text { @include font-default($default-btn-font-color); @include btn-default($default-btn-bg-color);}
-@mixin btn-text-strong { @include font-default($color-yellow); @include btn-default($color-red);}
-@mixin btn-text-weak { @include font-default($default-btn-font-color); @include btn-default($color-grey);}
-
-@mixin btn-image ($image){ @include btn-default(url($image) no-repeat); background-size:100% 100%;}

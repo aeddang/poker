@@ -15,11 +15,16 @@ class ChatBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("chat");
     cell.innerHTML =`
-    <div id='${this.id}viewer' class='viewer scroll-info'></div>
-    <form id='${this.id}inputForm' class='input'>
-      <input type="text" id='${this.id}inputText' class='text' value="" autofocus/>
-      <input type="submit" id='${this.id}inputBtn' value="SEND" class='btn' />
-    </form>
+		<div class='body'>
+	    <div id='${this.id}viewer' class='viewer scroll-info'></div>
+			<div id='${this.id}bottom' class='bottom'>
+		    <form id='${this.id}inputForm' class='input'>
+		      <input type="text" id='${this.id}inputText' class='text' value=""/>
+		      <input type="submit" id='${this.id}inputBtn' value="SEND" class='btn' />
+		    </form>
+			</div>
+		</div>
+		<button id='${this.id}btnChat' class='btn-chat'></button>
     `;
     this.body.appendChild(cell);
   }
@@ -41,6 +46,7 @@ export default class Chat extends Component  {
 		this.debuger.tag = 'Chat';
     this.info = new ChatInfo();
     this.viewer = null;
+		this.bottom = null;
     this.inputForm = null;
     this.inputText = null;
 		this.inputBtn = null;
@@ -52,6 +58,7 @@ export default class Chat extends Component  {
 		this.rows = null;
     this.info = null;
     this.viewer = null;
+		this.bottom = null;
     this.inputForm = null;
     this.inputText = null;
 		this.inputBtn = null;
@@ -70,6 +77,7 @@ export default class Chat extends Component  {
   getElementProvider() { return new ChatBody(this.body); }
   onCreate(elementProvider) {
     this.viewer = elementProvider.getElement('viewer');
+		this.bottom = elementProvider.getElement('bottom');
     this.inputForm = elementProvider.getElement('inputForm');
     this.inputText = elementProvider.getElement('inputText');
 		this.inputBtn = elementProvider.getElement('inputBtn');
@@ -89,8 +97,8 @@ export default class Chat extends Component  {
 	onResize() {
     super.onResize();
 		let bounce = Util.convertRectFromDimension(this.getBody());
-		this.inputForm.x = - (Math.floor(bounce.x / 2));
-
+		let bounceBottom = Util.convertRectFromDimension(this.bottom);
+		this.viewer.height = bounce.height - bounceBottom.height;
   }
 
   onSendMessage(e) {
