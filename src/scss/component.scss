@@ -3,7 +3,7 @@
 @import 'ui';
 
 .poker .chat { @include position-relative; @include size }
-.poker .chat .btn-chat { @include btn-chat; @include position-absolute; }
+.poker .chat .btn-chat { @include btn-chat; @include position-vertical-center(36); }
 .poker .chat .body { @include position-relative($margin-small); @include size(120px,100%); @include bg-image($image-bg-chat) }
 .poker .chat .body .viewer  { position:relative; @include position-side-margin($margin-small, $margin-small); @include text-small($color-white); overflow-y:auto; overflow-x: hidden;}
 .poker .chat .body .bottom { @include position-bottom-left(0, 0); @include size(100%, 64px) }

@@ -8,20 +8,13 @@ import * as SoundFactory from 'Root/soundfactory';
 class GameViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
-    <div class ='logo-center'></div>
-    <div class='info'>
-      <div class='ante'><span class='title'>ante</span><span id='${this.id}ante' class='text'></span></div>
-      <div class='min-bet'><span class='title'>bet</span><span id='${this.id}minBet' class='text'></span></div>
-      <div class='game-bet'><span class='title'>total</span><span id='${this.id}gameBet' class='text'></span></div>
-    </div>
+    <div class ='board'></div>
     <div class='pot'>
-      <div id='${this.id}round' class='round'></div>
-      <div class='main-pot'><span class='title'>mainpot</span><span id='${this.id}mainPot' class='text'></span></div>
-      <div class='round-pot'><span class='title'>roundpot</span><span id='${this.id}roundPot' class='text'></span></div>
-      <div class='side-pot'><span class='title'>sidepot</span><span id='${this.id}sidePot' class='text'></span></div>
+      <div id='${this.id}mainPot' class='main-pot'></div>
+      <div id='${this.id}sidePot' class='side-pot'>$0000</div>
+      <div class='chips'></div>
     </div>
-    <div id='${this.id}cardArea' class='cards'>
-    <div>
+    <div id='${this.id}cardArea' class='cards'></div>
     `;
   }
 }
@@ -48,25 +41,17 @@ export default class GameViewer extends SyncPropsComponent {
     this.cards.forEach( c => c.remove() );
     this.cards = null;
     this.cardArea = null;
-    this.ante = null;
     this.mainPot = null;
     this.sidePot = null;
-    this.minBet = null;
-    this.round = null;
-    this.roundPot = null;
-    this.gameBet = null;
+
     this.info = null;
   }
 
   getElementProvider() { return new GameViewerBody(this.body); }
   onCreate(elementProvider) {
-    this.ante = elementProvider.getElement('ante');
+    //this.ante = elementProvider.getElement('ante');
     this.mainPot = elementProvider.getElement('mainPot');
     this.sidePot = elementProvider.getElement('sidePot');
-    this.minBet = elementProvider.getElement('minBet');
-    this.round = elementProvider.getElement('round');
-    this.roundPot = elementProvider.getElement('roundPot');
-    this.gameBet = elementProvider.getElement('gameBet');
     this.cardArea = elementProvider.getElement('cardArea');
     this.createCards(elementProvider);
     this.onResize();
@@ -84,13 +69,13 @@ export default class GameViewer extends SyncPropsComponent {
   setupWatchs(){
     this.watchs = {
       ante: value =>{
-        this.ante.innerHTML = '$' + value;
+        //this.ante.innerHTML = '$' + value;
       },
       gameBet: value =>{
-        this.gameBet.innerHTML = '$' + value;
+        //this.gameBet.innerHTML = '$' + value;
       },
       minBet: value =>{
-        this.minBet.innerHTML = '$' + value;
+        //this.minBet.innerHTML = '$' + value;
       },
 
       gamePot: value =>{
@@ -98,27 +83,22 @@ export default class GameViewer extends SyncPropsComponent {
         this.mainPot.innerHTML = '$' + value;
       },
       roundPot: value =>{
-        this.roundPot.innerHTML = '$' + value;
+        //this.roundPot.innerHTML = '$' + value;
       },
 
       status: value =>{
         switch ( value ) {
           case Status.Wait:
-            this.round.innerHTML = 'Wait'
             break;
           case Status.FreeFlop:
-            this.round.innerHTML = 'Free Flop'
             break;
           case Status.Flop:
             SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
-            this.round.innerHTML = 'Flop'
             break;
           case Status.Turn:
             SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
-            this.round.innerHTML = 'Turn'
             break;
           case Status.ShowDown:
-            this.round.innerHTML = 'Show Down'
             break;
         }
       }

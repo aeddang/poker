@@ -7,6 +7,6 @@
 
 
 .poker .play { @include page($image-bg-game) }
-.poker .play .chat-area { @include position-top-right(0,80px); @include size(130px,0) }
+.poker .play .chat-area { @include position-top-right(-117px,80px); @include size(130px,0) }
 .poker .play .play-area { @include position-absolute(); @include size() }
 .poker .play .loading-bar { @include loading-bar }

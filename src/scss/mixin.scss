@@ -9,7 +9,8 @@ position
 @mixin position-clear {clear: both}
 
 @mixin position-absolute($top:0, $left:0){ top:$top; left:$left; position:absolute }
-@mixin position-horizontal-center($width, $marginY:0){position: absolute; margin:0 auto; margin-left:-($width/2); margin-top:$marginY }
+@mixin position-horizontal-center($width, $marginY:0){position: absolute; margin:0 auto; margin-left:-($width/2); top:$marginY }
+@mixin position-vertical-center($height, $marginX:0){position: absolute; top:50%; margin-top:-($height/2); left:$marginX }
 @mixin position-top($marginY:0){position: absolute; top:$marginY }
 @mixin position-top-left($marginX:0, $marginY:0){ left:$marginX; @include position-top($marginY) }
 @mixin position-top-right($marginX:0, $marginY:0){ right:$marginX; @include position-top($marginY) }
@@ -25,6 +26,12 @@ position
 /*
 util
 */
+@mixin drop-shadow($size:5px, $amount:0.45){
+  -webkit-box-shadow: $size $size $size 0px rgba(0,0,0,$amount);
+  -moz-box-shadow: $size $size $size 0px rgba(0,0,0,$amount);
+  box-shadow: $size $size $size 0px rgba(0,0,0,$amount);
+}
+@mixin text-shadow($color:$color-remon){ text-shadow: 0 0 3px $color; }
 @mixin text-line-limit{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 @mixin screen-out{ overflow:hidden; position:absolute; left:-1000px; height:0; padding:1px 0 0 0; line-height:0; font-size:0 }
 @mixin bg-image ($image){ background: url($image) no-repeat; background-size:100% 100%;}

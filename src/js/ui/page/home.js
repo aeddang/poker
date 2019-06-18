@@ -8,7 +8,7 @@ class HomeBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("home");
     cell.innerHTML =`
-    <div class ='logo-center'></div>
+    <div class ='logo'></div>
     <button id='${this.id}btnJoin' class='btn-join'>JOIN GAME</button>
     `;
     this.body.appendChild(cell);

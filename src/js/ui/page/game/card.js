@@ -2,7 +2,7 @@ import { DomComponent } from 'Skeleton/component';
 import { FrameAnimation } from 'Skeleton/paint';
 import { animationAndProgress, animationStop } from 'Skeleton/animation';
 import * as SoundFactory from 'Root/soundfactory';
-const IMG_PATH = './static/resource/cards.png';
+const IMG_PATH = './static/asset/cards.png';
 
 export default class Card extends DomComponent {
   constructor() {

@@ -3,7 +3,7 @@ import ComponentEvent from 'Skeleton/event';
 import ElementProvider from 'Skeleton/elementprovider';
 import Command, * as Cmd from  "Util/command";
 import * as Util from 'Skeleton/util';
-
+import { animation } from 'Skeleton/animation';
 export const CHAT_EVENT = Object.freeze ({
 	SEND_MESSAGE: "sendMessage",
   RECEIVED_MESSAGE: "receivedMessage",
@@ -34,6 +34,7 @@ class ChatInfo {
   constructor() {
     this.reset();
 		this.maxLow = 500;
+		this.isUiHidden = true;
   }
   reset() {
 
@@ -45,16 +46,12 @@ export default class Chat extends Component  {
     super();
 		this.debuger.tag = 'Chat';
     this.info = new ChatInfo();
-    this.viewer = null;
-		this.bottom = null;
-    this.inputForm = null;
-    this.inputText = null;
-		this.inputBtn = null;
 		this.rows = [];
   }
 
   remove() {
     super.remove();
+		this.btnChat = null;
 		this.rows = null;
     this.info = null;
     this.viewer = null;
@@ -81,10 +78,12 @@ export default class Chat extends Component  {
     this.inputForm = elementProvider.getElement('inputForm');
     this.inputText = elementProvider.getElement('inputText');
 		this.inputBtn = elementProvider.getElement('inputBtn');
+		this.btnChat = elementProvider.getElement('btnChat');
   }
 
   setupEvent() {
     this.attachEvent(this.inputForm, "submit", this.onSendMessage.bind(this), true);
+		this.attachEvent(this.btnChat, "click", this.onToggleOpen.bind(this), true);
   }
 
   onRoomEvent( event ) {
@@ -94,11 +93,29 @@ export default class Chat extends Component  {
     }
   }
 
+	onToggleOpen( event ) {
+
+		if(this.info.isUiHidden){
+			this.info.isUiHidden = false;
+			animation(
+        this.getBody().parentNode,{ right: 0 }
+      )
+		}else{
+			this.info.isUiHidden= true;
+			let bounce = Util.convertRectFromDimension(this.getBody());
+			let bounceBtn = Util.convertRectFromDimension(this.btnChat);
+			animation(
+        this.getBody().parentNode,{ right: -(bounce.width - bounceBtn.width) }
+      )
+		}
+  }
+
 	onResize() {
     super.onResize();
 		let bounce = Util.convertRectFromDimension(this.getBody());
 		let bounceBottom = Util.convertRectFromDimension(this.bottom);
 		this.viewer.height = bounce.height - bounceBottom.height;
+		this.btnChat.y = bounce.height/2;
   }
 
   onSendMessage(e) {

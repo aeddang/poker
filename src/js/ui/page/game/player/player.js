@@ -17,18 +17,13 @@ class PlayerBody extends ElementProvider {
     cell.classList.add("player-position-wait");
     cell.innerHTML = `
       <div class='box'>
-        <p id='${this.id}name' class='name'></p>
-        <p id='${this.id}bankroll' class='bankroll'></p>
-        <p id='${this.id}status' class='status'></p>
-        <p id='${this.id}positionStatus' class='position-status'></p>
-        <p id='${this.id}networkStatus' class='network-status'></p>
-        <p id='${this.id}blind' class='blind'>B</p>
-        <div id='${this.id}showDown' class='show-down'>
-          <div id='${this.id}resultValue' class='result-value'></div>
+        <div id='${this.id}name' class='name'></div>
+        <div id='${this.id}bankroll' class='bankroll'></div>
+        <div id='${this.id}positionIcon' class='position-icon'></div>
+        <div class='time-range'>
+          <div id='${this.id}timeBar' class='time-bar'></div>
+          <div id='${this.id}timeThumb' class='time-thumb'></div>
         </div>
-      </div>
-      <div class='time-range'>
-        <div id='${this.id}timeBar' class='time-bar'></div>
       </div>
       <div id='${this.id}action' class='action-info'></div>
     `;
@@ -58,18 +53,12 @@ export default class Player extends SyncPropsComponent {
     super.remove();
     this.removeViewAction();
     this.cards.forEach( c => c.remove() );
-    this.showDown = null;
     this.name = null;
     this.bankroll = null;
-    this.status = null;
-    this.blind = null;
     this.timeBar = null;
-    this.action = null;
+    this.timeThumb = null;
+    this.positionIcon = null
     this.cards = null;
-    this.resultValue = null;
-    this.positionStatus = null;
-    this.networkStatus = null;
-
   }
 
 
@@ -78,17 +67,8 @@ export default class Player extends SyncPropsComponent {
 
     this.name = elementProvider.getElement('name');
     this.bankroll = elementProvider.getElement('bankroll');
-    this.networkStatus = elementProvider.getElement('networkStatus');
-    this.positionStatus = elementProvider.getElement('positionStatus');
-    this.status = elementProvider.getElement('status');
-    this.action = elementProvider.getElement('action');
-    this.blind = elementProvider.getElement('blind');
-    this.timeBar = elementProvider.getElement('timeBar');
-    this.showDown = elementProvider.getElement('showDown');
-    this.resultValue = elementProvider.getElement('resultValue');
-    this.resultValue.opacity = 0;
-    this.showDown.opacity = 0;
-    this.action.opacity = 0;
+    this.timeThumb = elementProvider.getElement('timeThumb');
+    this.positionIcon = elementProvider.getElement('positionIcon');
   }
 
   setupWatchs(){
@@ -105,28 +85,20 @@ export default class Player extends SyncPropsComponent {
       status: value =>{
         switch ( value ) {
           case Status.Wait:
-            this.status.innerHTML = 'Wait'
             break;
           case Status.Impossible:
-            this.status.innerHTML = 'Impossible'
             break;
           case Status.Fold:
-            this.status.innerHTML = 'Fold'
             break;
           case Status.Play:
-            this.status.innerHTML = 'Play'
             break;
           case Status.AllIn:
-            this.status.innerHTML = 'AllIn'
             break;
           case Status.ShowDown:
-            this.status.innerHTML = 'ShowDown'
             break;
           case Status.Absence:
-            this.status.innerHTML = 'Absence'
             break;
           case Status.WaitBigBlind:
-            this.status.innerHTML = 'WaitBigBlind'
             break;
         }
       },
@@ -136,19 +108,20 @@ export default class Player extends SyncPropsComponent {
       time: value =>{
         this.time = value;
         if(this.limitTime <= 0) return;
-        this.timeBar.style.width =  Util.getStyleRatio( this.time/ this.limitTime * 100 );
+        let pct = Util.getStyleRatio( this.time/ this.limitTime * 100 );
+        this.timeBar.style.width = pct;
+        this.timeThumb.style.left = pct;
         if(this.limitTime > 5 && this.time <= 5) SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.TICK_TIME );
       },
       limitTime: value =>{
         this.limitTime = value;
       },
       isBlind: value =>{
-        this.blind.visible = value;
+
       },
       isWinner: value =>{
         if(value == null || value == "") return;
-        this.action.innerHTML = value  ? 'Win' : '';
-        this.viewAction();
+
       },
 
       isActive: value =>{
@@ -157,76 +130,74 @@ export default class Player extends SyncPropsComponent {
       resultValue: value =>{
         switch ( value ) {
           case Values.Highcard:
-            this.resultValue.innerHTML = 'Highcard';
+            //this.resultValue.innerHTML = 'Highcard';
             break;
           case Values.Pair:
-            this.resultValue.innerHTML = 'Pair';
+            //this.resultValue.innerHTML = 'Pair';
             break;
           case Values.TwoPairs:
-            this.resultValue.innerHTML = 'TwoPairs';
+            //this.resultValue.innerHTML = 'TwoPairs';
             break;
           case Values.ThreeOfAKind:
-            this.resultValue.innerHTML = 'ThreeOfAKind';
+            //this.resultValue.innerHTML = 'ThreeOfAKind';
             break;
           case Values.Straight:
-            this.resultValue.innerHTML = 'Straight';
+            //this.resultValue.innerHTML = 'Straight';
             break;
           case Values.FourOfAKind:
-            this.resultValue.innerHTML = 'FourOfAKind';
+            //this.resultValue.innerHTML = 'FourOfAKind';
             break;
           case Values.Flush:
-            this.resultValue.innerHTML = 'Flush';
+            //this.resultValue.innerHTML = 'Flush';
             break;
           case Values.FullHouse:
-            this.resultValue.innerHTML = 'FullHouse';
+            //this.resultValue.innerHTML = 'FullHouse';
             break;
           case Values.StraightFlush:
-            this.resultValue.innerHTML = 'StraightFlush';
+            //this.resultValue.innerHTML = 'StraightFlush';
             break;
           case Values.RoyalStraightFlush:
-            this.resultValue.innerHTML = 'RoyalStraightFlush';
+            //this.resultValue.innerHTML = 'RoyalStraightFlush';
             break;
           default:
-            this.resultValue.innerHTML = '';
-            animation( this.resultValue,{ opacity:0});
+            //this.resultValue.innerHTML = '';
             return;
         }
-        animation( this.resultValue,{ opacity:1});
       },
 
       finalAction: value =>{
         switch ( value ) {
           case Action.Fold:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.FOLD );
-            this.action.innerHTML = 'Fold'
+            //this.action.innerHTML = 'Fold'
             break;
           case Action.SmallBlind:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
-            this.action.innerHTML = 'SmallBlind'
+            //this.action.innerHTML = 'SmallBlind'
             break;
           case Action.BigBlind:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
-            this.action.innerHTML = 'BigBlind'
+            //this.action.innerHTML = 'BigBlind'
             break;
           case Action.Check:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
-            this.action.innerHTML = 'Check'
+            //this.action.innerHTML = 'Check'
             break;
           case Action.Call:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
-            this.action.innerHTML = 'Call'
+            //this.action.innerHTML = 'Call'
             break;
           case Action.Bet:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
-            this.action.innerHTML = 'Bet'
+            //this.action.innerHTML = 'Bet'
             break;
           case Action.Raise:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
-            this.action.innerHTML = 'Raise'
+            //this.action.innerHTML = 'Raise'
             break;
           case Action.AllIn:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.ALL_IN );
-            this.action.innerHTML = 'AllIn'
+            //this.action.innerHTML = 'AllIn'
             break;
           default:
             return;
@@ -236,48 +207,43 @@ export default class Player extends SyncPropsComponent {
       networkStatus: value =>{
         switch ( value ) {
           case NetworkStatus.Connected:
-            this.networkStatus.visible = false;
+
             break;
           case NetworkStatus.DisConnected:
-            this.networkStatus.visible = true;
-            this.networkStatus.innerHTML = 'out'
+
             break;
           case NetworkStatus.Wait:
-            this.networkStatus.visible = true;
-            this.networkStatus.innerHTML = 'wait'
+
             break;
         }
       },
 
-      positionStatus: value =>{
+      positionIcon: value =>{
         switch ( value ) {
           case PositionStatus.DeallerButton:
-            this.positionStatus.innerHTML = 'DB';
-            this.positionStatus.classList.add("db");
-            this.positionStatus.visible = true;
+            this.positionIcon.classList.add("db");
+            this.positionIcon.visible = true;
             break;
           case PositionStatus.BigBlind:
-            this.positionStatus.innerHTML = 'BB';
-            this.positionStatus.classList.add("bb");
-            this.positionStatus.visible = true;
+            this.positionIcon.classList.add("bb");
+            this.positionIcon.visible = true;
             break;
           case PositionStatus.SmallBlind:
-            this.positionStatus.innerHTML = 'SB';
-            this.positionStatus.classList.add("sb");
-            this.positionStatus.visible = true;
+
+            this.positionIcon.classList.add("sb");
+            this.positionIcon.visible = true;
             break;
           case PositionStatus.None:
-            this.positionStatus.innerHTML = ''
-            this.positionStatus.classList.remove("db");
-            this.positionStatus.classList.remove("sb");
-            this.positionStatus.classList.remove("bb");
-            this.positionStatus.visible = false;
+            this.positionIcon.classList.remove("db");
+            this.positionIcon.classList.remove("sb");
+            this.positionIcon.classList.remove("bb");
+            this.positionIcon.visible = false;
             break;
         }
       }
     };
   }
-
+  /*
   removeViewAction(){
     if( this.rxViewAction != null ) this.rxViewAction.unsubscribe();
     this.rxViewAction = null
@@ -290,7 +256,7 @@ export default class Player extends SyncPropsComponent {
       complete :() => { }
     })
   }
-
+  */
   onGameJoin( ) {
     this.removeViewAction()
     this.getBody().classList.remove("player-position-wait");

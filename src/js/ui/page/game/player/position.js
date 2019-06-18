@@ -14,13 +14,13 @@ class PositionBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("position");
     cell.innerHTML = `
-			<div class='card-icon'></div>
-		  <div class='profile'>
-				<img id='${this.id}profileImg' class='profile-img'></img>
-			</div>
 			<div id='${this.id}box' class='box'>
 				<button id='${this.id}btnJoin' class='btn-join'>JOIN</button>
 			</div>
+		  <div class='profile'>
+				<img id='${this.id}profileImg' class='profile-img'></img>
+			</div>
+
     `;
     this.body.appendChild(cell);
   }
@@ -66,7 +66,7 @@ export default class Position extends DomComponent {
 		this.box = elementProvider.getElement('box');
 		this.profileImg = elementProvider.getElement('profileImg');
 		this.profileImg.visible = false;
-		this.profileImg.src = "./static/resource/obj_alien2.png"
+		this.profileImg.src = "./static/asset/obj_alien2.png"
   }
 
   setupEvent() {
