@@ -20,7 +20,7 @@ class PlayerViewerInfo {
   reset() {}
 }
 
-const POSITION_WIDTH = 200;
+const POSITION_WIDTH = 160;
 const POSITION_HEIGHT = 50;
 
 export default class PlayerViewer extends SyncPropsComponent {
@@ -72,14 +72,14 @@ export default class PlayerViewer extends SyncPropsComponent {
 
   onResize(isAni = false) {
     let bounce = Util.convertRectFromDimension(this.getBody());
-    let marginX = 20;
-    let marginY = 20;
+    let marginX = 0;
+    let marginY = 40;
     let width = POSITION_WIDTH;
     let height = POSITION_HEIGHT;
     let centerX = bounce.width/2;
     let centerY = bounce.height/2;
     let posX = centerX - (width/2);
-    let posY = centerY - (height/2);
+    let posY = centerY - (height/2) - 20;
     let radiusX = centerX - (width/2) - marginX;
     let radiusY = centerY - (height/2) - marginY;
     var posLen = this.positions.length;
@@ -97,11 +97,11 @@ export default class PlayerViewer extends SyncPropsComponent {
         let posIdx  = pos % posLen;
         let position = this.positions[ posIdx ];
         if(90 <= rotate && rotate < 270) {
-          position.getBody().classList.remove("position-l");
-          position.getBody().classList.add("position-r");
-        }else{
           position.getBody().classList.remove("position-r");
           position.getBody().classList.add("position-l");
+        }else{
+          position.getBody().classList.remove("position-l");
+          position.getBody().classList.add("position-r");
         }
         position.onResize(posX, posY, radiusX, radiusY);
         var r = rotate * Math.PI/180
@@ -127,7 +127,8 @@ export default class PlayerViewer extends SyncPropsComponent {
 
   onCreatePlayer( id, syncProps, itsMe ){
     let player = new Player();
-    player.init( this.getBody(), itsMe ).subscribe ( this.onUiEvent.bind(this) );
+    let body = this.getBody();
+    player.init( body, itsMe ).subscribe ( this.onUiEvent.bind(this) );
     player.onUpdateSyncProps( syncProps );
     this.players[id] = player;
     return player;
@@ -151,6 +152,7 @@ export default class PlayerViewer extends SyncPropsComponent {
       if( position == null ) return;
 
       if( player.me ) {
+        position.addPlayer( player.getBody() );
         this.onSelectedMyposition( value );
       }
       else {

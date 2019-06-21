@@ -20,7 +20,6 @@ class PositionBody extends ElementProvider {
 		  <div class='profile'>
 				<img id='${this.id}profileImg' class='profile-img'></img>
 			</div>
-
     `;
     this.body.appendChild(cell);
   }
@@ -92,7 +91,7 @@ export default class Position extends DomComponent {
 		this.info.rotate = ( rotate > 0) ? rotate%(Math.PI * 2) : rotate + (Math.PI * 2)
 		this.x = this.info.posX + (Math.cos(this.info.rotate) *this.info.radiusX);
 		var posY = this.info.posY + (Math.sin(this.info.rotate) *this.info.radiusY);
-		posY = this.info.itsMe ? (posY + 150) : posY
+		if(this.info.itsMe) posY += 40;
 		this.y = posY;
 	}
 
@@ -101,8 +100,10 @@ export default class Position extends DomComponent {
 	}
 
 	onAnimationCompleted(){
-		if(this.info.itsMe) animationAndComplete( this.getBody(),{ opacity:0, scale:1.5},
-		p => { this.getBody().visible = false});
+		if(this.info.itsMe) animationAndComplete( this.getBody(),{ scale:1.2},
+		p => {
+			//this.getBody().visible = false
+		});
 	}
 
   onJoin() {

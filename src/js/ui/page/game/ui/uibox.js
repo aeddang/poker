@@ -176,7 +176,7 @@ export default class UiBox extends SyncPropsComponent {
     };
   }
   onJoin(player){
-		this.infoArea.appendChild(player.getBody());
+		//this.infoArea.appendChild(player.getBody());
 		this.profileImg.visible = true;
 	}
 	onBetEvent( e ){

@@ -16,17 +16,16 @@ class PlayerBody extends ElementProvider {
     cell.classList.add("player");
     cell.classList.add("player-position-wait");
     cell.innerHTML = `
-      <div class='box'>
+      <div class='info-box'>
         <div id='${this.id}name' class='name'></div>
         <div id='${this.id}bankroll' class='bankroll'></div>
-        <div id='${this.id}positionIcon' class='position-icon'></div>
+        <div id='${this.id}positionIcon' class='position-icon db'></div>
         <div class='time-range'>
           <div id='${this.id}timeBar' class='time-bar'></div>
           <div id='${this.id}timeThumb' class='time-thumb'></div>
         </div>
-      </div>
-      <div id='${this.id}action' class='action-info'></div>
-    `;
+      </div>`;
+
     this.body.appendChild(cell);
   }
 }
@@ -51,7 +50,6 @@ export default class Player extends SyncPropsComponent {
   }
   remove() {
     super.remove();
-    this.removeViewAction();
     this.cards.forEach( c => c.remove() );
     this.name = null;
     this.bankroll = null;
@@ -67,6 +65,7 @@ export default class Player extends SyncPropsComponent {
 
     this.name = elementProvider.getElement('name');
     this.bankroll = elementProvider.getElement('bankroll');
+    this.timeBar = elementProvider.getElement('timeBar');
     this.timeThumb = elementProvider.getElement('timeThumb');
     this.positionIcon = elementProvider.getElement('positionIcon');
   }
@@ -258,7 +257,6 @@ export default class Player extends SyncPropsComponent {
   }
   */
   onGameJoin( ) {
-    this.removeViewAction()
     this.getBody().classList.remove("player-position-wait");
     this.getBody().classList.add("player-position-join");
     let margin = 5;
@@ -277,15 +275,18 @@ export default class Player extends SyncPropsComponent {
     hei = Math.floor(hei);
     tx = Math.floor(tx);
     ty = Math.floor(ty);
+    /*
     for(var i=0; i<len; ++i) {
       let card = new Card().init( this.showDown, wid, hei, tx ,ty);
       this.cards.push( card );
       card.visible = false;
       tx += (wid+margin)
     }
+    */
   }
 
   showCard( id, cardData ) {
+    /*
     let idx = Number(id);
     let card = this.cards[ idx ];
     card.setData( cardData, true );
@@ -294,15 +295,18 @@ export default class Player extends SyncPropsComponent {
     this.isShowDown = true;
     SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
     animation(this.showDown, { opacity:1 });
+    */
   }
 
   hideCard( id ) {
+    /*
     let idx = Number(id);
     let card = this.cards[ idx ];
     card.hidden( true );
     if(!this.isShowDown) return;
     this.isShowDown = false;
     animation(this.showDown, { opacity:0});
+    */
   }
 }
 

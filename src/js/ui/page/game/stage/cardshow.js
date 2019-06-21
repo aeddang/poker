@@ -59,7 +59,6 @@ export default class CardShow extends Component {
     for(var i=0; i<this.info.cardNum; ++i) {
       let card = new Card().init( this.cardArea, this.info.cardWidth, this.info.cardHeight);
       this.cards.push( card );
-      card.hidden();
     }
   }
 
