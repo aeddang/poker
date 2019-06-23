@@ -19,13 +19,14 @@ export const SHOW_EVENT = Object.freeze ({
 });
 
 class CardShowInfo {
-  constructor(cardWidth, cardHeight) {
+  constructor(cardWidth, cardHeight, cardMargin) {
     this.reset();
     this.cardNum =30;
 		this.centerX = -1;
     this.centerY = 0;
     this.cardWidth = cardWidth;
 		this.cardHeight = cardHeight;
+    this.cardMargin = cardMargin;
   }
   reset() {}
 }
@@ -74,6 +75,7 @@ export default class CardShow extends Component {
   }
 
   shuffle(communityCards, players){
+    this.getBody().style.zIndex = 9999;
     this.getBody().visible = true;
     this.animating = true;
     this.shuffleStap1(communityCards, players);
@@ -99,7 +101,7 @@ export default class CardShow extends Component {
     let len = this.cards.length - 1;
     let viewWidth = 500;
     let deltaX = viewWidth/len;
-    let ty = this.info.centerY - 200
+    let ty = this.info.centerY - 100
     let tx = this.info.centerX - (viewWidth/2);
     this.cards.forEach( (card, idx) => {
       let rt = this.getDegree(tx + (this.info.cardWidth/2), ty);
@@ -162,6 +164,7 @@ export default class CardShow extends Component {
           card.getBody(),aniData,
           () => {
             this.getBody().visible = false;
+            this.getBody().style.zIndex = 'auto';
             this.delegate.next(new ComponentEvent( SHOW_EVENT.SHUFFLE_COMPLETED ))
           }
         );
@@ -189,6 +192,7 @@ export default class CardShow extends Component {
       cardIdx ++;
     });
     this.getBody().visible = true;
+    this.getBody().style.zIndex = 'auto';
     communityCards.forEach( communityCard => {
       let card = this.cards[cardIdx];
       card.x = communityCard.x;
@@ -208,6 +212,7 @@ export default class CardShow extends Component {
       animationAndComplete(
         card.getBody(),
         { rotateZ: "0deg",
+          rotateY: "180deg",
           left: Util.getStyleUnit(this.info.centerX),
           top: Util.getStyleUnit(this.info.centerY),
           opacity:1

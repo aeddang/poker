@@ -8,18 +8,18 @@ position
 @mixin position-right($marginX:0, $marginY:0) { position:relative; float:right; margin-right:$marginX; margin-top:$marginY }
 @mixin position-clear {clear: both}
 
-@mixin position-absolute($top:0, $left:0){ top:$top; left:$left; position:absolute }
+@mixin position-absolute($left:0, $top:0){ top:$top; left:$left; position:absolute }
 @mixin position-horizontal-center($width, $marginY:0){position: absolute; margin:0 auto; margin-left:-($width/2); top:$marginY }
 @mixin position-vertical-center($height, $marginX:0){position: absolute; top:50%; margin-top:-($height/2); left:$marginX }
 @mixin position-top($marginY:0){position: absolute; top:$marginY }
 @mixin position-top-left($marginX:0, $marginY:0){ left:$marginX; @include position-top($marginY) }
 @mixin position-top-right($marginX:0, $marginY:0){ right:$marginX; @include position-top($marginY) }
-@mixin position-top-center($width, $margin:0){ left: 50%; margin-left:-($width/2); @include position-top($margin) }
+@mixin position-top-center($width, $marginX:0, $marginY:0){ left: 50%; margin-left:-($width/2)+$marginX; @include position-top($marginY) }
 @mixin position-bottom($marginY:0){position: absolute; bottom:$marginY; }
 @mixin position-bottom-left($marginX:0, $marginY:0){ left:$marginX; @include position-bottom($marginY) }
 @mixin position-bottom-right($marginX:0, $marginY:0){ right:$marginX; @include position-bottom($marginY) }
-@mixin position-bottom-center($width, $margin:0){ left: 50%; width:$width; margin-left:-($width/2); @include position-bottom($margin) }
-@mixin position-center-alignment($width, $height, $marginX, $marginY) { margin-left:-($width/2)+$marginX; margin-top:-($height/2)+$marginY }
+@mixin position-bottom-center($width, $marginX:0, $marginY:0){ left: 50%; margin-left:-($width/2)+$marginX; @include position-bottom($marginY) }
+@mixin position-center-alignment($width, $height, $marginX:0, $marginY:0) { margin-left:-($width/2)+$marginX; margin-top:-($height/2)+$marginY }
 @mixin position-center($width, $height, $marginX:0, $marginY:0) { @include position-absolute(50%, 50%); @include position-center-alignment($width, $height, $marginX, $marginY) }
 
 @mixin size($width:100%, $height:100%){ width:$width; height:$height }
@@ -27,10 +27,17 @@ position
 util
 */
 @mixin drop-shadow($size:5px, $amount:0.45){
-  -webkit-box-shadow: $size $size $size 0px rgba(0,0,0,$amount);
-  -moz-box-shadow: $size $size $size 0px rgba(0,0,0,$amount);
-  box-shadow: $size $size $size 0px rgba(0,0,0,$amount);
+  -webkit-box-shadow: $size $size $size 0 rgba(0,0,0,$amount);
+  -moz-box-shadow: $size $size $size 0 rgba(0,0,0,$amount);
+  box-shadow: $size $size $size 0 rgba(0,0,0,$amount);
 }
+
+@mixin glow($color, $size:2px){
+  -webkit-box-shadow: 0 0 $size $size $color;
+  -moz-box-shadow: 0 0 $size $size $color;
+  box-shadow: 0 0 $size $size $color;
+}
+
 @mixin text-shadow($color:$color-remon){ text-shadow: 0 0 3px $color; }
 @mixin text-line-limit{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 @mixin screen-out{ overflow:hidden; position:absolute; left:-1000px; height:0; padding:1px 0 0 0; line-height:0; font-size:0 }

@@ -15,9 +15,8 @@ class PlayBody extends ElementProvider {
     <div id='${this.id}playArea' class='play-area'>
       <div id='${this.id}gameViewer' class='game-viewer'></div>
       <div id='${this.id}cardShow' class='card-show'></div>
-      <div id='${this.id}uiBox' class='ui-box'></div>
       <div id='${this.id}playerViewer' class='player-viewer'></div>
-
+      <div id='${this.id}uiBox' class='ui-box'></div>
       <button id='${this.id}btnExit' class='btn-exit'>EXIT</button>
       <div class ='logo'></div>
     </div>
@@ -28,8 +27,9 @@ class PlayBody extends ElementProvider {
   }
 }
 
-const CARD_WIDTH = 70;
-const CARD_HEIGHT = 105;
+const CARD_WIDTH = 50;
+const CARD_HEIGHT = 75;
+const CARD_MARGIN = 3;
 const BOTTOM_HEIGHT = 0;
 const BOTTOM_MARGIN = 20;
 class PlayInfo {
@@ -45,9 +45,9 @@ export default class Play extends Room {
     super();
     this.ROOM_KEY= "play";
     this.info = new PlayInfo();
-    this.gameViewer = new Game.GameViewer(CARD_WIDTH, CARD_HEIGHT);
+    this.gameViewer = new Game.GameViewer(CARD_WIDTH, CARD_HEIGHT, CARD_MARGIN);
     this.playerViewer = new Game.PlayerViewer();
-    this.cardShow = new Game.CardShow(CARD_WIDTH, CARD_HEIGHT);
+    this.cardShow = new Game.CardShow(CARD_WIDTH, CARD_HEIGHT, CARD_MARGIN);
     this.uiBox = new Game.UiBox();
     this.loadingBar = new LoadingSpiner();
   }
@@ -133,13 +133,18 @@ export default class Play extends Room {
     });
 
     this.room.listen("players/:id/openHand/:idx", e => {
-      if (e.operation === "add") this.playerViewer.onShowCard(e.path.id, e.path.idx, e.value);
+      if (e.operation === "add") {
+        if( this.gameViewer.onShowCard( e.value ) == false ) {
+          if(e.path.id == this.me) { this.uiBox.onShowCard(e.path.idx, e.value); }
+          else { this.playerViewer.onShowCard(e.path.id, e.path.idx, e.value); }
+        }
+      }
       else if (e.operation === "remove") this.playerViewer.onHideCard(e.path.id, e.path.idx);
     });
   }
 
   onPush(data) {
-    this.uiBox.pushHand(data);
+    this.uiBox.onPushHand(data);
   }
 
   onResize() {
@@ -195,6 +200,11 @@ export default class Play extends Room {
 
   onUiEvent(event) {
     this.debuger.log(event, 'onUiEvent');
+    switch( event.type ){
+      case Game.POSITION_EVENT.SELECTED_POSITION:
+        this.uiBox.onSelectedPosition( event.data );
+        return;
+    }
     let command = new Command (
       Cmd.CommandType.Action,
       event.type,

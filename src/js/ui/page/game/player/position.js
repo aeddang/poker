@@ -1,11 +1,13 @@
 import { DomComponent } from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import ComponentEvent from 'Skeleton/event';
+import * as Util from 'Skeleton/util';
 import { animationAndComplete } from 'Skeleton/animation';
 
 
 export const POSITION_EVENT = Object.freeze ({
 	JOIN_GAME: 10,
+	SELECTED_POSITION: 11,
 });
 
 class PositionBody extends ElementProvider {
@@ -15,10 +17,11 @@ class PositionBody extends ElementProvider {
     cell.classList.add("position");
     cell.innerHTML = `
 			<div id='${this.id}box' class='box'>
-				<button id='${this.id}btnJoin' class='btn-join'>JOIN</button>
+				<button id='${this.id}btnJoin' class='btn-join'>Join</button>
 			</div>
 		  <div class='profile'>
 				<img id='${this.id}profileImg' class='profile-img'></img>
+				<div id='${this.id}profileCover' class='profile-cover'></div>
 			</div>
     `;
     this.body.appendChild(cell);
@@ -35,6 +38,7 @@ class PositionInfo {
     this.radiusX = 0;
     this.radiusY = 0;
 		this.rotate = 0;
+		this.rotatePos = -1;
   }
   reset() {}
 }
@@ -45,6 +49,7 @@ export default class Position extends DomComponent {
     this.debuger.tag = 'Position';
 		this.info = new PositionInfo()
     this.info.idx = -1;
+		this.player = null;
   }
 
   init(body,idx) {
@@ -54,7 +59,10 @@ export default class Position extends DomComponent {
   remove() {
     super.remove();
     this.btnJoin = null;
+		this.profileCover = null;
 		this.info = null;
+		this.player = null;
+		this.profileImg = null;
   }
 
 
@@ -63,9 +71,10 @@ export default class Position extends DomComponent {
   onCreate(elementProvider) {
     this.btnJoin = elementProvider.getElement('btnJoin');
 		this.box = elementProvider.getElement('box');
+		this.profileCover = elementProvider.getElement('profileCover');
 		this.profileImg = elementProvider.getElement('profileImg');
 		this.profileImg.visible = false;
-		this.profileImg.src = "./static/asset/obj_alien2.png"
+		this.profileImg.src = "./static/asset/profile_image.png"
   }
 
   setupEvent() {
@@ -79,19 +88,58 @@ export default class Position extends DomComponent {
 	}
 
 	addPlayer(player){
+		this.player = player;
 		this.box.appendChild(player);
 		this.profileImg.visible = true;
+		this.setRotatePos(this.info.rotatePos);
 	}
 
 	setMe(){
 		this.info.itsMe = true;
 	}
 
+	setRotatePos(pos){
+		this.info.rotatePos = pos;
+		if(this.player == null) return;
+    let left = [0,2,3,4,9];
+    let idx = left.indexOf(pos);
+		this.player.classList.remove("player-hands-l");
+		this.player.classList.remove("player-hands-r");
+    if( idx == -1 ){
+      this.player.classList.add("player-hands-r");
+    }else{
+      this.player.classList.add("player-hands-l");
+    }
+  }
+
 	set rotate(rotate){
 		this.info.rotate = ( rotate > 0) ? rotate%(Math.PI * 2) : rotate + (Math.PI * 2)
-		this.x = this.info.posX + (Math.cos(this.info.rotate) *this.info.radiusX);
+		var posX = this.info.posX + (Math.cos(this.info.rotate) *this.info.radiusX);
 		var posY = this.info.posY + (Math.sin(this.info.rotate) *this.info.radiusY);
-		if(this.info.itsMe) posY += 40;
+		switch( this.info.rotatePos ){
+			case 0 :
+				posY += 40;
+				break;
+			case 4 :
+				posX += 25;
+				break;
+			case 6 :
+				posX -= 25;
+				break;
+			case 3 :
+				posX += 40;
+				break;
+			case 7 :
+				posX -= 40;
+				break;
+			case 1 :
+				posX -= 25;
+				break;
+			case 9 :
+				posX += 25;
+				break;
+		}
+		this.x = posX;
 		this.y = posY;
 	}
 
@@ -102,7 +150,7 @@ export default class Position extends DomComponent {
 	onAnimationCompleted(){
 		if(this.info.itsMe) animationAndComplete( this.getBody(),{ scale:1.2},
 		p => {
-			//this.getBody().visible = false
+			this.delegate.next(new ComponentEvent( POSITION_EVENT.SELECTED_POSITION, Util.convertRectFromDimension(this.getBody()) ));
 		});
 	}
 
@@ -115,6 +163,7 @@ export default class Position extends DomComponent {
   }
 
   leavePlayer() {
+		this.player = null;
 		this.profileImg.visible = false;
     //this.btnJoin.style.display = 'block';
   }

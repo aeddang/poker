@@ -2,6 +2,8 @@ import { DomComponent } from 'Skeleton/component';
 import { FrameAnimation } from 'Skeleton/paint';
 import { animationAndProgress, animationStop } from 'Skeleton/animation';
 import * as SoundFactory from 'Root/soundfactory';
+import * as Rx from 'rxjs'
+import { take } from 'rxjs/operators'
 const IMG_PATH = './static/asset/cards.png';
 
 export default class Card extends DomComponent {
@@ -21,7 +23,7 @@ export default class Card extends DomComponent {
     this.height = height;
     this.view = new FrameAnimation();
     this.view.init( this.getBody(), IMG_PATH, 4, 13 );
-    this.hidden();
+    this.hidden(false , 10);
     return this;
   }
 
@@ -45,6 +47,7 @@ export default class Card extends DomComponent {
   }
 
   onBurn(){
+    this.debuger.log(this.cardData, 'onBurn');
     if(this.cardData == null) return;
     if( this.isBurn ) return;
     SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
@@ -54,18 +57,28 @@ export default class Card extends DomComponent {
   burn( isAutoVisible = false ) {
     if(isAutoVisible) this.visible = true;
     this.isBurn = true;
-    animationAndProgress( this.cell, {rotateY: "0deg"}, ( ele, pct ) => {
+    animationAndProgress( this.cell, {rotateY: "0deg", rotateZ:"0deg"}, ( ele, pct ) => {
       if(pct >= 0.5) this.view.frame = Number( this.cardData.suit ) * 13 + Number( this.cardData.num );
     });
 
   }
 
-  hidden( isAutoVisible = false ){
+  show() {
+    this.cell.classList.remove("card-show");
+    this.cell.classList.add("card-show");
+    this.rxViewAction = Rx.interval(1500).pipe(take(1)).subscribe( {
+      next :(t) => { this.cell.classList.remove("card-show"); },
+      complete :() => {}
+    })
+  }
+
+  hidden( isAutoVisible = false , duration = 300){
+    this.cell.classList.remove("card-show");
     this.isBurn = false;
     animationAndProgress( this.cell, {rotateY: "180deg"},( ele, pct ) => {
       if(pct >= 0.5) this.view.clear();
       if(pct == 1.0 && isAutoVisible) this.visible = false;
-    });
+    }, duration );
     this.cardData = null;
   }
 

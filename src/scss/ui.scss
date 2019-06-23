@@ -12,7 +12,6 @@
 
 @mixin btn-chat { @include btn-image($image-btn-chat, 13px, 37px) }
 @mixin btn-close { @include btn-image($image-btn-close, 17px, 17px) }
-@mixin btn-bet-bg { @include btn-image($image-btn-bet-bg, 46px, 24px) }
 @mixin btn-red-chip-big { @include btn-image($image-btn-red-chip-big, 85px, 85px) }
 @mixin btn-blue-chip { @include btn-image($image-btn-blue-chip, 38px, 38px) }
 @mixin btn-red-chip { @include btn-image($image-btn-red-chip, 38px, 38px) }
@@ -20,6 +19,10 @@
 @mixin btn-blue-half-chip { @include btn-image($image-btn-blue-half-chip, 65px, 32px) }
 @mixin btn-red-half-chip { @include btn-image($image-btn-red-half-chip, 65px, 32px) }
 @mixin btn-purple-half-chip { @include btn-image($image-btn-purple-half-chip, 65px, 32px) }
+@mixin btn-action($color:$color-white){@include size(48,23); @include btn-default(); @include text-small($color-white); @include text-line-limit;
+                                    @include bg-image($image-btn-bet-bg); @include glow($color); margin-left:1px; margin-top:2px}
+@mixin btn-bet($color:$color-white){@include size(23,23); @include btn-default(); @include text-default($color-white);
+                                    @include bg-image($image-btn-bet-bg); @include glow($color); margin-left:1px; margin-top:2px}
 
 @mixin icon-logo { @include icon-image($image-icon-logo, 62px, 24px) }
 @mixin icon-bb { @include icon-image($image-icon-bb, 12px, 12px) }
@@ -33,7 +36,7 @@
 @mixin icon-mission-7days { @include icon-image($image-icon-mission-7days, 32px, 35px) }
 @mixin icon-mission-30days { @include icon-image($image-icon-mission-30days, 35px, 32px) }
 @mixin icon-rock { @include icon-image($image-icon-rock, 64px, 76px) }
-@mixin icon-time-thumb { @include icon-image($image-icon-time-thumb, 30px, 15px) }
+@mixin icon-time-thumb { @include icon-image($image-icon-time-thumb, 20px, 10px) }
 @mixin icon-player-hands { @include icon-image($image-icon-player-hands, 35px, 32px) }
 
 @mixin obj-roccat-blue { @include icon-image($image-obj-roccat-blue, 71px, 132px) }

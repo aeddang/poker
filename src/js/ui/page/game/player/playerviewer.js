@@ -5,6 +5,7 @@ import Player from './player';
 import Position from './position';
 import { animationValue, animationValueAndComplete } from 'Skeleton/animation';
 
+
 class PlayerViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
@@ -22,13 +23,15 @@ class PlayerViewerInfo {
 
 const POSITION_WIDTH = 160;
 const POSITION_HEIGHT = 50;
-
+const MAX_WIDTH = 700;
+const MAX_HEIGHT = 400;
 export default class PlayerViewer extends SyncPropsComponent {
   constructor() {
     super();
     this.debuger.tag = 'PlayerViewer';
     this.info = new PlayerViewerInfo();
     this.players = {};
+    this.me = null;
     this.positions = [];
   }
 
@@ -38,6 +41,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     this.positions.forEach( p => { p.remove(); });
     this.players = null;
     this.positions = null;
+    this.me = null;
   }
 
   getElementProvider() { return new PlayerViewerBody(this.body); }
@@ -72,14 +76,17 @@ export default class PlayerViewer extends SyncPropsComponent {
 
   onResize(isAni = false) {
     let bounce = Util.convertRectFromDimension(this.getBody());
-    let marginX = 0;
+    var marginX = 0;
+    if(bounce.width >= MAX_WIDTH) marginX = Math.floor((bounce.width - MAX_WIDTH)/2);
     let marginY = 40;
+    if(bounce.height >= MAX_HEIGHT) marginY += Math.floor((bounce.height - MAX_HEIGHT)/2);
+
     let width = POSITION_WIDTH;
     let height = POSITION_HEIGHT;
     let centerX = bounce.width/2;
     let centerY = bounce.height/2;
     let posX = centerX - (width/2);
-    let posY = centerY - (height/2) - 20;
+    let posY = centerY - (height/2) - 25;
     let radiusX = centerX - (width/2) - marginX;
     let radiusY = centerY - (height/2) - marginY;
     var posLen = this.positions.length;
@@ -96,6 +103,7 @@ export default class PlayerViewer extends SyncPropsComponent {
       if( i != dealler) {
         let posIdx  = pos % posLen;
         let position = this.positions[ posIdx ];
+        position.setRotatePos(i - start);
         if(90 <= rotate && rotate < 270) {
           position.getBody().classList.remove("position-r");
           position.getBody().classList.add("position-l");
@@ -150,8 +158,8 @@ export default class PlayerViewer extends SyncPropsComponent {
     if( prop == 'position') {
       let position = this.positions[ value ];
       if( position == null ) return;
-
       if( player.me ) {
+        this.me = player;
         position.addPlayer( player.getBody() );
         this.onSelectedMyposition( value );
       }
@@ -168,6 +176,10 @@ export default class PlayerViewer extends SyncPropsComponent {
     this.info.myPosition = position;
     this.positions[ position ].setMe();
     this.onResize(true);
+  }
+
+  onPushHand(cardDatas){
+    this.me.onPushHand(cardDatas);
   }
 
   onShowCard( id, idx, cardData ) {

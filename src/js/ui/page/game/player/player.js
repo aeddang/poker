@@ -19,18 +19,22 @@ class PlayerBody extends ElementProvider {
       <div class='info-box'>
         <div id='${this.id}name' class='name'></div>
         <div id='${this.id}bankroll' class='bankroll'></div>
-        <div id='${this.id}positionIcon' class='position-icon db'></div>
-        <div class='time-range'>
+        <div id='${this.id}positionIcon' class='position-icon'></div>
+        <div id='${this.id}timeRange' class='time-range'>
           <div id='${this.id}timeBar' class='time-bar'></div>
           <div id='${this.id}timeThumb' class='time-thumb'></div>
         </div>
-      </div>`;
+      </div>
+      <div id='${this.id}hands' class='hands'></div>
+      <div id='${this.id}message' class='message'></div>
+      `;
 
     this.body.appendChild(cell);
   }
 }
 
-
+const CARD_WIDTH = 23;
+const CARD_HEIGHT = 35;
 
 export default class Player extends SyncPropsComponent {
   constructor() {
@@ -39,9 +43,11 @@ export default class Player extends SyncPropsComponent {
     this.me = false;
     this.limitTime = 0;
     this.time = 0
+    this.position = -1;
     this.isShowDown = false;
-    this.cards = [];
-    this.rxViewAction = null
+    this.cards = null;
+    this.showIdx = 0;
+    this.rxMessage = null
   }
 
   init(body, itsMe) {
@@ -50,13 +56,17 @@ export default class Player extends SyncPropsComponent {
   }
   remove() {
     super.remove();
-    this.cards.forEach( c => c.remove() );
+    this.removeCards();
+    this.removeViewMessage()
     this.name = null;
     this.bankroll = null;
+    this.timeRange = null;
     this.timeBar = null;
     this.timeThumb = null;
-    this.positionIcon = null
+    this.positionIcon = null;
+    this.hands = null;
     this.cards = null;
+    this.message = null;
   }
 
 
@@ -65,9 +75,15 @@ export default class Player extends SyncPropsComponent {
 
     this.name = elementProvider.getElement('name');
     this.bankroll = elementProvider.getElement('bankroll');
+    this.timeRange = elementProvider.getElement('timeRange');
     this.timeBar = elementProvider.getElement('timeBar');
     this.timeThumb = elementProvider.getElement('timeThumb');
     this.positionIcon = elementProvider.getElement('positionIcon');
+    this.hands = elementProvider.getElement('hands');
+    this.message = elementProvider.getElement('message');
+    this.timeThumb.visible = false;
+    this.hands.opacity = 0;
+    this.message.opacity = 0;
   }
 
   setupWatchs(){
@@ -76,6 +92,7 @@ export default class Player extends SyncPropsComponent {
         this.name.innerHTML = value;
       },
       position: value =>{
+        this.position = value;
         if( value != -1 ) this.onGameJoin();
       },
       bankroll: value =>{
@@ -84,16 +101,25 @@ export default class Player extends SyncPropsComponent {
       status: value =>{
         switch ( value ) {
           case Status.Wait:
+            this.resetHand();
+            this.removeGameStatus();
+            this.addPlayerStatus("wait");
             break;
           case Status.Impossible:
+            this.addPlayerStatus("impossible");
             break;
           case Status.Fold:
+            this.addPlayerStatus("fold");
             break;
           case Status.Play:
+            this.setHand();
+            this.addPlayerStatus("play");
             break;
           case Status.AllIn:
+            this.addGameStatus("allin");
             break;
           case Status.ShowDown:
+            this.addGameStatus("showdown");
             break;
           case Status.Absence:
             break;
@@ -107,7 +133,7 @@ export default class Player extends SyncPropsComponent {
       time: value =>{
         this.time = value;
         if(this.limitTime <= 0) return;
-        let pct = Util.getStyleRatio( this.time/ this.limitTime * 100 );
+        let pct = Util.getStyleRatio( 100-(this.time/ this.limitTime * 100) );
         this.timeBar.style.width = pct;
         this.timeThumb.style.left = pct;
         if(this.limitTime > 5 && this.time <= 5) SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.TICK_TIME );
@@ -124,100 +150,115 @@ export default class Player extends SyncPropsComponent {
       },
 
       isActive: value =>{
-        value ? this.getBody().classList.add("player-active") : this.getBody().classList.remove("player-active")
+        if(value == true){
+          this.timeThumb.visible = true;
+          this.timeBar.style.width = 0;
+          this.timeThumb.style.left = 0;
+          let parent = this.getBody().parentNode;
+          if(parent == null) return;
+          parent.classList.add("active");
+        } else{
+          this.timeThumb.visible = false;
+          this.timeBar.style.width = 0;
+          let parent = this.getBody().parentNode;
+          if(parent == null) return;
+          parent.classList.remove("active");
+        }
       },
       resultValue: value =>{
+        var msg = "";
         switch ( value ) {
           case Values.Highcard:
-            //this.resultValue.innerHTML = 'Highcard';
+            msg = 'Highcard';
             break;
           case Values.Pair:
-            //this.resultValue.innerHTML = 'Pair';
+            msg = 'Pair';
             break;
           case Values.TwoPairs:
-            //this.resultValue.innerHTML = 'TwoPairs';
+            msg = 'TwoPairs';
             break;
           case Values.ThreeOfAKind:
-            //this.resultValue.innerHTML = 'ThreeOfAKind';
+            msg = 'ThreeOfAKind';
             break;
           case Values.Straight:
-            //this.resultValue.innerHTML = 'Straight';
+            msg = 'Straight';
             break;
           case Values.FourOfAKind:
-            //this.resultValue.innerHTML = 'FourOfAKind';
+            msg = 'FourOfAKind';
             break;
           case Values.Flush:
-            //this.resultValue.innerHTML = 'Flush';
+            msg = 'Flush';
             break;
           case Values.FullHouse:
-            //this.resultValue.innerHTML = 'FullHouse';
+            msg = 'FullHouse';
             break;
           case Values.StraightFlush:
-            //this.resultValue.innerHTML = 'StraightFlush';
+            msg = 'StraightFlush';
             break;
           case Values.RoyalStraightFlush:
-            //this.resultValue.innerHTML = 'RoyalStraightFlush';
+            msg = 'RoyalStraightFlush';
             break;
           default:
-            //this.resultValue.innerHTML = '';
             return;
         }
+        this.viewMessage(msg, "alert");
       },
 
       finalAction: value =>{
+        var msg = "";
         switch ( value ) {
           case Action.Fold:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.FOLD );
-            //this.action.innerHTML = 'Fold'
+            msg = 'Fold';
             break;
           case Action.SmallBlind:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
-            //this.action.innerHTML = 'SmallBlind'
+            msg = 'SmallBlind';
             break;
           case Action.BigBlind:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
-            //this.action.innerHTML = 'BigBlind'
+            msg = 'BigBlind';
             break;
           case Action.Check:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
-            //this.action.innerHTML = 'Check'
+            msg = 'Check';
             break;
           case Action.Call:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.CALL );
-            //this.action.innerHTML = 'Call'
+            msg = 'Call';
             break;
           case Action.Bet:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
-            //this.action.innerHTML = 'Bet'
+            msg = 'Bet';
             break;
           case Action.Raise:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
-            //this.action.innerHTML = 'Raise'
+            msg = 'Raise';
             break;
           case Action.AllIn:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.ALL_IN );
-            //this.action.innerHTML = 'AllIn'
+            msg = 'AllIn';
             break;
           default:
             return;
         }
-        this.viewAction();
+        this.viewMessage(msg, "action");
       },
       networkStatus: value =>{
         switch ( value ) {
           case NetworkStatus.Connected:
-
+            this.addPlayerStatus("connect")
             break;
           case NetworkStatus.DisConnected:
-
+            this.addPlayerStatus("disconnect")
             break;
           case NetworkStatus.Wait:
-
+            this.addPlayerStatus("wait")
             break;
         }
       },
 
-      positionIcon: value =>{
+      positionStatus: value =>{
         switch ( value ) {
           case PositionStatus.DeallerButton:
             this.positionIcon.classList.add("db");
@@ -228,7 +269,6 @@ export default class Player extends SyncPropsComponent {
             this.positionIcon.visible = true;
             break;
           case PositionStatus.SmallBlind:
-
             this.positionIcon.classList.add("sb");
             this.positionIcon.visible = true;
             break;
@@ -242,20 +282,56 @@ export default class Player extends SyncPropsComponent {
       }
     };
   }
-  /*
-  removeViewAction(){
-    if( this.rxViewAction != null ) this.rxViewAction.unsubscribe();
-    this.rxViewAction = null
+
+  removeViewMessage(){
+    this.message.classList.remove("alert");
+    this.message.classList.remove("chat");
+    this.message.classList.remove("action");
+    if( this.rxMessage != null ) this.rxMessage.unsubscribe();
+    this.rxMessage = null
   }
-  viewAction(){
-    if( this.rxViewAction != null ) this.rxViewAction.unsubscribe();
-    animation(this.action, { opacity:1, scale:1 });
-    this.rxViewAction = Rx.interval(1500).pipe(take(1)).subscribe( {
-      next :(t) => { animation(this.action, { opacity:0, scale:1.5 }); },
+  viewMessage(msg, style = "action"){
+    this.removeViewMessage()
+    if(style != null) this.message.classList.add(style);
+    this.message.innerHTML = msg;
+    animation(this.message, { opacity:1, scale:1, top:-15 });
+    this.rxMessage = Rx.interval(1500).pipe(take(1)).subscribe( {
+      next :(t) => { animation(this.message, { opacity:0, scale:1.5, top:-30 }); },
       complete :() => { }
     })
   }
-  */
+
+  removeGameStatus(){
+    let parent = this.getBody().parentNode;
+    if(parent == null) return;
+    parent.classList.remove("allin");
+    parent.classList.remove("showdown");
+  }
+
+  addGameStatus(style = ""){
+    this.removeGameStatus();
+    let parent = this.getBody().parentNode;
+    if(parent == null) return;
+    parent.classList.add(style);
+  }
+
+  removePlayerStatus(){
+    let parent = this.getBody().parentNode;
+    if(parent == null) return;
+    parent.classList.remove("disconnect");
+    parent.classList.remove("wait");
+    parent.classList.remove("fold");
+    parent.classList.remove("play")
+    parent.classList.remove("impossible")
+  }
+
+  addPlayerStatus(style = ""){
+    this.removePlayerStatus();
+    let parent = this.getBody().parentNode;
+    if(parent == null) return;
+    parent.classList.add(style);
+  }
+
   onGameJoin( ) {
     this.getBody().classList.remove("player-position-wait");
     this.getBody().classList.add("player-position-join");
@@ -275,38 +351,49 @@ export default class Player extends SyncPropsComponent {
     hei = Math.floor(hei);
     tx = Math.floor(tx);
     ty = Math.floor(ty);
-    /*
-    for(var i=0; i<len; ++i) {
-      let card = new Card().init( this.showDown, wid, hei, tx ,ty);
-      this.cards.push( card );
-      card.visible = false;
-      tx += (wid+margin)
-    }
-    */
+
   }
 
+  setHand(){
+    if(this.me) return;
+    this.debuger.log(this.cards, 'setHand');
+    if(this.cards != null) return;
+    this.cards = [];
+    this.showIdx = 0;
+
+    for(var i=0; i<2; ++i) {
+      let card = new Card().init( this.hands , CARD_WIDTH , CARD_HEIGHT, CARD_WIDTH * i , 0);
+      this.cards.push( card );
+    }
+    animationAndComplete( this.hands,{ opacity:1, top: -CARD_HEIGHT },
+		p => {
+      this.cards.forEach( (c, idx) => animation(c.getBody(), { rotateZ: (15 - (30*idx)) + "deg" } ));
+		});
+
+	}
+
+	resetHand(){
+    animationAndComplete( this.hands,{ opacity:0, top: -CARD_HEIGHT + 10 },
+		p => { this.removeCards(); });
+	}
+
+  removeCards(){
+		if(this.cards == null) return;
+		this.cards.forEach( c => c.remove() );
+		this.cards = null;
+	}
+
   showCard( id, cardData ) {
-    /*
-    let idx = Number(id);
-    let card = this.cards[ idx ];
-    card.setData( cardData, true );
+    if(this.cards == null) return;
+    let card = this.cards[ this.showIdx ];
+    card.setData( cardData );
+    card.show();
     card.burn();
-    if(this.isShowDown) return;
-    this.isShowDown = true;
-    SoundFactory.getInstence().playSideEffect( SoundFactory.SUB_SOUND.FLIP_CARD );
-    animation(this.showDown, { opacity:1 });
-    */
+    this.showIdx ++;
   }
 
   hideCard( id ) {
-    /*
-    let idx = Number(id);
-    let card = this.cards[ idx ];
-    card.hidden( true );
-    if(!this.isShowDown) return;
-    this.isShowDown = false;
-    animation(this.showDown, { opacity:0});
-    */
+
   }
 }
 

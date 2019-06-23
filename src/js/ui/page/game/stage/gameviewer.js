@@ -19,20 +19,23 @@ class GameViewerBody extends ElementProvider {
   }
 }
 
+
+
 class GameViewerInfo {
-  constructor(cardWidth, cardHeight) {
+  constructor(cardWidth, cardHeight, cardMargin) {
     this.reset();
     this.cardWidth = cardWidth;
 		this.cardHeight = cardHeight;
+    this.cardMargin = cardMargin;
   }
   reset() {}
 }
 
 export default class GameViewer extends SyncPropsComponent {
-  constructor(cardWidth, cardHeight) {
+  constructor(cardWidth, cardHeight, cardMargin) {
     super();
     this.debuger.tag = 'GameViewer';
-    this.info = new GameViewerInfo(cardWidth, cardHeight)
+    this.info = new GameViewerInfo(cardWidth, cardHeight, cardMargin)
     this.cards = [];
   }
 
@@ -62,7 +65,6 @@ export default class GameViewer extends SyncPropsComponent {
     for(var i=0; i<5; ++i) {
       let card = new Card().init( this.cardArea, this.info.cardWidth, this.info.cardHeight);
       this.cards.push( card );
-      card.hidden();
     }
   }
 
@@ -109,7 +111,7 @@ export default class GameViewer extends SyncPropsComponent {
     let bounce = Util.convertRectFromDimension(this.getBody());
     let width = this.info.cardWidth;
     let height = this.info.cardHeight;
-    let margin = 10;
+    let margin = this.info.cardMargin;
     let len = this.cards.length;
     var posX = (bounce.width - (width * len) - (margin * (len-1))) /2;
     let posY = ( bounce.height - height ) /2;
@@ -139,7 +141,6 @@ export default class GameViewer extends SyncPropsComponent {
   burnCard( id , cardData ){
     let idx = Number(id);
     let card = this.cards[ idx ];
-    this.debuger.log(cardData, 'burnCard');
     card.setData( cardData );
     card.burn();
 	}
@@ -149,6 +150,13 @@ export default class GameViewer extends SyncPropsComponent {
     let card = this.cards[ idx ];
     card.hidden();
 	}
+
+  onShowCard( cardData ){
+    let card = this.cards.find( c => { return (c.cardData.suit == cardData.suit && c.cardData.num == cardData.num) });
+    if(card == undefined) return false;
+    card.show();
+    return true;
+  }
 
   getCardPositions(){
     return this.cards.map( c=>{ return {x:c.x, y:c.y} });
