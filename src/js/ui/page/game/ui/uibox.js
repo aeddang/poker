@@ -157,6 +157,11 @@ export default class UiBox extends SyncPropsComponent {
 	onResize() {
     super.onResize();
   }
+	onMovePosition( playerBounce ){
+		if(!this.info.isSelectedPlayer) return;
+		this.getBody().x = playerBounce.x;
+		this.getBody().y = playerBounce.y;
+	}
 	onSelectedPosition( playerBounce ){
 		animationAndComplete( this.getBody(),{ left:playerBounce.x, top:playerBounce.y },
 		p => {

@@ -8,6 +8,7 @@ import { animationAndComplete } from 'Skeleton/animation';
 export const POSITION_EVENT = Object.freeze ({
 	JOIN_GAME: 10,
 	SELECTED_POSITION: 11,
+	MOVE_POSITION:12
 });
 
 class PositionBody extends ElementProvider {
@@ -103,7 +104,7 @@ export default class Position extends DomComponent {
 		if(this.player == null) return;
 		this.player.classList.remove("player-hands-l");
 		this.player.classList.remove("player-hands-r");
-	
+
     let left = [0,2,3,4,9];
     let idx = left.indexOf(pos);
     if( idx == -1 ){
@@ -142,6 +143,7 @@ export default class Position extends DomComponent {
 		}
 		this.x = posX;
 		this.y = posY;
+			if(this.info.itsMe) this.delegate.next(new ComponentEvent( POSITION_EVENT.MOVE_POSITION, Util.convertRectFromDimension(this.getBody()) ));
 	}
 
 	get rotate(){
@@ -166,6 +168,7 @@ export default class Position extends DomComponent {
   leavePlayer(isJoin = true) {
 		this.player = null;
 		this.profileImg.visible = false;
-		if(!isJoin) this.btnJoin.style.display = 'block';
+		this.debuger.log(isJoin, "leavePlayer");
+		if(!isJoin) this.btnJoin.visible = true;
   }
 }

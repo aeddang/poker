@@ -36,6 +36,7 @@ class PlayInfo {
   constructor() {
     this.reset();
     this.players = [];
+    this.me = null;
   }
   reset() {}
 }
@@ -66,7 +67,7 @@ export default class Play extends Room {
     this.gameViewer = null;
     this.playerViewer = null;
     this.uiBox = null;
-    this.me = null;
+
     this.cardShow = null;
   }
 
@@ -115,7 +116,7 @@ export default class Play extends Room {
         let itsMe = this.userInfo.id == e.value.userId;
         let player = this.playerViewer.onJoin(e.path.id, e.value, itsMe);
         if( itsMe ) {
-          this.me = e.path.id;
+          this.info.me = e.path.id;
           this.uiBox.onJoin(player);
           this.uiBox.onUpdateSyncProps(e.value);
         }
@@ -126,7 +127,7 @@ export default class Play extends Room {
 
     this.room.listen("players/:id/:attribute", e => {
       this.playerViewer.onUpdatePlayer(e.path.id, e.path.attribute, e.value);
-      if(e.path.id == this.me) {
+      if(e.path.id == this.info.me) {
         this.uiBox.onUpdateSyncProp (e.path.attribute, e.value);
         if( e.path.attribute == "mainPot") this.gameViewer.addSidePot( e.value );
       }
@@ -135,7 +136,7 @@ export default class Play extends Room {
     this.room.listen("players/:id/openHand/:idx", e => {
       if (e.operation === "add") {
         if( this.gameViewer.onShowCard( e.value ) == false ) {
-          if(e.path.id == this.me) { this.uiBox.onShowCard(e.path.idx, e.value); }
+          if(e.path.id == this.info.me) { this.uiBox.onShowCard(e.path.idx, e.value); }
           else { this.playerViewer.onShowCard(e.path.id, e.path.idx, e.value); }
         }
       }
@@ -204,7 +205,12 @@ export default class Play extends Room {
       case Game.POSITION_EVENT.SELECTED_POSITION:
         this.uiBox.onSelectedPosition( event.data );
         return;
+      case Game.POSITION_EVENT.MOVE_POSITION:
+        this.uiBox.onMovePosition( event.data );
+        return;
     }
+    if(this.info.me != null && event.type == Game.POSITION_EVENT.JOIN_GAME ) return;
+
     let command = new Command (
       Cmd.CommandType.Action,
       event.type,
