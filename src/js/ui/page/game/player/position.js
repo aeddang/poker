@@ -101,10 +101,11 @@ export default class Position extends DomComponent {
 	setRotatePos(pos){
 		this.info.rotatePos = pos;
 		if(this.player == null) return;
-    let left = [0,2,3,4,9];
-    let idx = left.indexOf(pos);
 		this.player.classList.remove("player-hands-l");
 		this.player.classList.remove("player-hands-r");
+	
+    let left = [0,2,3,4,9];
+    let idx = left.indexOf(pos);
     if( idx == -1 ){
       this.player.classList.add("player-hands-r");
     }else{
@@ -162,9 +163,9 @@ export default class Position extends DomComponent {
     this.btnJoin.visible = false;
   }
 
-  leavePlayer() {
+  leavePlayer(isJoin = true) {
 		this.player = null;
 		this.profileImg.visible = false;
-    //this.btnJoin.style.display = 'block';
+		if(!isJoin) this.btnJoin.style.display = 'block';
   }
 }

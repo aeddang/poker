@@ -51,14 +51,15 @@
 .poker .position .player .hands {@include position-top(); @include size(60, 37); z-index:99}
 .poker .position .player-hands-l .hands {left:0}
 .poker .position .player-hands-r .hands {right:0}
-.poker .position .player .message{@include position-top(20); @include size(50, 20); @include text-tiny($color-black);
-                                  background: $color-white; text-align: center; z-index:99}
+.poker .position .player .message{@include position-top(20); @include size(46, 14); @include text-tiny($color-black);
+                                  background: $color-white; text-align: center; z-index:99; padding:3px}
 .poker .position .player .chat { border: 2px solid $color-grey }
 .poker .position .player .alert { border: 2px solid $color-remon }
 .poker .position .player .action { border: 2px solid $color-sky }
 
 .poker .position-l .player .message { left:-50 }
 .poker .position-r .player .message { right:-50 }
+.poker .position-me .player .message { left:100 }
 .poker .position .player .info-box {@include position-relative}
 .poker .position .player .info-box .name { @include position-relative; @include text-tiny($color-white); @include text-line-limit }
 .poker .position .player .info-box .bankroll { @include position-relative; @include text-tiny($color-remon); @include text-line-limit }

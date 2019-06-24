@@ -104,11 +104,15 @@ export default class PlayerViewer extends SyncPropsComponent {
         let posIdx  = pos % posLen;
         let position = this.positions[ posIdx ];
         position.setRotatePos(i - start);
+        position.getBody().classList.remove("position-r");
+        position.getBody().classList.remove("position-l");
+        position.getBody().classList.remove("position-me");
+        if(rotate == 90){
+          position.getBody().classList.add("position-me");
+        }
         if(90 <= rotate && rotate < 270) {
-          position.getBody().classList.remove("position-r");
           position.getBody().classList.add("position-l");
         }else{
-          position.getBody().classList.remove("position-l");
           position.getBody().classList.add("position-r");
         }
         position.onResize(posX, posY, radiusX, radiusY);
@@ -148,7 +152,10 @@ export default class PlayerViewer extends SyncPropsComponent {
     player.remove();
     delete this.players[id]
     let position = this.positions[ player.position ];
-    if( position != null) position.leavePlayer();
+    if( position != null) {
+      if(this.me == null){ position.leavePlayer(true); }
+      else { position.leavePlayer(false); }
+    }
   }
 
   onUpdatePlayer(id, prop, value){
