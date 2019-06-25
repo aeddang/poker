@@ -16,6 +16,7 @@ class PlayerViewerBody extends ElementProvider {
 class PlayerViewerInfo {
   constructor() {
     this.myPosition = 0;
+    this.isSelectedPlayer = false;
     this.reset();
   }
   reset() {}
@@ -152,10 +153,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     player.remove();
     delete this.players[id]
     let position = this.positions[ player.position ];
-    if( position != null) {
-      if(this.me == null){ position.leavePlayer(true); }
-      else { position.leavePlayer(false); }
-    }
+    if( position != null) position.leavePlayer(this.info.isSelectedPlayer);
   }
 
   onUpdatePlayer(id, prop, value){
@@ -166,7 +164,7 @@ export default class PlayerViewer extends SyncPropsComponent {
       let position = this.positions[ value ];
       if( position == null ) return;
       if( player.me ) {
-        this.me = player;
+        this.info.isSelectedPlayer = true;
         position.addPlayer( player.getBody() );
         this.onSelectedMyposition( value );
       }
@@ -185,9 +183,6 @@ export default class PlayerViewer extends SyncPropsComponent {
     this.onResize(true);
   }
 
-  onPushHand(cardDatas){
-    this.me.onPushHand(cardDatas);
-  }
 
   onShowCard( id, idx, cardData ) {
     this.players[id].showCard( idx, cardData );

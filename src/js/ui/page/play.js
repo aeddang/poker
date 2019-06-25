@@ -209,7 +209,7 @@ export default class Play extends Room {
         this.uiBox.onMovePosition( event.data );
         return;
     }
-    if(this.info.me != null && event.type == Game.POSITION_EVENT.JOIN_GAME ) return;
+    if(this.uiBox.info.isSelectedPlayer == true && event.type == Game.POSITION_EVENT.JOIN_GAME ) return;
 
     let command = new Command (
       Cmd.CommandType.Action,

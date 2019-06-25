@@ -146,7 +146,7 @@ export default class Player extends SyncPropsComponent {
       },
       isWinner: value =>{
         if(value == null || value == "") return;
-
+        if(value) this.viewMessage("Win!!", "celebration");
       },
 
       isActive: value =>{
@@ -167,6 +167,7 @@ export default class Player extends SyncPropsComponent {
       },
       resultValue: value =>{
         var msg = "";
+        var type = "alert";
         switch ( value ) {
           case Values.Highcard:
             msg = 'Highcard';
@@ -179,24 +180,31 @@ export default class Player extends SyncPropsComponent {
             break;
           case Values.ThreeOfAKind:
             msg = 'ThreeOfAKind';
+            type = "celebration";
             break;
           case Values.Straight:
             msg = 'Straight';
+            type = "celebration";
             break;
           case Values.FourOfAKind:
             msg = 'FourOfAKind';
+            type = "celebration";
             break;
           case Values.Flush:
             msg = 'Flush';
+            type = "celebration";
             break;
           case Values.FullHouse:
             msg = 'FullHouse';
+            type = "celebration";
             break;
           case Values.StraightFlush:
             msg = 'StraightFlush';
+            type = "celebration";
             break;
           case Values.RoyalStraightFlush:
             msg = 'RoyalStraightFlush';
+            type = "celebration";
             break;
           default:
             return;
@@ -284,6 +292,7 @@ export default class Player extends SyncPropsComponent {
   }
 
   removeViewMessage(){
+    this.message.classList.remove("celebration");
     this.message.classList.remove("alert");
     this.message.classList.remove("chat");
     this.message.classList.remove("action");

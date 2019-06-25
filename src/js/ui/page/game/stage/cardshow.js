@@ -149,7 +149,8 @@ export default class CardShow extends Component {
       let card = this.cards[cardIdx];
       animation(
         card.getBody(),
-        { left: communityCard.x,
+        { rotateZ: "0deg",
+          left: communityCard.x,
           top: communityCard.y }
       )
       cardIdx ++;

@@ -165,10 +165,10 @@ export default class Position extends DomComponent {
     this.btnJoin.visible = false;
   }
 
-  leavePlayer(isJoin = true) {
+  leavePlayer(isSelected = true) {
 		this.player = null;
 		this.profileImg.visible = false;
-		this.debuger.log(isJoin, "leavePlayer");
-		if(!isJoin) this.btnJoin.visible = true;
+		this.debuger.log(isSelected, "leavePlayer");
+		if( !isSelected ) this.btnJoin.visible = true;
   }
 }
