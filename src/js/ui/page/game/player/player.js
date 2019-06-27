@@ -341,6 +341,10 @@ export default class Player extends SyncPropsComponent {
     parent.classList.add(style);
   }
 
+  onChat(brodcast){
+    this.viewMessage(brodcast.message, "chat");
+  }
+
   onGameJoin( ) {
     this.getBody().classList.remove("player-position-wait");
     this.getBody().classList.add("player-position-join");

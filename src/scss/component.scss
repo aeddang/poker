@@ -18,3 +18,11 @@
 .poker .chat .body .individual {@include text-default($color-sky) }
 .poker .chat .body .viewer .title { font-size:$font-tiny }
 .poker .chat .body .viewer .text { font-size:$font-small}
+
+.poker .top-navi{ @include position-relative; @include size}
+.poker .top-navi .btn-exit { @include btn-close @include position-right($margin-tiny,10); }
+.poker .home .top-navi .btn-exit { display: none }
+.poker .top-navi .btn-sound { @include btn-sound-off; @include position-right($margin-tiny, 10); }
+.poker .top-navi .btn-sound-on { @include btn-sound-on; }
+.poker .top-navi .btn-event { @include btn-event; @include position-right($margin-tiny, 2); }
+.poker .top-navi .btn-event-2 { @include btn-event-2; @include position-right($margin-tiny); }

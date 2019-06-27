@@ -65,9 +65,7 @@ export default class Position extends DomComponent {
 		this.player = null;
 		this.profileImg = null;
   }
-
-
-
+	
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
     this.btnJoin = elementProvider.getElement('btnJoin');
@@ -81,6 +79,11 @@ export default class Position extends DomComponent {
   setupEvent() {
     this.attachEvent(this.btnJoin, "click", this.onJoin.bind(this));
   }
+
+	onJoin() {
+    this.delegate.next(new ComponentEvent( POSITION_EVENT.JOIN_GAME, this.info.idx ));
+  }
+
 	onResize(posX, posY, radiusX, radiusY){
 		this.info.posX = posX;
 		this.info.posY = posY;
@@ -156,10 +159,6 @@ export default class Position extends DomComponent {
 			this.delegate.next(new ComponentEvent( POSITION_EVENT.SELECTED_POSITION, Util.convertRectFromDimension(this.getBody()) ));
 		});
 	}
-
-  onJoin() {
-    this.delegate.next(new ComponentEvent( POSITION_EVENT.JOIN_GAME, this.info.idx ));
-  }
 
   joinPlayer(){
     this.btnJoin.visible = false;

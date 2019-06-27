@@ -8,7 +8,8 @@ export const Sender = Object.freeze ({
   Push: '6'
 });
 
-const BOUNDERY = '$';
+const BOUNDERY = '$^$'
+const SECOND_BOUNDERY = '$->$'
 
 class Brodcast {
   constructor( data ) {
@@ -16,7 +17,7 @@ class Brodcast {
     let datas = data.split(BOUNDERY);
     this.sender = datas[0];
     this.message = datas[1];
-
+    this.senderId = datas[2];
     let className = '';
     let header = '';
     switch( this.sender ){
@@ -25,9 +26,9 @@ class Brodcast {
       case Sender.AdminLv3 : className='admin-lv3'; header='<span class="title">Roccat<br> :</span>'; break;
       case Sender.User :
         className='user';
-        let msgss = this.message.split("-> ");
-        let user = msgss[0];
-        let msg = this.message.slice( this.message.indexOf(msgss[1]) );
+        let msgs = this.message.split(SECOND_BOUNDERY);
+        let user = msgs[0];
+        let msg = this.message.slice( this.message.indexOf(msgs[1]) );
         header='<span class="title">' + user + '<br> :</span>';
         this.message = msg;
         break;

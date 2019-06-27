@@ -156,6 +156,13 @@ export default class PlayerViewer extends SyncPropsComponent {
     if( position != null) position.leavePlayer(this.info.isSelectedPlayer);
   }
 
+  onChatPlayer(brodcast){
+    let id = brodcast.senderId;
+    let player = this.players[id];
+    if( player == null ) return;
+    player.onChat(brodcast);
+  }
+
   onUpdatePlayer(id, prop, value){
     let player = this.players[id];
     if( player == null ) return;

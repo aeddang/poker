@@ -23,6 +23,7 @@ class MusicBoxInfo {
     this.extension = ".mp3";
 		this.isBgmPlay = false;
     this.isFocus = true;
+    this.isOn = true;
   }
   reset() {}
 }
@@ -52,12 +53,26 @@ export default class MusicBox extends Component {
 		this.bgmPlayer = elementProvider.getElement('bgmPlayer');
     this.mainPlayer = elementProvider.getElement('mainPlayer');
     this.subPlayer = elementProvider.getElement('subPlayer');
-    //this.bgmPlayer.loop = true;
   }
 
   setupEvent() {
     this.attachEvent(window,"blur",this.onPause.bind(this));
     this.attachEvent(window,"focus",this.onResume.bind(this));
+  }
+
+  toggleSound(){
+    if(this.info.isOn) this.soundOff();
+    else this.soundOn();
+  }
+
+  soundOn(){
+    this.info.isOn = true;
+    if(this.info.isBgmPlay) this.bgmPlayer.play();
+  }
+
+  soundOff(){
+    this.info.isOn = false;
+    this.bgmPlayer.pause();
   }
 
   addStaticSound(path) {

@@ -43,7 +43,7 @@ export default class RoomComponent<T> extends Room<T> {
     this.debuger.log(command,'onChat',0)
     switch(command.t) {
       case Cmd.Chat.Msg :
-        this.broadcast( Brodcast.getMsg ( this.getPlayerName( client ) , command.d ))
+        this.broadcast( Brodcast.getMsg ( client.sessionId, this.getPlayerName( client ) , command.d ))
         break
     }
   }
@@ -52,7 +52,7 @@ export default class RoomComponent<T> extends Room<T> {
     this.debuger.log(data,'onPush',0)
     let client = this.clients.find( c => { return c.sessionId == data.id })
     if(client == undefined) return
-    this.send(client,Brodcast.getPushMsg(data.value))
+    this.send(client,Brodcast.getPushMsg(client.sessionId, data.value))
   }
 
 }

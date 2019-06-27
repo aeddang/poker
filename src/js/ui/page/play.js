@@ -4,6 +4,7 @@ import { LoadingSpiner } from 'Skeleton/paint';
 import * as Util from 'Skeleton/util';
 import * as Config from 'Util/config';
 import * as Game from './game/game';
+import TopNavi from 'Component/topnavi';
 import Command, * as Cmd from  "Util/command";
 
 class PlayBody extends ElementProvider {
@@ -17,9 +18,9 @@ class PlayBody extends ElementProvider {
       <div id='${this.id}cardShow' class='card-show'></div>
       <div id='${this.id}playerViewer' class='player-viewer'></div>
       <div id='${this.id}uiBox' class='ui-box'></div>
-      <button id='${this.id}btnExit' class='btn-exit'>EXIT</button>
       <div class ='logo'></div>
     </div>
+    <div id='${this.id}topNaviArea' class='top-navi-area'></div>
     <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}loadingBar' class='loading-bar'></div>
     `;
@@ -50,24 +51,25 @@ export default class Play extends Room {
     this.playerViewer = new Game.PlayerViewer();
     this.cardShow = new Game.CardShow(CARD_WIDTH, CARD_HEIGHT, CARD_MARGIN);
     this.uiBox = new Game.UiBox();
+    this.topNavi = new TopNavi();
     this.loadingBar = new LoadingSpiner();
   }
 
   remove() {
     super.remove();
     this.info = null;
-    this.btnExit = null;
-    this.chatArea = null;
+    this.topNavi.remove();
     this.loadingBar.remove();
     this.gameViewer.remove();
     this.playerViewer.remove();
     this.uiBox.remove();
     this.cardShow.remove();
+    this.chatArea = null;
     this.loadingBar = null;
     this.gameViewer = null;
     this.playerViewer = null;
     this.uiBox = null;
-
+    this.topNavi = null;
     this.cardShow = null;
   }
 
@@ -77,24 +79,19 @@ export default class Play extends Room {
     let bounce = Util.convertRectFromDimension(loadingBarBody);
     this.loadingBar.init(elementProvider.getElement('loadingBar'));
     this.gameViewer.init(elementProvider.getElement('gameViewer'));
-
-    this.btnExit = elementProvider.getElement('btnExit');
     this.playArea = elementProvider.getElement('playArea');
     this.chatArea = elementProvider.getElement('chatArea');
     this.chat.init(this.chatArea).subscribe ( this.onChatEvent.bind(this) );
-
+    this.topNavi.init(elementProvider.getElement('topNaviArea'));
     this.playerViewer.init(elementProvider.getElement('playerViewer')).subscribe ( this.onUiEvent.bind(this) );
     this.uiBox.init(elementProvider.getElement('uiBox')).subscribe ( this.onUiEvent.bind(this) );
     this.cardShow.init(elementProvider.getElement('cardShow')).subscribe ( this.onShowEvent.bind(this) );
     super.onCreate(elementProvider);
     this.onResize();
     this.join();
-
-
   }
-  setupEvent() {
-    this.attachEvent(this.btnExit, "click", this.onExit.bind(this));
 
+  setupEvent() {
     this.room.listen("maxPlayer", e => {
       this.playerViewer.onUpdateSyncProp("maxPlayer", e.value);
     });
@@ -153,12 +150,10 @@ export default class Play extends Room {
     let bounceBox = Util.convertRectFromDimension(this.chatArea);
     let margin = bounceBox.y - bounce.y + BOTTOM_MARGIN;
     this.chatArea.height = bounce.height - margin;
-
     let gameHeight = bounce.height - BOTTOM_HEIGHT;
     this.gameViewer.getBody().height = gameHeight;
     this.playerViewer.getBody().height = gameHeight;
     this.cardShow.getBody().height = gameHeight;
-
     super.onResize();
     this.chat.onResize();
     this.gameViewer.onResize();
@@ -168,7 +163,6 @@ export default class Play extends Room {
   }
 
   onGameStatusChange( status ){
-
     switch ( status ) {
       case Game.Status.Wait:
         this.gameViewer.detachCard();
@@ -229,13 +223,9 @@ export default class Play extends Room {
     this.loadingBar.stop();
   }
 
-  onExit() {
-    //this.cardShow.shuffle(this.gameViewer.getCardPositions(), this.playerViewer.getPlayerPositions()) ;
-    Poker.onPageChange(Config.Page.Join);
-  }
-
   onMessage(message) {
-    super.onMessage(message);
+    let bro = super.onMessage(message);
+    this.playerViewer.onChatPlayer(bro);
   }
 
   onError(error) {
@@ -243,7 +233,5 @@ export default class Play extends Room {
     this.loadingBar.stop();
     this.onExit();
   }
-
-
 
 }

@@ -10,10 +10,10 @@ enum Sender {
   Push
 }
 
-const BOUNDERY = '$'
-
-export function getPushMsg (msg:string):string {
-  return Sender.Push + BOUNDERY + JSON.stringify(msg)
+const BOUNDERY = '$^$'
+const SECOND_BOUNDERY = '$->$'
+export function getPushMsg (id:string, msg:string):string {
+  return Sender.Push + BOUNDERY + JSON.stringify(msg) + BOUNDERY + id
 }
 
 export function getJoinMsg (nick:string):string {
@@ -24,7 +24,7 @@ export function getLeaveMsg (nick:string):string {
   return Sender.AdminLv3 + BOUNDERY + nick + " leave!!"
 }
 
-export function getMsg (nick:string, msg:string, isIndividual:boolean = false):string {
+export function getMsg (id:string, nick:string, msg:string, isIndividual:boolean = false):string {
   let header = isIndividual ? Sender.Individual : Sender.User
-  return header + BOUNDERY + nick + "-> " + msg
+  return header + BOUNDERY + nick + SECOND_BOUNDERY + msg + BOUNDERY + id
 }

@@ -71,6 +71,7 @@ export default class Room extends Component {
     this.debuger.log(brodcast, 'onMessage', '', 0);
     if( brodcast.sender == Sender.Push ) { this.onPush( brodcast.message); return; }
     this.chat.onRoomEvent( new ComponentEvent( CHAT_EVENT.RECEIVED_MESSAGE,brodcast ) )
+    return brodcast;
   }
 
   onPush(data) {
