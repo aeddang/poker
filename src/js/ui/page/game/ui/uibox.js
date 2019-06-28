@@ -20,8 +20,8 @@ export const UI_EVENT = Object.freeze ({
 	BLIND: 9
 });
 
-const CARD_WIDTH = 30;
-const CARD_HEIGHT = 45;
+const CARD_WIDTH = 42;
+const CARD_HEIGHT = 63;
 
 class UiBoxInfo {
   constructor() {
@@ -38,6 +38,7 @@ class UiBoxBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
 	    <div id='${this.id}profileCover' class='profile-cover'></div>
+			<div id='${this.id}hands' class='hands'></div>
 			<div id='${this.id}actionArea' class='action-area'>
 	      <button id='${this.id}btnFold' class='btn-fold'>Fold</button>
 	      <button id='${this.id}btnSmallBlind' class='btn-small-blind'>SBlind</button>
@@ -48,7 +49,6 @@ class UiBoxBody extends ElementProvider {
 				<button id='${this.id}btnRaise' class='btn-raise'>Raise</button>
 	      <button id='${this.id}btnAllIn' class='btn-all-in'>Allin</button>
 			</div>
-			<div id='${this.id}hands' class='hands'></div>
 			<div id='${this.id}bettingArea' class='betting-area'></div>
     `;
   }

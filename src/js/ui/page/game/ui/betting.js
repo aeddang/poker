@@ -8,11 +8,11 @@ import { animation } from 'Skeleton/animation';
 class BettingBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
-    <button id='${this.id}btnIncrease' class='btn-increase'>+</button>
-  	<button id='${this.id}btnDecrease' class='btn-decrease'>-</button>
+    <button id='${this.id}btnIncrease' class='btn-increase'></button>
+  	<button id='${this.id}btnDecrease' class='btn-decrease'></button>
     <button id='${this.id}btnBet' class='btn-bet'>Bet</button>
-  	<button id='${this.id}btnMultiply2' class='btn-multiply'>X2</button>
-    <button id='${this.id}btnMultiply4' class='btn-multiply'>X4</button>
+  	<button id='${this.id}btnMultiply2' class='btn-multiply'></button>
+    <button id='${this.id}btnMultiply4' class='btn-multiply-4'></button>
   	<button id='${this.id}btnReset' class='btn-reset'>Reset</button>
     `;
   }

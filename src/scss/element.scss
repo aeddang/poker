@@ -36,22 +36,25 @@ $color-transparent-black15: rgba(0, 0, 0, 0.15);
 
 
 $image-path:  '../static/asset/';
+$image-bg: $image-path + 'bg.png';
 $image-bg-home: $image-path + 'bg_home.png';
+$image-bg-game: $image-path + 'bg_game.png';
+$image-bg-user-box: $image-path + 'bg_user_box.png';
 $image-bg-chat: $image-path + 'bg_chat.png';
 $image-bg-layer-popup: $image-path + 'bg_layer_popup.png';
-$image-bg-rank-blue: $image-path + 'bg_rank_blue.png';
-$image-bg-rank-deep-green: $image-path + 'bg_rank_deep_green.png';
-$image-bg-rank-green: $image-path + 'bg_rank_green.png';
-$image-bg-rank-red: $image-path + 'bg_rank_red.png';
+$image-bg-rank: $image-path + 'bg_rank.png';
 $image-bg-lv-blue: $image-path + 'bg_lv_blue.png';
 $image-bg-lv-red: $image-path + 'bg_lv_red.png';
 $image-bg-lv-purple: $image-path + 'bg_lv_purple.png';
 $image-bg-lv-yellow: $image-path + 'bg_lv_yellow.png';
 $image-bg-lv-green: $image-path + 'bg_lv_green.png';
+$image-bg-lv1: $image-path + 'bg_lv1.png';
+$image-bg-lv2: $image-path + 'bg_lv2.png';
+$image-bg-lv3: $image-path + 'bg_lv3.png';
+$image-bg-lv4: $image-path + 'bg_lv4.png';
+
 $image-bg-profile: $image-path + 'bg_profile.png';
 $image-bg-profile-rect: $image-path + 'bg_profile_rect.png';
-$image-bg-game: $image-path + 'bg_game.png';
-$image-bg-game-center: $image-path + 'bg_game_center.png';
 $image-bg-user: $image-path + 'bg_user.png';
 $image-bg-betting: $image-path + 'bg_betting.png';
 $image-bg-main-pot: $image-path + 'bg_main_pot.png';
@@ -67,7 +70,16 @@ $image-btn-event: $image-path + 'btn_event.png';
 $image-btn-event-2: $image-path + 'btn_event_2.png';
 $image-btn-chat: $image-path + 'btn_chat.png';
 $image-btn-close: $image-path + 'btn_close.png';
-$image-btn-bet-bg: $image-path + 'btn_bet_bg.png';
+
+$image-btn-bet-d: $image-path + 'btn_bet_d.png';
+$image-btn-bet-i: $image-path + 'btn_bet_i.png';
+$image-btn-bet-m2: $image-path + 'btn_bet_m2.png';
+$image-btn-bet-m4: $image-path + 'btn_bet_m4.png';
+$image-btn-bet-blue: $image-path + 'btn_bet_blue.png';
+$image-btn-bet-red: $image-path + 'btn_bet_red.png';
+$image-btn-bet-sky: $image-path + 'btn_bet_sky.png';
+$image-btn-bet-yellow: $image-path + 'btn_bet_yellow.png';
+
 $image-btn-red-chip-big: $image-path + 'btn_red_chip_big.png';
 $image-btn-blue-chip: $image-path + 'btn_blue_chip.png';
 $image-btn-red-chip: $image-path + 'btn_red_chip.png';
@@ -78,7 +90,6 @@ $image-btn-purple-half-chip: $image-path + 'btn_purple_half_chip.png';
 
 $image-icon-bb: $image-path + 'icon_bb.png';
 $image-icon-sb: $image-path + 'icon_sb.png';
-$image-icon-db: $image-path + 'icon_db.png';
 $image-icon-hand: $image-path + 'icon_hand.png';
 $image-icon-chips-little: $image-path + 'icon_chips_little.png';
 $image-icon-chips-much: $image-path + 'icon_chips_much.png';
@@ -89,10 +100,6 @@ $image-icon-mission-30days: $image-path + 'icon_mission_30days.png';
 $image-icon-rock: $image-path + 'icon_rock.png';
 $image-icon-logo: $image-path + 'icon_logo.png';
 $image-icon-time-thumb: $image-path + 'icon_time_thumb.png';
-$image-icon-player-hands: $image-path + 'icon_player_hands.png';
+$image-icon-main-pot: $image-path + 'icon_main_pot.png';
 
 $image-card: $image-path + 'card.png';
-
-$image-obj-roccat-blue: $image-path + 'obj_roccat_blue.png';
-$image-obj-roccat-red: $image-path + 'obj_roccat_red.png';
-$image-obj-roccat-purple: $image-path + 'obj_roccat_purple.png';

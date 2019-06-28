@@ -3,13 +3,13 @@
 
 .poker .card-show { @include glow($color-remon) }
 .poker .game-viewer { @include position-absolute; @include size}
-.poker .game-viewer .board { @include position-center(350,200,0,0); @include size(350,200); @include bg-image($image-bg-game-center); }
+.poker .game-viewer .board { @include position-center(558,450,0,0); @include size(558,450); @include bg-image($image-bg-game); }
 .poker .game-viewer .cards{@include position-absolute; @include size }
-.poker .game-viewer .pot{@include position-center(140,50,0, -65); z-index:100}
-.poker .game-viewer .pot .main-pot{ @include position-relative;@include size(140, 25); @include text-big($color-white); @include bg-image($image-bg-main-pot);
-                                    @include text-shadow; text-align: center; padding-top:3}
-.poker .game-viewer .pot .side-pot{ @include position-relative;@include size(140, 25); @include text-default($color-white); @include text-shadow; text-align: center }
-.poker .game-viewer .pot .chips{ @include position-absolute(-70, -40); @include icon-chips-little;}
+.poker .game-viewer .pot{@include position-center(110,50,0, -65); z-index:100}
+.poker .game-viewer .pot .main-pot{ @include position-relative;@include size(120, 32); @include text-default($color-black); @include bg-image($image-bg-main-pot);
+                                    text-align: center; padding-top:3}
+.poker .game-viewer .pot .side-pot{ @include position-relative(0,-5) ;@include size(120, 25); @include text-small($color-white); @include text-shadow; text-align: center }
+.poker .game-viewer .pot .chips{ @include position-absolute(-25, -5); @include icon-main-pot;}
 
 .poker .card{ @include position-absolute; @include bg-image($image-card); background-color:$color-grey;}
 .poker .card-show { @include position-absolute; @include size;}
@@ -44,8 +44,8 @@
 .poker .position .player-position-join {  }
 .poker .position .player-active { }
 .poker .position .player .hands {@include position-top(); @include size(60, 37); z-index:99}
-.poker .position .player-hands-l .hands {left:0}
-.poker .position .player-hands-r .hands {right:0}
+.poker .position .player-hands-l .hands {left:10}
+.poker .position .player-hands-r .hands {right:10}
 .poker .position .player .message{@include position-top(20); @include size("auto", 14); @include text-tiny($color-black); max-width: 200px;
                                   background: $color-white; text-align: center; z-index:99; padding:3px; @include text-line-limit}
 .poker .position .player .chat { border: 2px solid $color-grey }
@@ -54,34 +54,38 @@
 .poker .position .player .celebration { border: 2px solid $color-red }
 .poker .position-l .player .message { left:-50 }
 .poker .position-r .player .message { right:-50 }
-.poker .position-me .player .message { left:80 }
+.poker .position-me .player .message { left:100; top:-10}
 .poker .position .player .info-box {@include position-relative}
-.poker .position .player .info-box .name { @include position-relative; @include text-tiny($color-white); @include text-line-limit }
-.poker .position .player .info-box .bankroll { @include position-relative; @include text-tiny($color-remon); @include text-line-limit }
-.poker .position-l .player .info-box .position-icon { @include position-top-left(-15, -10) }
-.poker .position-r .player .info-box .position-icon { @include position-top-right(-15, -10) }
-.poker .position .player .info-box .db{ @include icon-db }
+.poker .position .player .info-box .name { height:15px; @include position-relative; @include text-tiny($color-black); @include text-line-limit;}
+.poker .position .player .info-box .bankroll {height:20px; @include position-relative; @include text-tiny($color-remon); @include text-line-limit; @include text-shadow($color-transparent-black70) }
+.poker .position-l .player .info-box .position-icon { @include position-top-left(-20, -20); z-index:90 }
+.poker .position-r .player .info-box .position-icon { @include position-top-right(-20, -20); z-index:90 }
+.poker .position-me .player .info-box .position-icon { @include position-top-right(0, -30); z-index:90 }
+.poker .position .player .info-box .db{  }
 .poker .position .player .info-box .sb{ @include icon-sb }
 .poker .position .player .info-box .bb{ @include icon-bb }
-.poker .position .player .info-box .time-range { @include position-relative(0, $margin-tiny ); @include size(100%, 3px); @include bg-image($image-bg-progress-range)}
+.poker .position .player .info-box .time-range { @include position-relative(0, 2 ); @include size(100%, 3px); @include bg-image($image-bg-progress-range)}
+.poker .position-l .player .info-box .time-range {margin-left:-10px}
+.poker .position-r .player .info-box .time-range {margin-left:10px}
 .poker .position .player .info-box .time-range .time-bar { @include position-relative; @include size(0,100%) @include bg-image($image-bg-progress)}
 .poker .position .player .info-box .time-range .time-thumb{ @include position-center-alignment(20,10,0,2); @include position-top-left; @include icon-time-thumb}
 
-.poker .ui-box { @include position-absolute(30%,100%); @include size(425,100);}
+.poker .ui-box { @include position-absolute(30%,100%); @include size(455,100);}
 .poker .ui-box .profile-cover{@include position-absolute(-50, -20); @include size(116,158); @include bg-image($image-cover-user-profile)}
-.poker .ui-box .hands {@include position-top-left(90); @include size(100, 60) }
-.poker .ui-box .action-area{@include position-left(197px); @include size(102,100%) }
-.poker .ui-box .action-area .btn-fold { @include btn-action($color-transparent-white45 ) }
-.poker .ui-box .action-area .btn-small-blind { @include btn-action($color-remon-45) }
-.poker .ui-box .action-area .btn-big-blind { @include btn-action($color-remon-45) }
-.poker .ui-box .action-area .btn-check { @include btn-action($color-remon-45) }
-.poker .ui-box .action-area .btn-call { @include btn-action($color-remon-45) }
-.poker .ui-box .action-area .btn-bet { @include btn-action($color-red-45) }
-.poker .ui-box .action-area .btn-raise { @include btn-action($color-red-45) }
-.poker .ui-box .action-area .btn-all-in { @include btn-action($color-red-45) }
-.poker .ui-box .betting-area { @include position-left(5); @include size(105,100%) }
-.poker .ui-box .betting-area .btn-multiply { @include btn-bet($color-sky-45) }
-.poker .ui-box .betting-area .btn-increase { @include btn-bet($color-remon-45) }
-.poker .ui-box .betting-area .btn-decrease { @include btn-bet($color-transparent-white45) }
-.poker .ui-box .betting-area .btn-bet {  @include btn-action($color-red-45) }
-.poker .ui-box .betting-area .btn-reset { @include btn-action($color-transparent-white45) }
+.poker .ui-box .hands {@include position-top-left(100); @include size(100, 60) }
+.poker .ui-box .action-area{@include position-top-right(128px); @include size(128px,100%); font-size:0}
+.poker .ui-box .action-area .btn-fold { @include btn-action($image-btn-bet-sky) }
+.poker .ui-box .action-area .btn-small-blind { @include btn-action($image-btn-bet-yellow) }
+.poker .ui-box .action-area .btn-big-blind { @include btn-action($image-btn-bet-yellow) }
+.poker .ui-box .action-area .btn-check { @include btn-action($image-btn-bet-blue) }
+.poker .ui-box .action-area .btn-call { @include btn-action($image-btn-bet-blue) }
+.poker .ui-box .action-area .btn-bet { @include btn-action($image-btn-bet-red) }
+.poker .ui-box .action-area .btn-raise { @include btn-action($image-btn-bet-red) }
+.poker .ui-box .action-area .btn-all-in { @include btn-action($image-btn-bet-red) }
+.poker .ui-box .betting-area { @include position-top-right(); @include size(128px,100%); font-size:0;}
+.poker .ui-box .betting-area .btn-multiply { @include btn-bet($image-btn-bet-m2) }
+.poker .ui-box .betting-area .btn-multiply-4 { @include btn-bet($image-btn-bet-m4) }
+.poker .ui-box .betting-area .btn-increase { @include btn-bet($image-btn-bet-i) }
+.poker .ui-box .betting-area .btn-decrease { @include btn-bet($image-btn-bet-d) }
+.poker .ui-box .betting-area .btn-bet {  @include btn-action($image-btn-bet-red) }
+.poker .ui-box .betting-area .btn-reset { @include btn-action($image-btn-bet-sky) }
