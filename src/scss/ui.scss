@@ -11,7 +11,7 @@
 
 @mixin btn-chat { @include btn-image($image-btn-chat, 13px, 37px) }
 @mixin btn-close { @include btn-image($image-btn-close, 33px, 33px) }
-@mixin btn-red-chip-big { @include btn-image($image-btn-red-chip-big, 85px, 85px) }
+@mixin btn-chip { @include btn-image($image-btn-chip, 74px, 67px) }
 @mixin btn-blue-chip { @include btn-image($image-btn-blue-chip, 38px, 38px) }
 @mixin btn-red-chip { @include btn-image($image-btn-red-chip, 38px, 38px) }
 @mixin btn-yellow-chip { @include btn-image($image-btn-yellow-chip, 38px, 38px) }

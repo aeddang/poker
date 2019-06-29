@@ -18,6 +18,7 @@ class HomeBody extends ElementProvider {
     <div id='${this.id}rankListArea' class='rank-list-area'></div>
     <div id='${this.id}roomListArea' class='room-list-area'></div>
     <button id='${this.id}btnJoin' class='btn-join'>JOIN GAME</button>
+    <button id='${this.id}btnChip' class='btn-chip'></button>
     `;
     this.body.appendChild(cell);
   }
@@ -27,7 +28,7 @@ export default class Home extends Component {
   constructor() {
     super();
     this.topNavi = new TopNavi();
-    this.btnJoin = null;
+
   }
 
   init(body, client, options) {
@@ -39,6 +40,7 @@ export default class Home extends Component {
     this.topNavi.remove();
     this.topNavi = null;
     this.btnJoin = null;
+    this.btnchip = null;
     this.userBoxArea = null;
     this.rankListArea = null;
   }
@@ -50,10 +52,13 @@ export default class Home extends Component {
     this.rankListArea = elementProvider.getElement('rankListArea');
     this.topNavi.init(elementProvider.getElement('topNaviArea'));
     this.btnJoin = elementProvider.getElement('btnJoin');
+    this.btnChip = elementProvider.getElement('btnChip');
     super.onCreate(elementProvider);
   }
 
   setupEvent() {
+    this.attachEvent(this.btnChip, "click", e => {} );
+
     this.attachEvent(this.btnJoin, "click", e => {
       SoundFactory.getInstence().playBgm(SoundFactory.BGM.DEFAULT);
       Login.model.login();

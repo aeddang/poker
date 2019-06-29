@@ -20,6 +20,7 @@ class PlayBody extends ElementProvider {
       <div id='${this.id}uiBox' class='ui-box'></div>
       <div class ='logo'></div>
     </div>
+    <button id='${this.id}btnChip' class='btn-chip'></button>
     <div id='${this.id}topNaviArea' class='top-navi-area'></div>
     <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}loadingBar' class='loading-bar'></div>
@@ -71,6 +72,7 @@ export default class Play extends Room {
     this.uiBox = null;
     this.topNavi = null;
     this.cardShow = null;
+    this.btnchip = null;
   }
 
   getElementProvider() { return new PlayBody(this.body); }
@@ -79,6 +81,7 @@ export default class Play extends Room {
     let bounce = Util.convertRectFromDimension(loadingBarBody);
     this.loadingBar.init(elementProvider.getElement('loadingBar'));
     this.gameViewer.init(elementProvider.getElement('gameViewer'));
+    this.btnChip = elementProvider.getElement('btnChip');
     this.playArea = elementProvider.getElement('playArea');
     this.chatArea = elementProvider.getElement('chatArea');
     this.chat.init(this.chatArea).subscribe ( this.onChatEvent.bind(this) );
@@ -92,6 +95,8 @@ export default class Play extends Room {
   }
 
   setupEvent() {
+    this.attachEvent(this.btnChip, "click", e => {} );
+
     this.room.listen("maxPlayer", e => {
       this.playerViewer.onUpdateSyncProp("maxPlayer", e.value);
     });
@@ -225,6 +230,8 @@ export default class Play extends Room {
 
   onMessage(message) {
     let bro = super.onMessage(message);
+    if(bro == null) return;
+    if(bro.senderId == null || bro.senderId == undefined) return;
     this.playerViewer.onChatPlayer(bro);
   }
 

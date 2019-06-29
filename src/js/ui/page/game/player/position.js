@@ -22,8 +22,8 @@ class PositionBody extends ElementProvider {
 			</div>
 		  <div class='profile'>
 				<img id='${this.id}profileImg' class='profile-img'></img>
-				<div id='${this.id}profileCover' class='profile-cover'></div>
 			</div>
+			<div id='${this.id}profileCover' class='profile-cover'></div>
     `;
     this.body.appendChild(cell);
   }
@@ -65,7 +65,7 @@ export default class Position extends DomComponent {
 		this.player = null;
 		this.profileImg = null;
   }
-	
+
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
     this.btnJoin = elementProvider.getElement('btnJoin');

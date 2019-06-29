@@ -271,6 +271,7 @@ export default class Player extends Component {
   }
 
   setPassivePlayer(){
+    this.resetAction()
     this.checkBet = 0
     this.minBet = 0
     this.isActive = false

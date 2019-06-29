@@ -180,7 +180,7 @@ export default class UiBox extends SyncPropsComponent {
       this.cards.push( card );
 		});
 
-		animationAndComplete( this.hands,{ opacity:1, top: -CARD_HEIGHT },
+		animationAndComplete( this.hands,{ opacity:1, top: (-CARD_HEIGHT + 5) },
 		p => {
       this.cards.forEach( (c, idx) => animation(c.getBody(), { left: CARD_WIDTH * idx } ));
 		});

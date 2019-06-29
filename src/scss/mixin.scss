@@ -32,6 +32,12 @@ util
   box-shadow: $size $size $size 0 rgba(0,0,0,$amount);
 }
 
+@mixin filter-grayscale($amount:100%){
+  -webkit-filter: grayscale($amount);;
+  -moz-filter: grayscale($amount);;
+  box-shadow: grayscale($amount);;
+}
+
 @mixin glow($color, $size:2px){
   -webkit-box-shadow: 0 0 $size $size $color;
   -moz-box-shadow: 0 0 $size $size $color;

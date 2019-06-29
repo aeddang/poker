@@ -188,6 +188,10 @@ export default class Game extends Component {
 		this.stage.turnStart( )
   }
 	onTime(t:number){
+		if(this.currentPlayer == null) {
+			this.debuger.log('onTime error currentPlayer null')
+			return
+		}
 		this.currentPlayer.time = t
 		if( t == 0 ) {
 			if( this.currentPlayer.currentBlindAction != -1 ){

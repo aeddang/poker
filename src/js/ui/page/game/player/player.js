@@ -55,6 +55,7 @@ export default class Player extends SyncPropsComponent {
     return super.init(body);
   }
   remove() {
+    this.resetStatus();
     super.remove();
     this.removeCards();
     this.removeViewMessage()
@@ -102,8 +103,8 @@ export default class Player extends SyncPropsComponent {
         switch ( value ) {
           case Status.Wait:
             this.resetHand();
+            this.removePlayerStatus();
             this.removeGameStatus();
-            this.addPlayerStatus("wait");
             break;
           case Status.Impossible:
             this.addPlayerStatus("impossible");
@@ -122,9 +123,11 @@ export default class Player extends SyncPropsComponent {
             this.addGameStatus("showdown");
             break;
           case Status.Absence:
-            break;
           case Status.WaitBigBlind:
+            this.removeGameStatus();
+            this.addPlayerStatus("wait");
             break;
+
         }
       },
       gameBet: value =>{
@@ -154,15 +157,11 @@ export default class Player extends SyncPropsComponent {
           this.timeThumb.visible = true;
           this.timeBar.style.width = 0;
           this.timeThumb.style.left = 0;
-          let parent = this.getBody().parentNode;
-          if(parent == null) return;
-          parent.classList.add("active");
+          this.addGameStatus("active");
         } else{
           this.timeThumb.visible = false;
           this.timeBar.style.width = 0;
-          let parent = this.getBody().parentNode;
-          if(parent == null) return;
-          parent.classList.remove("active");
+          this.addGameStatus("passive");
         }
       },
       resultValue: value =>{
@@ -255,13 +254,13 @@ export default class Player extends SyncPropsComponent {
       networkStatus: value =>{
         switch ( value ) {
           case NetworkStatus.Connected:
-            this.addPlayerStatus("connect")
+            this.addNetworkStatus("connect")
             break;
           case NetworkStatus.DisConnected:
-            this.addPlayerStatus("disconnect")
+            this.addNetworkStatus("disconnect")
             break;
           case NetworkStatus.Wait:
-            this.addPlayerStatus("wait")
+            this.addNetworkStatus("disconnect")
             break;
         }
       },
@@ -310,35 +309,59 @@ export default class Player extends SyncPropsComponent {
     })
   }
 
-  removeGameStatus(){
-    let parent = this.getBody().parentNode;
-    if(parent == null) return;
-    parent.classList.remove("allin");
-    parent.classList.remove("showdown");
+  getStatusBody(){
+    var parent = this.getBody().parentNode;
+    if(parent == null) return null;
+    return parent.parentNode;
   }
 
+  resetStatus(){
+    this.removeGameStatus();
+    this.removePlayerStatus();
+    this.removeNetworkStatus();
+  }
+
+  setStatus(style = ""){
+    let parent = this.getStatusBody();
+    if(parent == null) return;
+    parent.classList.add("position-"+style);
+  }
+
+  removeGameStatus(){
+    let parent = this.getStatusBody();
+    if(parent == null) return;
+    parent.classList.remove("position-allin");
+    parent.classList.remove("position-showdown");
+    parent.classList.remove("position-active");
+    parent.classList.remove("position-passive");
+  }
   addGameStatus(style = ""){
     this.removeGameStatus();
-    let parent = this.getBody().parentNode;
-    if(parent == null) return;
-    parent.classList.add(style);
+    this.setStatus(style);
   }
 
   removePlayerStatus(){
-    let parent = this.getBody().parentNode;
+    let parent = this.getStatusBody();
     if(parent == null) return;
-    parent.classList.remove("disconnect");
-    parent.classList.remove("wait");
-    parent.classList.remove("fold");
-    parent.classList.remove("play")
-    parent.classList.remove("impossible")
+    parent.classList.remove("position-wait");
+    parent.classList.remove("position-fold");
+    parent.classList.remove("position-play")
+    parent.classList.remove("position-impossible")
   }
-
   addPlayerStatus(style = ""){
     this.removePlayerStatus();
-    let parent = this.getBody().parentNode;
+    this.setStatus(style);
+  }
+
+  removeNetworkStatus(){
+    let parent = this.getStatusBody();
     if(parent == null) return;
-    parent.classList.add(style);
+    parent.classList.remove("position-disconnect");
+    parent.classList.remove("position-connect");
+  }
+  addNetworkStatus(style = ""){
+    this.removeNetworkStatus();
+    this.setStatus(style);
   }
 
   onChat(brodcast){

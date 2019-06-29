@@ -21,8 +21,9 @@
 
 .poker .top-navi{ @include position-relative; @include size}
 .poker .top-navi .btn-exit { @include btn-close @include position-right($margin-tiny,$margin-tiny); }
-.poker .home .top-navi .btn-exit { display: none }
 .poker .top-navi .btn-sound { @include btn-sound-off; @include position-right($margin-tiny,$margin-tiny); }
 .poker .top-navi .btn-sound-on { @include btn-sound-on; }
 .poker .top-navi .btn-event { @include btn-event; @include position-right($margin-tiny,$margin-tiny); }
 .poker .top-navi .btn-event-2 { @include btn-event-2; @include position-right($margin-tiny,$margin-tiny); }
+
+.poker .btn-chip{ @include btn-chip; }

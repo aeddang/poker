@@ -11,9 +11,12 @@ $home-left-width: 184px;
 .poker .home .rank-list-area{ @include position-top-left(0, 200); @include size($home-left-width,10); background-color: $color-remon}
 .poker .home .room-list-area{ @include position-top-center(318, $home-left-width/2); @include size(318,100%); background-color: $color-grey}
 .poker .home .btn-join{  @include position-center(100,50,$home-left-width/2,0); @include size(100,50); }
+.poker .home .top-navi .btn-exit { display: none }
+.poker .home .btn-chip{ @include position-top-left(160, -1); }
 
 .poker .play { @include page($image-bg) }
-.poker .play .top-navi-area { @include position-top-right(0, 0); @include size(160,36)}
-.poker .play .chat-area { @include position-top-right(-117px,80px); @include size(130px,0) }
+.poker .play .btn-chip{ @include position-top-right($margin-default, -1); }
+.poker .play .top-navi-area { @include position-top-right(100, 0); @include size(160,36)}
+.poker .play .chat-area { @include position-top-right(-117px,80px); @include size(130px,0); z-index:999}
 .poker .play .play-area { @include position-absolute(); @include size() }
 .poker .play .loading-bar { @include loading-bar }

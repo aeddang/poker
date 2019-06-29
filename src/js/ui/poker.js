@@ -6,6 +6,7 @@ import * as Config from "Util/config";
 import * as Login from "ViewModel/login";
 import * as Page from 'Page/page';
 import * as SoundFactory from './soundfactory';
+import { ErrorAlert } from  "Util/message";
 
 class PokerBody extends ElementProvider {
   writeHTML() {
@@ -20,6 +21,8 @@ class PokerBody extends ElementProvider {
 class PokerInfo {
   constructor() {
     this.reset();
+    this.currentPageId = "";
+    this.isGameReady = false;
     this.finalSize = {width:0, height:0};
   }
 
@@ -32,8 +35,7 @@ export default class Poker extends Component {
   constructor() {
     super();
     this.info = new PokerInfo();
-    this.client = new Colyseus.Client(Config.SERVER_HOST);
-    Login.model.delegate.subscribe ( this.onLoginEvent.bind(this) );
+    this.client = null;
   }
   remove() {
     super.remove();
@@ -58,14 +60,37 @@ export default class Poker extends Component {
     SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
     this.onResize();
+    this.client = new Colyseus.Client(Config.SERVER_HOST);
     this.onPageChange(Config.Page.Home);
   }
 
   setupEvent() {
+    this.client.onError.add((err) => {
+
+      switch(this.info.currentPageId){
+        case Config.Page.Play :
+          alert(ErrorAlert.DisableGame);
+          this.onPageChange(Config.Page.Home);
+          break;
+        default : this.info.isGameReady = false ; break;
+      }
+
+    });
+
+    this.client.onOpen.add(() => {
+      this.info.isGameReady = true;
+    });
+
+    Login.model.delegate.subscribe ( this.onLoginEvent.bind(this) );
     this.attachEvent(window, "resize", this.onResize.bind(this));
   }
 
   onPageChange(id, options=null) {
+    if(this.info.isGameReady == false && id == Config.Page.Play){
+        alert(ErrorAlert.DisableConnect);
+        return;
+    }
+
     if(this.currentPage != null) this.currentPage.remove();
     let page = null;
     switch( id ) {
@@ -73,6 +98,7 @@ export default class Poker extends Component {
       case Config.Page.Join : page = new Page.Join(); break;
       case Config.Page.Play : page = new Page.Play(); break;
     }
+    this.info.currentPageId = id;
     this.currentPage = page;
     page.init(this.pageArea, this.client, options).subscribe ( this.onPageEvent.bind(this) );
   }
