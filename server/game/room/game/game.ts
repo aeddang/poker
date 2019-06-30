@@ -236,8 +236,9 @@ export default class Game extends Component {
 			command.d = player.bankroll
 			this.debuger.log(player.bankroll, 'allin')
 		}
-		player.action(command)
-		this.onBetting( id, this.stage.action(command) )
+		let bet  = this.stage.action(command)
+		player.action(command, bet)
+		this.onBetting( id, bet )
 		if( command.t == Action.AllIn ) player.mainPot = this.stage.getMainPot(id)
 		this.removeCurrentPlayer();
 		this.stage.onTurnComplete()

@@ -35,23 +35,31 @@ class PlayerBody extends ElementProvider {
 
 const CARD_WIDTH = 23;
 const CARD_HEIGHT = 35;
-
-export default class Player extends SyncPropsComponent {
+class PlayerInfo {
   constructor() {
-    super();
-    this.debuger.tag = 'Player';
+    this.reset();
+    this.finalWinPot = 0;
+		this.finalBet = 0;
     this.me = false;
     this.limitTime = 0;
     this.time = 0
     this.position = -1;
     this.isShowDown = false;
-    this.cards = null;
     this.showIdx = 0;
+  }
+  reset() {}
+}
+export default class Player extends SyncPropsComponent {
+  constructor() {
+    super();
+    this.debuger.tag = 'Player';
+    this.info = new PlayerInfo();
+    this.cards = null;
     this.rxMessage = null
   }
 
   init(body, itsMe) {
-    this.me = itsMe;
+    this.info.me = itsMe;
     return super.init(body);
   }
   remove() {
@@ -59,6 +67,7 @@ export default class Player extends SyncPropsComponent {
     super.remove();
     this.removeCards();
     this.removeViewMessage()
+    this.info = null;
     this.name = null;
     this.bankroll = null;
     this.timeRange = null;
@@ -93,7 +102,7 @@ export default class Player extends SyncPropsComponent {
         this.name.innerHTML = value;
       },
       position: value =>{
-        this.position = value;
+        this.info.position = value;
         if( value != -1 ) this.onGameJoin();
       },
       bankroll: value =>{
@@ -134,22 +143,26 @@ export default class Player extends SyncPropsComponent {
         //this.bet.innerHTML = 'GameBet -> ' + value;
       },
       time: value =>{
-        this.time = value;
-        if(this.limitTime <= 0) return;
-        let pct = Util.getStyleRatio( 100-(this.time/ this.limitTime * 100) );
+        this.info.time = value;
+        if(this.info.limitTime <= 0) return;
+        let pct = Util.getStyleRatio( 100-(this.info.time/ this.info.limitTime * 100) );
         this.timeBar.style.width = pct;
         this.timeThumb.style.left = pct;
-        if(this.limitTime > 5 && this.time <= 5) SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.TICK_TIME );
+        if(this.info.limitTime > 5 && this.info.time <= 5) SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.TICK_TIME );
       },
       limitTime: value =>{
-        this.limitTime = value;
+        this.info.limitTime = value;
       },
       isBlind: value =>{
 
       },
       isWinner: value =>{
         if(value == null || value == "") return;
-        if(value) this.viewMessage("Win!!", "celebration");
+        if(value) this.viewMessage( ("++ $" + this.info.finalWinPot) , "celebration");
+      },
+      winPot: value =>{
+        if(value == 0) return;
+        this.info.finalWinPot = value;
       },
 
       isActive: value =>{
@@ -210,7 +223,9 @@ export default class Player extends SyncPropsComponent {
         }
         this.viewMessage(msg, "alert");
       },
-
+      finalBet: value =>{
+        this.info.finalBet = value;
+      },
       finalAction: value =>{
         var msg = "";
         switch ( value ) {
@@ -236,7 +251,7 @@ export default class Player extends SyncPropsComponent {
             break;
           case Action.Bet:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
-            msg = 'Bet';
+            msg = 'Bet $' + this.info.finalBet;
             break;
           case Action.Raise:
             SoundFactory.getInstence().playEffect( SoundFactory.SOUND.BET );
@@ -391,11 +406,11 @@ export default class Player extends SyncPropsComponent {
   }
 
   setHand(){
-    if(this.me) return;
+    if(this.info.me) return;
     this.debuger.log(this.cards, 'setHand');
     if(this.cards != null) return;
     this.cards = [];
-    this.showIdx = 0;
+    this.info.showIdx = 0;
 
     for(var i=0; i<2; ++i) {
       let card = new Card().init( this.hands , CARD_WIDTH , CARD_HEIGHT, CARD_WIDTH * i , 0);
@@ -425,7 +440,7 @@ export default class Player extends SyncPropsComponent {
     card.setData( cardData );
     card.show();
     card.burn();
-    this.showIdx ++;
+    this.info.showIdx ++;
   }
 
   hideCard( id ) {

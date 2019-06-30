@@ -24,12 +24,10 @@
 .poker .position .profile .profile-img{ @include position-absolute; @include size }
 .poker .position .profile-cover{ @include position-absolute(-1,-1); @include size(52,52); @include bg-image($image-cover-player-profile)}
 .poker .position .box { @include position-vertical-center(45); @include size(100,35); @include bg-image($image-bg-user); @include drop-shadow; padding:$margin-tiny}
-
-.poker .position-play .profile .profile-img{ @include filter-grayscale(0%)}
 .poker .position-fold .profile .profile-img { @include filter-grayscale()}
 .poker .position-wait .profile .profile-img { @include filter-grayscale() }
 .poker .position-impossible .profile .profile-img { @include filter-grayscale() }
-
+.poker .position-play .profile .profile-img{ @include filter-grayscale(0%)}
 
 .poker .position-disconnect { opacity:0.7 }
 .poker .position-connect {}
@@ -50,15 +48,15 @@
 
 .poker .position .player-position-join {  }
 .poker .position .player-active { }
-.poker .position .player .hands {@include position-top(); @include size(60, 37); z-index:99}
+.poker .position .player .hands {@include position-top(); @include size(60, 37); z-index:88}
 .poker .position .player-hands-l .hands {left:10}
 .poker .position .player-hands-r .hands {right:10}
-.poker .position .player .message{@include position-top(20); @include size("auto", 14); @include text-tiny($color-black); max-width: 200px;
+.poker .position .player .message{@include position-top(20); @include size("auto", 14); @include bg-radius(3px); @include text-tiny($color-black); max-width: 200px;
                                   background: $color-white; text-align: center; z-index:99; padding:3px; @include text-line-limit}
-.poker .position .player .chat { border: 2px solid $color-grey }
-.poker .position .player .alert { border: 2px solid $color-remon }
-.poker .position .player .action { border: 2px solid $color-sky }
-.poker .position .player .celebration { border: 2px solid $color-red }
+.poker .position .player .chat { border: 1px solid $color-grey }
+.poker .position .player .alert { border: 1px solid $color-remon }
+.poker .position .player .action { border: 1px solid $color-red }
+.poker .position .player .celebration { border: 1px solid $color-blue }
 .poker .position-l .player .message { left:-50 }
 .poker .position-r .player .message { right:-50 }
 .poker .position-me .player .message { left:100; top:-10}

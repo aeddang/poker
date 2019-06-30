@@ -23,6 +23,7 @@ export default class Player extends Component {
   winPot:number = 0
   time:number = 0
   limitTime:number = 0
+  finalBet:number = 0
   finalAction:number = -1;
   isActive:boolean = false
   openHand:EntityMap<Any> = {}
@@ -178,7 +179,7 @@ export default class Player extends Component {
     return true
   }
 
-  action (command: Command) {
+  action (command: Command, bet:number = 0) {
     switch(command.t) {
       case Action.Fold: this.status = Status.Fold; break
       case Action.Raise: this.status = Status.Play; break
@@ -191,6 +192,7 @@ export default class Player extends Component {
         if( this.networkStatus == NetworkStatus.Connected ) this.status = Status.Play
         break
     }
+    this.finalBet = bet
     this.finalAction = command.t
     this.time = 0
     this.resetAction()
