@@ -152,7 +152,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     if( player == null ) return;
     player.remove();
     delete this.players[id]
-    let position = this.positions[ player.position ];
+    let position = this.positions[ player.info.position ];
     if( position != null) position.leavePlayer(this.info.isSelectedPlayer);
   }
 
@@ -170,7 +170,7 @@ export default class PlayerViewer extends SyncPropsComponent {
     if( prop == 'position') {
       let position = this.positions[ value ];
       if( position == null ) return;
-      if( player.me ) {
+      if( player.info.me ) {
         this.info.isSelectedPlayer = true;
         position.addPlayer( player.getBody() );
         this.onSelectedMyposition( value );
