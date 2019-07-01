@@ -1,22 +1,11 @@
-@import 'element';
-@import 'mixin';
-@import 'ui';
-@import 'game';
 
-.poker .home { @include page($image-bg) }
-$home-left-width: 184px;
-.poker .home .board { @include position-center(367,275,$home-left-width/2,0); @include size(367,275); @include bg-image($image-bg-home); }
-.poker .home .top-navi-area { @include position-top-right($margin-default, 0); @include size(50,150)}
-.poker .home .user-box-area{ @include position-top-left(0, 50); @include size($home-left-width,178); @include bg-image($image-bg-user-box) }
-.poker .home .rank-list-area{ @include position-top-left(0, 200); @include size($home-left-width,10); background-color: $color-remon}
-.poker .home .room-list-area{ @include position-top-center(318, $home-left-width/2); @include size(318,100%); background-color: $color-grey}
-.poker .home .btn-join{  @include position-center(100,50,$home-left-width/2,0); @include size(100,50); }
-.poker .home .top-navi .btn-exit { display: none }
-.poker .home .btn-chip{ @include position-top-left(160, -1); }
+.poker .room-list { @include position-relative; @include size}
 
-.poker .play { @include page($image-bg) }
-.poker .play .btn-chip{ @include position-top-right($margin-default, -1); }
-.poker .play .top-navi-area { @include position-top-right(100, 0); @include size(160,36)}
-.poker .play .chat-area { @include position-top-right(-117px,80px); @include size(130px,0); z-index:999}
-.poker .play .play-area { @include position-absolute(); @include size() }
-.poker .play .loading-bar { @include loading-bar }
+.poker .room-list .item{ @include position-relative; @include size(100%, 94); }
+.poker .room-list .lv1{ @include bg-image($image-bg-lv1); margin-top:$margin-tiny }
+.poker .room-list .lv2{ @include bg-image($image-bg-lv2); margin-top:$margin-tiny }
+.poker .room-list .lv3{ @include bg-image($image-bg-lv3); margin-top:$margin-tiny }
+.poker .room-list .lv4{ @include bg-image($image-bg-lv4); }
+.poker .room-list .item .text{@include position-bottom($margin-default); @include size(100%, 20); @include text-default($color-remon); text-align:center;}
+.poker .room-list .item .icon-rock{@include icon-rock; @include position-right($margin-default, 9);}
+.poker .room-list .item .btn{@include btn-trensparent;}

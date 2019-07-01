@@ -16,6 +16,10 @@ export default class Play extends RoomComponent<Game> {
   debuger: Debugger
   onInit (options) {
     super.onInit(options)
+    if( options ) {
+      this.ante = options.ante
+      this.gameRule = options.gameRule
+    }
     this.setState(new Game(this.ante, this.gameRule, this.maxClients))
     this.state.delegate.subscribe( this.onStateEvent.bind(this) )
   }

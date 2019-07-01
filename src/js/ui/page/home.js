@@ -1,8 +1,10 @@
 import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
-import * as Login from "ViewModel/login";
+import * as Account from "ViewModel/account";
 import TopNavi from 'Component/topnavi';
+import RoomList from './room/roomlist/roomlist';
+import * as RoomEvent from './room/event'
 import * as SoundFactory from 'Root/soundfactory';
 
 class HomeBody extends ElementProvider {
@@ -28,7 +30,7 @@ export default class Home extends Component {
   constructor() {
     super();
     this.topNavi = new TopNavi();
-
+    this.roomList = new RoomList();
   }
 
   init(body, client, options) {
@@ -51,6 +53,7 @@ export default class Home extends Component {
     this.userBoxArea = elementProvider.getElement('userBoxArea');
     this.rankListArea = elementProvider.getElement('rankListArea');
     this.topNavi.init(elementProvider.getElement('topNaviArea'));
+    this.roomList.init(elementProvider.getElement('roomListArea')).subscribe ( this.onRoomEvent.bind(this) );
     this.btnJoin = elementProvider.getElement('btnJoin');
     this.btnChip = elementProvider.getElement('btnChip');
     super.onCreate(elementProvider);
@@ -58,12 +61,20 @@ export default class Home extends Component {
 
   setupEvent() {
     this.attachEvent(this.btnChip, "click", e => {} );
-
     this.attachEvent(this.btnJoin, "click", e => {
       SoundFactory.getInstence().playBgm(SoundFactory.BGM.DEFAULT);
-      Login.model.login();
+      Account.loginModel.login();
     } );
   }
+
+  onRoomEvent(event) {
+    switch( event.type ){
+      case RoomEvent.ROOM_EVENT.SELECTED_ROOM:
+
+        return;
+    }
+  }
+
 
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());

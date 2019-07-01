@@ -1,8 +1,6 @@
 import Component from 'Skeleton/component';
 import { observe } from 'rxjs-observe';
 
-
-
 export default class SyncPropsComponent extends Component {
   constructor() {
     super();

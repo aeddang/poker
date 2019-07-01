@@ -9,14 +9,13 @@ import * as Room from './room/room'
 import Debugger from './skeleton/log'
 import Dealler from './room/game/dealler'
 
-export default function start( port ) {
+export default function start( port, options ) {
   const debuger = new Debugger("Index")
   const app = express()
   const gameServer = new Server({
     server: createServer(app)
   })
-  gameServer.register("join", Room.AuthJoin)
-  gameServer.register("play", Room.Play)
+  gameServer.register("play", Room.Play, {custom_options:options})
   /*
   gameServer.register("join_with_options", AuthJoin, {
       custom_options: "you can use me on Room#onInit"

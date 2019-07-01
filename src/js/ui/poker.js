@@ -3,7 +3,7 @@ import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import * as Config from "Util/config";
-import * as Login from "ViewModel/login";
+import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
 import * as SoundFactory from './soundfactory';
 import { ErrorAlert } from  "Util/message";
@@ -45,11 +45,9 @@ export default class Poker extends Component {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //PUBLIC start
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
   pageChange(id,options=null) {
     this.onPageChange(id, options);
   }
-
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //PUBLIC end
@@ -66,7 +64,6 @@ export default class Poker extends Component {
 
   setupEvent() {
     this.client.onError.add((err) => {
-
       switch(this.info.currentPageId){
         case Config.Page.Play :
           alert(ErrorAlert.DisableGame);
@@ -81,7 +78,7 @@ export default class Poker extends Component {
       this.info.isGameReady = true;
     });
 
-    Login.model.delegate.subscribe ( this.onLoginEvent.bind(this) );
+    Account.loginModel.delegate.subscribe ( this.onLoginEvent.bind(this) );
     this.attachEvent(window, "resize", this.onResize.bind(this));
   }
 
@@ -109,8 +106,8 @@ export default class Poker extends Component {
 
   onLoginEvent(event) {
     switch(event.type) {
-      case Login.EVENT.ON_PROFILE : this.onPageChange(Config.Page.Play); break;
-      case Login.EVENT.LOGOUT : this.onPageChange(Config.Page.Home); break;
+      case Account.EVENT.ON_PROFILE : this.onPageChange(Config.Page.Play); break;
+      case Account.EVENT.LOGOUT : this.onPageChange(Config.Page.Home); break;
     }
   }
 

@@ -23,6 +23,8 @@ class UserInfo {
   reset() {
     this.name = '';
     this.id = '';
+		this.bank= 0;
+		this.rank = 0;
     this.accessToken = '';
   }
 
@@ -99,4 +101,4 @@ class LoginModel {
   }
 }
 
-export const model = new LoginModel();
+export const loginModel = new LoginModel();
