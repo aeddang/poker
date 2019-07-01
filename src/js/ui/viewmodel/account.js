@@ -10,9 +10,9 @@ export const EVENT = Object.freeze ({
   PROGRESS: "progress"
 });
 
-export const STATUS = Object.freeze ({
-	LOGIN: "login",
-  LOGOUT: "logout"
+export const Status = Object.freeze ({
+	Login: "login",
+  Logout: "logout"
 });
 
 class UserInfo {
@@ -23,8 +23,8 @@ class UserInfo {
   reset() {
     this.name = '';
     this.id = '';
-		this.bank= 0;
-		this.rank = 0;
+		this.bank= -1;
+		this.rank = -1;
     this.accessToken = '';
   }
 
@@ -33,10 +33,12 @@ class UserInfo {
 		//this.id = userData.id;
 		this.name = 'N'+uuidv4();
 		this.id = "ID"+uuidv4();
+		this.bank= 1000;
+		this.rank = 1;
   }
 
   getStatus() {
-    return this.accessToken == "" ? STATUS.LOGOUT : STATUS.LOGIN;
+    return this.accessToken == "" ? Status.Logout : Status.Login;
   }
 }
 
@@ -64,7 +66,7 @@ class LoginModel {
     this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
 		/*
 		FB.login( (response) => {
-      ( response.status === 'connected' ) ? this.onLogin(response.authResponse.accessToken) : this.onLoginError();
+      ( response.Status === 'connected' ) ? this.onLogin(response.authResponse.accessToken) : this.onLoginError();
     }, {scope: 'public_profile,email'});
 		*/
 		this.onLogin('accessToken');

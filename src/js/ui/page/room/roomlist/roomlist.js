@@ -2,7 +2,8 @@ import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Account from "ViewModel/account";
 import * as Event from '../event'
-import { UiAlert } from  "Util/message";
+import * as Config from "Util/config";
+import { UiAlert, Confirm } from  "Util/message";
 
 class RoomListBody extends ElementProvider {
   writeHTML() {
@@ -28,10 +29,12 @@ class ListItemBody extends ElementProvider {
 }
 
 class ListData {
-  constructor(lv, minBank) {
+  constructor(lv, minBank,port) {
     this.lv = lv;
     this.minBank = minBank;
+    this.port = port;
     this.isAble = false;
+
   }
 }
 
@@ -40,10 +43,11 @@ export default class RoomList extends Component {
     super();
     this.userInfo = null;
     this.datas = [];
-    this.datas.push(new ListData(1,0));
-    this.datas.push(new ListData(2,2000));
-    this.datas.push(new ListData(3,5000));
-    this.datas.push(new ListData(4,10000));
+    this.datas.push(new ListData(4,10000, Config.Port.Lv4));
+    this.datas.push(new ListData(3,5000, Config.Port.Lv3));
+    this.datas.push(new ListData(2,2000, Config.Port.Lv2));
+    this.datas.push(new ListData(1,0, Config.Port.Lv1));
+    
   }
 
   remove() {
@@ -84,12 +88,14 @@ class ListItem extends Component {
     this.btn = elementProvider.getElement('btn');
     this.text.innerHTML = "bank $"+this.data.minBank;
     this.getBody().classList.add("lv" + this.data.lv);
-    if( Account.loginModel.info.bank >= this.data.minBank) this.data.isAble = true;
+    if( Account.loginModel.getUserData().bank >= this.data.minBank) this.data.isAble = true;
 
   }
 
   setupEvent() {
-    Account.loginModel.delegate.subscribe ( info => {
+    Account.loginModel.delegate.subscribe ( e => {
+        if(e.type != Account.EVENT.ON_PROFILE) return;
+        let info = e.value;
         if(info.bank >= this.data.minBank){
            this.data.isAble = true;
            this.iconRock.visible = false;
@@ -101,11 +107,15 @@ class ListItem extends Component {
         }
     } );
     this.attachEvent(this.btn, "click", e => {
+       if( Account.loginModel.getStatus() != Account.Status.Login ){
+          if(confirm(Confirm.NeedLogin) == true) Account.loginModel.login();
+          return;
+       }
        if(!this.data.isAble){
          alert(UiAlert.DisableLv);
          return;
        }
-       this.delegate.next(new ComponentEvent( EVENT.ROOM_EVENT.SELECTED_ROOM, this.data ));
+       window.Poker.createClient(this.data.port);
     } );
   }
 

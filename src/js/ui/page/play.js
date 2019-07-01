@@ -6,6 +6,7 @@ import * as Config from 'Util/config';
 import * as Game from './game/game';
 import TopNavi from 'Component/topnavi';
 import Command, * as Cmd from  "Util/command";
+import * as SoundFactory from 'Root/soundfactory';
 
 class PlayBody extends ElementProvider {
   writeHTML() {
@@ -77,6 +78,7 @@ export default class Play extends Room {
 
   getElementProvider() { return new PlayBody(this.body); }
   onCreate(elementProvider) {
+    SoundFactory.getInstence().playBgm(SoundFactory.BGM.DEFAULT);
     let loadingBarBody = elementProvider.getElement('loadingBar');
     let bounce = Util.convertRectFromDimension(loadingBarBody);
     this.loadingBar.init(elementProvider.getElement('loadingBar'));
@@ -195,7 +197,6 @@ export default class Play extends Room {
       case Game.SHOW_EVENT.DISCARD_COMPLETED:
         break;
     }
-
   }
 
   onUiEvent(event) {

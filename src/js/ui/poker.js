@@ -39,6 +39,7 @@ export default class Poker extends Component {
   }
   remove() {
     super.remove();
+    this.removeClient();
     this.info = null;
   }
 
@@ -58,11 +59,12 @@ export default class Poker extends Component {
     SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
     this.onResize();
-    this.client = new Colyseus.Client(Config.SERVER_HOST);
     this.onPageChange(Config.Page.Home);
   }
 
-  setupEvent() {
+  createClient(port){
+    this.removeClient();
+    this.client = new Colyseus.Client(Config.SERVER_HOST + ":" + port);
     this.client.onError.add((err) => {
       switch(this.info.currentPageId){
         case Config.Page.Play :
@@ -71,13 +73,21 @@ export default class Poker extends Component {
           break;
         default : this.info.isGameReady = false ; break;
       }
-
     });
 
     this.client.onOpen.add(() => {
       this.info.isGameReady = true;
+      this.onPageChange(Config.Page.Play);
     });
+  }
 
+  removeClient(){
+    if(this.client == null) return;
+    this.client.close();
+    this.client= null;
+  }
+
+  setupEvent() {
     Account.loginModel.delegate.subscribe ( this.onLoginEvent.bind(this) );
     this.attachEvent(window, "resize", this.onResize.bind(this));
   }
@@ -87,6 +97,7 @@ export default class Poker extends Component {
         alert(ErrorAlert.DisableConnect);
         return;
     }
+    if(Config.Page.Play != id) this.removeClient();
 
     if(this.currentPage != null) this.currentPage.remove();
     let page = null;
@@ -106,7 +117,6 @@ export default class Poker extends Component {
 
   onLoginEvent(event) {
     switch(event.type) {
-      case Account.EVENT.ON_PROFILE : this.onPageChange(Config.Page.Play); break;
       case Account.EVENT.LOGOUT : this.onPageChange(Config.Page.Home); break;
     }
   }

@@ -1,10 +1,10 @@
 
 .poker .room-list { @include position-relative; @include size}
 
-.poker .room-list .item{ @include position-relative; @include size(100%, 94); }
-.poker .room-list .lv1{ @include bg-image($image-bg-lv1); margin-top:$margin-tiny }
-.poker .room-list .lv2{ @include bg-image($image-bg-lv2); margin-top:$margin-tiny }
-.poker .room-list .lv3{ @include bg-image($image-bg-lv3); margin-top:$margin-tiny }
+.poker .room-list .item{ @include position-relative; @include size(100%, 94); margin-top:$margin-default; margin-bottom:$margin-tiny }
+.poker .room-list .lv1{ @include bg-image($image-bg-lv1); }
+.poker .room-list .lv2{ @include bg-image($image-bg-lv2); }
+.poker .room-list .lv3{ @include bg-image($image-bg-lv3); }
 .poker .room-list .lv4{ @include bg-image($image-bg-lv4); }
 .poker .room-list .item .text{@include position-bottom($margin-default); @include size(100%, 20); @include text-default($color-remon); text-align:center;}
 .poker .room-list .item .icon-rock{@include icon-rock; @include position-right($margin-default, 9);}

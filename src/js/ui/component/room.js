@@ -1,7 +1,7 @@
 import Component from 'Skeleton/component';
 import ComponentEvent from 'Skeleton/event';
 import Chat, { CHAT_EVENT } from  "Component/chat";
-import * as Login from "ViewModel/login";
+import * as Account from "ViewModel/account";
 import { parseBrodcast, Sender } from 'Util/brodcastfactory';
 
 export default class Room extends Component {
@@ -34,7 +34,7 @@ export default class Room extends Component {
 
   onCreate(elementProvider) {
     super.onCreate(elementProvider);
-    this.userInfo = Login.model.getUserData();
+    this.userInfo = Account.loginModel.getUserData();
   }
 
   join() {

@@ -2,6 +2,7 @@
 @import 'mixin';
 @import 'ui';
 @import 'game';
+@import 'room';
 
 .poker .home { @include page($image-bg) }
 $home-left-width: 184px;
@@ -9,7 +10,7 @@ $home-left-width: 184px;
 .poker .home .top-navi-area { @include position-top-right($margin-default, 0); @include size(50,150)}
 .poker .home .user-box-area{ @include position-top-left(0, 50); @include size($home-left-width,178); @include bg-image($image-bg-user-box) }
 .poker .home .rank-list-area{ @include position-top-left(0, 200); @include size($home-left-width,10); background-color: $color-remon}
-.poker .home .room-list-area{ @include position-top-center(318, $home-left-width/2); @include size(318,100%); background-color: $color-grey}
+.poker .home .room-list-area{ @include position-top-center(318, $home-left-width/2); @include size(318,100%);}
 .poker .home .btn-join{  @include position-center(100,50,$home-left-width/2,0); @include size(100,50); }
 .poker .home .top-navi .btn-exit { display: none }
 .poker .home .btn-chip{ @include position-top-left(160, -1); }
