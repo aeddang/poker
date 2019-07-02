@@ -22,6 +22,7 @@ class PositionBody extends ElementProvider {
 			</div>
 		  <div class='profile'>
 				<img id='${this.id}profileImg' class='profile-img'></img>
+				<div class='dimed'></div>
 			</div>
 			<div id='${this.id}profileCover' class='profile-cover'></div>
     `;

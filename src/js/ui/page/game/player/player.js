@@ -106,7 +106,7 @@ export default class Player extends SyncPropsComponent {
         if( value != -1 ) this.onGameJoin();
       },
       bankroll: value =>{
-        this.bankroll.innerHTML = '$' + value;
+        this.bankroll.innerHTML = '$' + Util.numberWithCommas(value);
       },
       status: value =>{
         switch ( value ) {

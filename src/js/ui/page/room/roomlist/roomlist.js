@@ -1,5 +1,6 @@
 import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
+import * as Util from 'Skeleton/util';
 import * as Account from "ViewModel/account";
 import * as Event from '../event'
 import * as Config from "Util/config";
@@ -21,8 +22,9 @@ class ListItemBody extends ElementProvider {
     cell.classList.add("item");
     cell.innerHTML = `
       <div id='${this.id}text' class='text' ></div>
+      <div id='${this.id}dimed' class='dimed'></div>
       <div id='${this.id}iconRock' class='icon-rock' ></div>
-			<button id='${this.id}btn' class='btn'>Join</button>
+			<button id='${this.id}btn' class='btn'></button>
     `;
     this.body.appendChild(cell);
   }
@@ -41,13 +43,11 @@ class ListData {
 export default class RoomList extends Component {
   constructor() {
     super();
-    this.userInfo = null;
     this.datas = [];
     this.datas.push(new ListData(4,10000, Config.Port.Lv4));
     this.datas.push(new ListData(3,5000, Config.Port.Lv3));
     this.datas.push(new ListData(2,2000, Config.Port.Lv2));
     this.datas.push(new ListData(1,0, Config.Port.Lv1));
-    
   }
 
   remove() {
@@ -60,11 +60,13 @@ export default class RoomList extends Component {
   }
 
   onCreateListItem(){
+    let scollBody = this.getBody();
     this.datas.forEach( (data) => {
       let item = new ListItem()
       item.data = data;
-      item.init( this.getBody() ).subscribe ( e => { this.delegate.next(e) } );
+      item.init( scollBody ).subscribe ( e => { this.delegate.next(e) } );
     });
+    scollBody.scrollTop = scollBody.scrollHeight - scollBody.clientHeight;
   }
 }
 
@@ -78,6 +80,7 @@ class ListItem extends Component {
     this.data = null;
     this.text = null;
     this.iconRock = null;
+    this.dimed = null;
     this.btn = null;
   }
 
@@ -85,27 +88,18 @@ class ListItem extends Component {
   onCreate(elementProvider) {
     this.text = elementProvider.getElement('text');
     this.iconRock = elementProvider.getElement('iconRock');
+    this.dimed = elementProvider.getElement('dimed');
     this.btn = elementProvider.getElement('btn');
-    this.text.innerHTML = "bank $"+this.data.minBank;
+    this.text.innerHTML = "bank $"+Util.numberWithCommas(this.data.minBank);
     this.getBody().classList.add("lv" + this.data.lv);
-    if( Account.loginModel.getUserData().bank >= this.data.minBank) this.data.isAble = true;
-
+    this.updateUserData();
   }
 
   setupEvent() {
     Account.loginModel.delegate.subscribe ( e => {
-        if(e.type != Account.EVENT.ON_PROFILE) return;
-        let info = e.value;
-        if(info.bank >= this.data.minBank){
-           this.data.isAble = true;
-           this.iconRock.visible = false;
-           this.btn.visible = true;
-        }else{
-           this.data.isAble = false;
-           this.iconRock.visible = true;
-           this.btn.visible = false;
-        }
+        if(e.type == Account.EVENT.ON_PROFILE || e.type == Account.EVENT.ON_LOGOUT) this.updateUserData();
     } );
+
     this.attachEvent(this.btn, "click", e => {
        if( Account.loginModel.getStatus() != Account.Status.Login ){
           if(confirm(Confirm.NeedLogin) == true) Account.loginModel.login();
@@ -117,6 +111,21 @@ class ListItem extends Component {
        }
        window.Poker.createClient(this.data.port);
     } );
+  }
+
+  updateUserData(){
+    let info = Account.loginModel.getUserData();
+    if(info.bank >= this.data.minBank){
+       this.data.isAble = true;
+       this.dimed.visible = false;
+       this.iconRock.visible = false;
+       this.btn.visible = true;
+    }else{
+       this.data.isAble = false;
+       this.dimed.visible = true;
+       this.iconRock.visible = true;
+       this.btn.visible = false;
+    }
   }
 
 }

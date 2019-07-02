@@ -84,7 +84,6 @@ export default class Component {
   }
 
   onResize(){}
-
   onComponentEvent(event){}
 }
 

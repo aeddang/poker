@@ -21,14 +21,14 @@
 
 .poker .position { @include position-absolute; @include size(160,50); }
 .poker .position .profile { @include position-absolute; @include size(50,50); @include bg-radius(25px); @include bg-image($image-bg-profile-rect)}
+.poker .position .profile .dimed{@include position-absolute; @include size;  @include bg-radius(25px); background-color:$color-transparent-black45}
 .poker .position .profile .profile-img{ @include position-absolute; @include size }
 .poker .position .profile-cover{ @include position-absolute(-1,-1); @include size(52,52); @include bg-image($image-cover-player-profile)}
 .poker .position .box { @include position-vertical-center(45); @include size(100,35); @include bg-image($image-bg-user); @include drop-shadow; padding:$margin-tiny}
-.poker .position-fold .profile .profile-img { @include filter-grayscale()}
-.poker .position-wait .profile .profile-img { @include filter-grayscale() }
-.poker .position-impossible .profile .profile-img { @include filter-grayscale() }
-.poker .position-play .profile .profile-img{ @include filter-grayscale(0%)}
-
+.poker .position-fold .profile .dimed { display:block; }
+.poker .position-wait .profile .dimed { display:block; }
+.poker .position-impossible .profile .dimed { display:block; }
+.poker .position-play .profile .dimed{ display:none}
 .poker .position-disconnect { opacity:0.7 }
 .poker .position-connect {}
 

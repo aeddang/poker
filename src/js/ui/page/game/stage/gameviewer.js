@@ -82,7 +82,7 @@ export default class GameViewer extends SyncPropsComponent {
 
       gamePot: value =>{
         SoundFactory.getInstence().play( SoundFactory.STATIC_SOUND.DROP_POT );
-        this.mainPot.innerHTML = '$' + value;
+        this.mainPot.innerHTML = '$' + Util.numberWithCommas(value);
       },
       roundPot: value =>{
         //this.roundPot.innerHTML = '$' + value;

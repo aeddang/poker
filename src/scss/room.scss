@@ -1,11 +1,36 @@
 
-.poker .room-list { @include position-relative; @include size}
-
-.poker .room-list .item{ @include position-relative; @include size(100%, 94); margin-top:$margin-default; margin-bottom:$margin-tiny }
+.poker .room-list { @include position-relative; @include size; overflow-y: auto; overflow-x:hidden; }
+.poker .room-list .item{ @include position-relative; @include size(100%, 94); margin-top:$margin-default; margin-bottom:$margin-default }
 .poker .room-list .lv1{ @include bg-image($image-bg-lv1); }
 .poker .room-list .lv2{ @include bg-image($image-bg-lv2); }
 .poker .room-list .lv3{ @include bg-image($image-bg-lv3); }
 .poker .room-list .lv4{ @include bg-image($image-bg-lv4); }
 .poker .room-list .item .text{@include position-bottom($margin-default); @include size(100%, 20); @include text-default($color-remon); text-align:center;}
-.poker .room-list .item .icon-rock{@include icon-rock; @include position-right($margin-default, 9);}
+.poker .room-list .item .dimed{@include position-absolute; @include size; background-color:$color-transparent-black45}
+.poker .room-list .item .icon-rock{@include icon-rock; @include position-right($margin-tiny, 9);}
 .poker .room-list .item .btn{@include btn-trensparent;}
+
+
+.poker .rank-list { @include position-relative; @include size; overflow-y: auto; overflow-x:hidden; }
+.poker .rank-list .item{ @include position-relative; @include size(100%, 50); @include bg-image($image-bg-user);  }
+.poker .rank-list .item .rank{ @include position-left(0, 15); @include size(40, 20); @include text-default($color-white); @include text-shadow($color-transparent-black45); text-align:center;}
+.poker .rank-list .rank1 .rank{ @include text-big($color-yellow); }
+.poker .rank-list .rank2 .rank{ @include text-big($color-yellow); }
+.poker .rank-list .rank3 .rank{ @include text-big($color-yellow); }
+.poker .rank-list .item .profile { @include position-left; @include size(50,50); @include bg-radius(25px); @include bg-image($image-bg-profile-rect) }
+.poker .rank-list .item .profile .profile-img{ @include position-absolute(5,5); @include size(40,40);}
+.poker .rank-list .item .profile .profile-cover{ @include position-absolute(-1,-1); @include size(52,52); @include bg-image($image-cover-player-profile)}
+.poker .rank-list .item .info { @include position-left($margin-tiny,5); @include size(74,45);}
+.poker .rank-list .item .info .text{@include position-relative; @include size(100%, 20); @include text-default($color-white); @include text-shadow($color-transparent-black45); text-align:center; @include text-line-limit}
+.poker .rank-list .item .info .desc{@include position-relative; @include size(100%, 20); @include text-small($color-remon); @include text-shadow($color-transparent-black45); @include text-line-limit; text-align:center;}
+.poker .rank-list .item .btn{@include btn-trensparent;}
+
+
+.poker .user-box { @include position-relative; @include size(184,178) }
+.poker .user-box .profile-img{ @include position-absolute(10,62); @include size(50,50) }
+.poker .user-box .profile-cover{ @include position-absolute; @include size; @include bg-image($image-bg-user-box)}
+.poker .user-box .info { @include position-vertical-center(60,70); @include size(65,70)}
+.poker .user-box .info .text{@include position-relative; @include size(auto, 15); @include text-small($color-white); @include text-line-limit}
+.poker .user-box .info .desc{@include position-relative; @include size(auto, 17); @include text-default($color-white); @include text-line-limit}
+.poker .user-box .info .rank{ @include position-relative; @include size(auto, 35); @include text-ultra($color-black); @include text-shadow($color-remon-45,10px);}
+.poker .user-box .btn{@include btn-trensparent;}

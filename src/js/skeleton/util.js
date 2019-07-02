@@ -55,6 +55,10 @@ export function getCertainDigitsString (n, len)
 	return digitsString.slice(-len);
 }
 
+export function numberWithCommas(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 export function getTimeDisplayString (t, div = ":", isFillDigits = false) {
 	if( String(t) == "NaN" ) t=0;
 	if( t < 0 ) t = 0;

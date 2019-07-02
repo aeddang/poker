@@ -44,7 +44,7 @@ util
   box-shadow: 0 0 $size $size $color;
 }
 
-@mixin text-shadow($color:$color-remon){ text-shadow: 0 0 3px $color; }
+@mixin text-shadow($color:$color-remon, $amount:3px){ text-shadow: 0 0 $amount $color; }
 @mixin text-line-limit{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 @mixin screen-out{ overflow:hidden; position:absolute; left:-1000px; height:0; padding:1px 0 0 0; line-height:0; font-size:0 }
 @mixin bg-image ($image){ background: url($image) no-repeat; background-size:100% 100%;}

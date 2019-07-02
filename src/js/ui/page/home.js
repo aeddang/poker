@@ -4,6 +4,8 @@ import * as Util from 'Skeleton/util';
 import * as Account from "ViewModel/account";
 import TopNavi from 'Component/topnavi';
 import RoomList from './room/roomlist/roomlist';
+import RankList from './room/ranklist/ranklist';
+import UserBox from './room/userbox/userbox';
 import * as RoomEvent from './room/event'
 import * as SoundFactory from 'Root/soundfactory';
 
@@ -31,6 +33,8 @@ export default class Home extends Component {
     super();
     this.topNavi = new TopNavi();
     this.roomList = new RoomList();
+    this.rankList = new RankList();
+    this.userBox = new UserBox();
   }
 
   init(body, client, options) {
@@ -39,9 +43,13 @@ export default class Home extends Component {
 
   remove() {
     super.remove();
+    this.userBox.remove();
+    this.roomList.remove();
+    this.rankList.remove();
     this.topNavi.remove();
     this.topNavi = null;
     this.btnchip = null;
+    this.userBox = null;
     this.userBoxArea = null;
     this.rankListArea = null;
   }
@@ -51,10 +59,13 @@ export default class Home extends Component {
     SoundFactory.getInstence().stopBgm();
     this.userBoxArea = elementProvider.getElement('userBoxArea');
     this.rankListArea = elementProvider.getElement('rankListArea');
+    this.userBox.init(this.userBoxArea);
     this.topNavi.init(elementProvider.getElement('topNaviArea'));
     this.roomList.init(elementProvider.getElement('roomListArea'));
+    this.rankList.init(this.rankListArea);
     this.btnChip = elementProvider.getElement('btnChip');
     super.onCreate(elementProvider);
+    this.onResize();
   }
 
   setupEvent() {

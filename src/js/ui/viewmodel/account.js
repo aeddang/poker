@@ -26,6 +26,7 @@ class UserInfo {
 		this.bank= -1;
 		this.rank = -1;
     this.accessToken = '';
+		this.profileImg = "";
   }
 
   setData(userData) {
@@ -34,6 +35,7 @@ class UserInfo {
 		this.name = 'N'+uuidv4();
 		this.id = "ID"+uuidv4();
 		this.bank= 1000;
+		this.profileImg = "./static/asset/profile_image.png";
 		this.rank = 1;
   }
 
