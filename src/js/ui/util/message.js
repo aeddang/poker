@@ -4,7 +4,8 @@ export const Confirm = Object.freeze ({
 });
 
 export const UiAlert = Object.freeze ({
-	DisableLv: "BankRoll 이 부족하여 해당LV에 입장할수 없습니다."
+	DisableLv: "BankRoll 이 부족하여 해당LV에 입장할수 없습니다.",
+	DisableoOrientation: "디바이스를 가로모드로 고정해주세요."
 })
 export const ErrorAlert = Object.freeze ({
 	DisableConnect: "서버문제로 게임에 접속할수 없습니다.",

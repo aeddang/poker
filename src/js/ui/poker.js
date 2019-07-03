@@ -6,7 +6,7 @@ import * as Config from "Util/config";
 import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
 import * as SoundFactory from './soundfactory';
-import { ErrorAlert } from  "Util/message";
+import { ErrorAlert, UiAlert } from  "Util/message";
 
 class PokerBody extends ElementProvider {
   writeHTML() {
@@ -34,6 +34,7 @@ class PokerInfo {
 export default class Poker extends Component {
   constructor() {
     super();
+    this.debuger.tag = 'Poker';
     this.info = new PokerInfo();
     this.client = null;
   }
@@ -90,8 +91,8 @@ export default class Poker extends Component {
   setupEvent() {
     Account.loginModel.delegate.subscribe ( this.onLoginEvent.bind(this) );
     this.attachEvent(window, "resize", this.onResize.bind(this));
-    this.attachEvent(screen, "orientationchange", e =>{
-      alert("the orientation of the device is now " + screen.orientation);
+    this.attachEvent(window, "orientationchange", e =>{
+      if(screen.orientation.type.indexOf("portrait") != -1) alert( UiAlert.DisableoOrientation )
     });
   }
 
