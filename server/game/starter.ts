@@ -15,7 +15,7 @@ export default function start( port, options ) {
   const gameServer = new Server({
     server: createServer(app)
   })
-  gameServer.register("play", Room.Play, {custom_options:options})
+  gameServer.register("play", Room.Play, options)
   /*
   gameServer.register("join_with_options", AuthJoin, {
       custom_options: "you can use me on Room#onInit"

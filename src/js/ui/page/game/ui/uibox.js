@@ -198,12 +198,18 @@ export default class UiBox extends SyncPropsComponent {
 		this.cards = null;
 	}
 
-	onShowCard( id, cardData ) {
+	onOpenCard( idx, cardData ) {
+    if(this.cards == null) return;
+		let card = this.cards.find( c => { return (c.cardData.suit == cardData.suit && c.cardData.num == cardData.num) });
+    if(card == undefined) return;
+    if(!card.isBurn) card.burn();
+  }
+
+	onShowCard( idx, cardData ) {
     if(this.cards == null) return;
 		let card = this.cards.find( c => { return (c.cardData.suit == cardData.suit && c.cardData.num == cardData.num) });
     if(card == undefined) return;
     card.show();
-		card.burn();
   }
 
   hideCard( id ) {

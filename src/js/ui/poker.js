@@ -59,7 +59,7 @@ export default class Poker extends Component {
     SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
     this.onResize();
-    this.onPageChange(Config.Page.Home);
+    this.onPageChange(Config.Page.Intro);
   }
 
   createClient(port){
@@ -90,6 +90,9 @@ export default class Poker extends Component {
   setupEvent() {
     Account.loginModel.delegate.subscribe ( this.onLoginEvent.bind(this) );
     this.attachEvent(window, "resize", this.onResize.bind(this));
+    this.attachEvent(screen, "orientationchange", e =>{
+      alert("the orientation of the device is now " + screen.orientation);
+    });
   }
 
   onPageChange(id, options=null) {
@@ -103,7 +106,7 @@ export default class Poker extends Component {
     let page = null;
     switch( id ) {
       case Config.Page.Home : page = new Page.Home(); break;
-      case Config.Page.Join : page = new Page.Join(); break;
+      case Config.Page.Intro : page = new Page.Intro(); break;
       case Config.Page.Play : page = new Page.Play(); break;
     }
     this.info.currentPageId = id;

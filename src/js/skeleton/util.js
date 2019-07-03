@@ -72,3 +72,15 @@ export function getTimeDisplayString (t, div = ":", isFillDigits = false) {
   str += getCertainDigitsString(s,2);
   return str;
 }
+
+export function enterFullscreen(body) {
+  if (body.requestFullscreen) body.requestFullscreen();
+  if (body.mozRequestFullScreen) body.mozRequestFullScreen();
+  if (body.webkitRequestFullscreen) body.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+}
+
+export function exitFullscreen() {
+  if (document.cancelFullScreen) document.cancelFullScreen();
+  if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+  if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
+}

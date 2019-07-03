@@ -72,12 +72,6 @@ export default class Home extends Component {
     this.attachEvent(this.btnChip, "click", e => {} );
   }
 
-  onRoomEvent(event) {
-    switch( event.type ){
-      case RoomEvent.ROOM_EVENT.SELECTED_ROOM:
-        return;
-    }
-  }
 
   onResize() {
     let bounce = Util.convertRectFromDimension(this.getBody());
@@ -85,7 +79,6 @@ export default class Home extends Component {
     let rankHeight = bounce.height - (bounceBox.y + bounceBox.height);
     this.rankListArea.height = rankHeight;
     super.onResize();
-
   }
 
 }

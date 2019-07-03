@@ -353,14 +353,14 @@ export default class Game extends Component {
 				if ( player.mainPot == 0) {
 					playWinners.push( player )
 					getPot = Math.floor( totalPot / wNum )
-					player.winPot += getPot
+					player.getPot += getPot
 					isNext = false
 					this.debuger.log( getPot , 'getPot ' + player.name )
 				} else {
 					getPot = this.stage.getMainPot( w.id )
 					if( getPot > totalPot) getPot = totalPot;
 					getPot = Math.floor( getPot / wNum )
-					player.winPot += getPot
+					player.getPot += getPot
 					this.debuger.log( getPot , 'getPot allin ' + player.name )
 				}
 				totalPot -= getPot
@@ -368,7 +368,7 @@ export default class Game extends Component {
 			})
 			if( !isNext ) {
 				var getPot = Math.floor( totalPot/ playWinners.length )
-				playWinners.forEach( p => p.winPot += getPot )
+				playWinners.forEach( p => p.getPot += getPot )
 				totalPot -= getPot
 			}
 			this.debuger.log( totalPot , 'totalPot' )

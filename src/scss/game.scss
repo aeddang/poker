@@ -7,7 +7,7 @@
 .poker .game-viewer .cards{@include position-absolute; @include size }
 .poker .game-viewer .pot{@include position-center(110,50,0, -65); z-index:100}
 .poker .game-viewer .pot .main-pot{ @include position-relative;@include size(120, 32); @include text-default($color-black); @include bg-image($image-bg-main-pot);
-                                    text-align: center; padding-top:3}
+                                    text-align: center; padding-top:7}
 .poker .game-viewer .pot .side-pot{ @include position-relative(0,-5) ;@include size(120, 25); @include text-small($color-white); @include text-shadow; text-align: center }
 .poker .game-viewer .pot .chips{ @include position-absolute(-25, -5); @include icon-main-pot;}
 

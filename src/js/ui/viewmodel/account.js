@@ -32,7 +32,7 @@ class UserInfo {
   setData(userData) {
 		//this.name = userData.name;
 		//this.id = userData.id;
-		this.name = 'N'+uuidv4();
+		this.name = instenceID;
 		this.id = "ID"+uuidv4();
 		this.bank= 1000;
 		this.profileImg = "./static/asset/profile_image.png";

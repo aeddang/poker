@@ -150,9 +150,9 @@ export default class PlayerViewer extends SyncPropsComponent {
   onLeave(id) {
     let player = this.players[id];
     if( player == null ) return;
+    let position = this.positions[ player.info.position ];
     player.remove();
     delete this.players[id]
-    let position = this.positions[ player.info.position ];
     if( position != null) position.leavePlayer(this.info.isSelectedPlayer);
   }
 
@@ -190,6 +190,10 @@ export default class PlayerViewer extends SyncPropsComponent {
     this.onResize(true);
   }
 
+
+  onOpenCard( id, idx, cardData ) {
+    this.players[id].openCard( idx, cardData );
+  }
 
   onShowCard( id, idx, cardData ) {
     this.players[id].showCard( idx, cardData );

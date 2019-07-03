@@ -45,7 +45,6 @@ class PlayerInfo {
     this.time = 0
     this.position = -1;
     this.isShowDown = false;
-    this.showIdx = 0;
   }
   reset() {}
 }
@@ -106,6 +105,7 @@ export default class Player extends SyncPropsComponent {
         if( value != -1 ) this.onGameJoin();
       },
       bankroll: value =>{
+        this.debuger.log(value, "bankroll");
         this.bankroll.innerHTML = '$' + Util.numberWithCommas(value);
       },
       status: value =>{
@@ -157,10 +157,12 @@ export default class Player extends SyncPropsComponent {
 
       },
       isWinner: value =>{
+        this.debuger.log(value, "isWinner");
         if(value == null || value == "") return;
         if(value) this.viewMessage( ("++ $" + this.info.finalWinPot) , "celebration");
       },
       winPot: value =>{
+        this.debuger.log(value, "winPot");
         if(value == 0) return;
         this.info.finalWinPot = value;
       },
@@ -410,7 +412,6 @@ export default class Player extends SyncPropsComponent {
     this.debuger.log(this.cards, 'setHand');
     if(this.cards != null) return;
     this.cards = [];
-    this.info.showIdx = 0;
 
     for(var i=0; i<2; ++i) {
       let card = new Card().init( this.hands , CARD_WIDTH , CARD_HEIGHT, CARD_WIDTH * i , 0);
@@ -433,14 +434,19 @@ export default class Player extends SyncPropsComponent {
 		this.cards.forEach( c => c.remove() );
 		this.cards = null;
 	}
-
-  showCard( id, cardData ) {
+  
+  openCard( idx, cardData ) {
     if(this.cards == null) return;
-    let card = this.cards[ this.showIdx ];
+    let card = this.cards[ idx ];
     card.setData( cardData );
-    card.show();
     card.burn();
-    this.info.showIdx ++;
+  }
+
+  showCard( idx, cardData ) {
+    if(this.cards == null) return;
+    let card = this.cards.find( c => { return (c.cardData.suit == cardData.suit && c.cardData.num == cardData.num) });
+    if(card == undefined) return;
+    card.show();
   }
 
   hideCard( id ) {

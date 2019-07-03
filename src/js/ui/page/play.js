@@ -136,8 +136,13 @@ export default class Play extends Room {
         if( e.path.attribute == "mainPot") this.gameViewer.addSidePot( e.value );
       }
     });
-
     this.room.listen("players/:id/openHand/:idx", e => {
+      if (e.operation === "add") {
+        if(e.path.id == this.info.me) { this.uiBox.onOpenCard(e.path.idx, e.value); }
+        else { this.playerViewer.onOpenCard(e.path.id, e.path.idx, e.value); }
+      }
+    });
+    this.room.listen("players/:id/madeHand/:idx", e => {
       if (e.operation === "add") {
         if( this.gameViewer.onShowCard( e.value ) == false ) {
           if(e.path.id == this.info.me) { this.uiBox.onShowCard(e.path.idx, e.value); }

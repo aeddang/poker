@@ -4,6 +4,11 @@
 @import 'game';
 @import 'room';
 
+.poker .intro { @include page($image-bg) }
+.poker .intro .board { @include position-center(367,275); @include size(367,275); @include bg-image($image-bg-home); }
+.poker .intro .btn-join { @include position-center(150,50); @include size(150,50); @include btn-text; @include text-ultra($color-remon); @include text-shadow($color-remon-45,10px);}
+
+
 .poker .home { @include page($image-bg) }
 $home-left-width: 184px;
 .poker .home .board { @include position-center(367,275,$home-left-width/2,0); @include size(367,275); @include bg-image($image-bg-home); }

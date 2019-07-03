@@ -26,6 +26,7 @@ export default class Player extends Component {
   finalBet:number = 0
   finalAction:number = -1;
   isActive:boolean = false
+  madeHand:EntityMap<Any> = {}
   openHand:EntityMap<Any> = {}
   resultValue = -1;
   resultLevel = -1;
@@ -48,7 +49,8 @@ export default class Player extends Component {
   hand:Array
   @nosync
   isActionComplete:boolean = false
-
+  @nosync
+  getPot:number = 0
 
   constructor(id:stirng, options:JoinOption) {
     super()
@@ -61,8 +63,10 @@ export default class Player extends Component {
   remove() {
     super.remove()
     this.hand = null
-    for (let id in this.openHand) delete this.openHand[id]
+    for (var id in this.madeHand) delete this.madeHand[id]
+    for (var id in this.openHand) delete this.openHand[id]
     this.openHand = null
+    this.madeHand = null
   }
 
   isConnected():boolean {
@@ -141,14 +145,15 @@ export default class Player extends Component {
     this.gameBet = 0
     this.checkBet = 0
     this.minBet = 0
-    this.winPot = 0
+    this.getPot = 0
     this.resultValue = -1
     this.resultLevel = -1
     this.positionStatus = PositionStatus.None;
     this.currentBlindAction = -1
     this.finalAction = -1;
     this.actionBlind = true
-    for (let id in this.openHand) delete this.openHand[id]
+    for (var id in this.madeHand) delete this.madeHand[id]
+    for (var id in this.openHand) delete this.openHand[id]
     this.resetAction()
   }
 
@@ -205,10 +210,12 @@ export default class Player extends Component {
     this.resultValue = handsValue.value
     this.resultLevel = handsValue.level
     this.status = Status.ShowDown
-    handsValue.cards.forEach( (c, idx) => this.openHand[ idx ] = c )
+    this.hand.forEach( (c, idx) => this.openHand[ idx ] = c )
+    handsValue.cards.forEach( (c, idx) => this.madeHand[ idx ] = c )
   }
 
   updatePot(){
+    this.winPot = this.getPot;
     this.bankroll += this.winPot
     if( this.gameBet < this.winPot ){
       this.isWinner = true
@@ -218,7 +225,6 @@ export default class Player extends Component {
       this.debuger.log(this.winPot,'lose ' + this.name)
     }
     else this.debuger.log(this.winPot,'draw ' + this.name)
-    this.winPot = 0
   }
 
   setPosition( idx:number ){
