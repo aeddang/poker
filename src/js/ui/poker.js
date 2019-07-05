@@ -38,6 +38,13 @@ export default class Poker extends Component {
     this.info = new PokerInfo();
     this.client = null;
   }
+
+  init(body){
+    super.init(body);
+    this.pageChange(Config.Page.Intro);
+    return this.delegate;
+  }
+
   remove() {
     super.remove();
     this.removeClient();
@@ -47,10 +54,34 @@ export default class Poker extends Component {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //PUBLIC start
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  pageChange(id,options=null) {
-    this.onPageChange(id, options);
+  pageChange(id, options=null) {
+    this.debuger.log(id, "pageChange");
+    location.hash = id;
+  }
+  createClient(port){
+    this.removeClient();
+    this.client = new Colyseus.Client(Config.SERVER_HOST + ":" + port);
+    this.client.onError.add((err) => {
+      switch(this.info.currentPageId){
+        case Config.Page.Play :
+          alert(ErrorAlert.DisableGame);
+          this.pageChange(Config.Page.Home);
+          break;
+        default : this.info.isGameReady = false ; break;
+      }
+    });
+
+    this.client.onOpen.add(() => {
+      this.info.isGameReady = true;
+      this.pageChange(Config.Page.Play);
+    });
   }
 
+  removeClient(){
+    if(this.client == null) return;
+    this.client.close();
+    this.client= null;
+  }
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //PUBLIC end
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,32 +91,7 @@ export default class Poker extends Component {
     SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
     this.onResize();
-    this.onPageChange(Config.Page.Intro);
-  }
 
-  createClient(port){
-    this.removeClient();
-    this.client = new Colyseus.Client(Config.SERVER_HOST + ":" + port);
-    this.client.onError.add((err) => {
-      switch(this.info.currentPageId){
-        case Config.Page.Play :
-          alert(ErrorAlert.DisableGame);
-          this.onPageChange(Config.Page.Home);
-          break;
-        default : this.info.isGameReady = false ; break;
-      }
-    });
-
-    this.client.onOpen.add(() => {
-      this.info.isGameReady = true;
-      this.onPageChange(Config.Page.Play);
-    });
-  }
-
-  removeClient(){
-    if(this.client == null) return;
-    this.client.close();
-    this.client= null;
   }
 
   setupEvent() {
@@ -94,22 +100,29 @@ export default class Poker extends Component {
     this.attachEvent(window, "orientationchange", e =>{
       if(screen.orientation.type.indexOf("portrait") != -1) alert( UiAlert.DisableoOrientation )
     });
+    this.attachEvent(window, "hashchange", e =>{
+        let hash = window.location.hash;
+        this.onPageChange(hash.replace("#",""));
+    });
+
   }
 
   onPageChange(id, options=null) {
+    this.debuger.log(id, "onPageChange");
     if(this.info.isGameReady == false && id == Config.Page.Play){
         alert(ErrorAlert.DisableConnect);
         return;
     }
     if(Config.Page.Play != id) this.removeClient();
-
     if(this.currentPage != null) this.currentPage.remove();
     let page = null;
     switch( id ) {
       case Config.Page.Home : page = new Page.Home(); break;
       case Config.Page.Intro : page = new Page.Intro(); break;
       case Config.Page.Play : page = new Page.Play(); break;
+
     }
+    if(page == null) return;
     this.info.currentPageId = id;
     this.currentPage = page;
     page.init(this.pageArea, this.client, options).subscribe ( this.onPageEvent.bind(this) );
@@ -121,7 +134,7 @@ export default class Poker extends Component {
 
   onLoginEvent(event) {
     switch(event.type) {
-      case Account.EVENT.LOGOUT : this.onPageChange(Config.Page.Home); break;
+      case Account.EVENT.LOGOUT : this.pageChange(Config.Page.Home); break;
     }
   }
 

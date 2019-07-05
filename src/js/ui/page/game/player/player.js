@@ -105,7 +105,6 @@ export default class Player extends SyncPropsComponent {
         if( value != -1 ) this.onGameJoin();
       },
       bankroll: value =>{
-        this.debuger.log(value, "bankroll");
         this.bankroll.innerHTML = '$' + Util.numberWithCommas(value);
       },
       status: value =>{
@@ -434,7 +433,7 @@ export default class Player extends SyncPropsComponent {
 		this.cards.forEach( c => c.remove() );
 		this.cards = null;
 	}
-  
+
   openCard( idx, cardData ) {
     if(this.cards == null) return;
     let card = this.cards[ idx ];
