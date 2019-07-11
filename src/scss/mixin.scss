@@ -48,13 +48,15 @@ util
 @mixin text-line-limit{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 @mixin screen-out{ overflow:hidden; position:absolute; left:-1000px; height:0; padding:1px 0 0 0; line-height:0; font-size:0 }
 @mixin bg-image ($image){ background: url($image) no-repeat; background-size:100% 100%;}
-@mixin bg-radius ($radius:$default-btn-radius) { -webkit-border-radius:$radius;moz-border-radius:$radius;border-radius:$radius }
+@mixin bg-radius ($radius:$margin-default) { -webkit-border-radius:$radius;moz-border-radius:$radius;border-radius:$radius }
 @mixin icon-image ($image, $width, $height){ @include bg-image($image); @include size($width, $height)}
 @mixin btn-default () { padding:0; border:0; cursor:pointer }
 @mixin btn-trensparent { @include position-absolute(); @include size(); @include btn-default() ;opacity:0 }
 @mixin btn-text () { @include btn-default(); background:none }
 @mixin btn-image ($image, $width, $height){ @include btn-default(); @include icon-image($image, $width, $height) }
 @mixin btn-bg ($image){ @include btn-image ($image);  @include font-out() }
+@mixin btn-default-text ($textColor:$color-black, $borderColor:$color-blue) {
+  @include btn-default; @include size(80,30); @include bg-radius; @include text-default($textColor); border:0.5px solid $borderColor }
 /*
 font
 */

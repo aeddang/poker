@@ -27,3 +27,13 @@
 .poker .top-navi .btn-event-2 { @include btn-event-2; @include position-right($margin-tiny,$margin-tiny); }
 
 .poker .btn-chip{ @include btn-chip; }
+
+
+.poker .message-box{ @include position-absolute; @include size; z-index:9999}
+.poker .message-box .dimed{ @include position-relative; @include size; background:$color-transparent-black70}
+.poker .message-box .box{ @include position-center(320,240); @include size(320,340); @include bg-radius; background:$color-white; text-align:center;}
+.poker .message-box .box .title{ @include position-relative; @include text-big($color-black); padding:$margin-default $margin-default $margin-default 0; text-align:center;}
+.poker .message-box .box .message{ @include position-relative; @include text-small($color-black); padding:$margin-default; text-align:center;}
+.poker .message-box .box .box-btns { @include position-relative; }
+.poker .message-box .box .box-btns .btn-confirm{ @include btn-default-text}
+.poker .message-box .box .box-btns .btn-cancel{@include btn-default-text($color-grey,$color-grey)}

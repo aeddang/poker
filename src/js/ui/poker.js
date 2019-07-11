@@ -6,6 +6,7 @@ import * as Config from "Util/config";
 import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
 import * as SoundFactory from './soundfactory';
+import MessageBox from 'Component/messagebox';
 import { ErrorAlert, UiAlert } from  "Util/message";
 
 class PokerBody extends ElementProvider {
@@ -91,7 +92,8 @@ export default class Poker extends Component {
     SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
     this.onResize();
-
+    let test = new MessageBox();
+    test.init(this.getBody());
   }
 
   setupEvent() {

@@ -27,7 +27,6 @@ export default class TopNavi extends Component {
 
   remove() {
     super.remove();
-    this.info = null;
     this.btnExit = null;
     this.btnSound = null;
     this.btnEvent = null;
