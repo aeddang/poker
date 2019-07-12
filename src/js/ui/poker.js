@@ -6,7 +6,7 @@ import * as Config from "Util/config";
 import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
 import * as SoundFactory from './soundfactory';
-import MessageBox from 'Component/messagebox';
+import * as MessageBoxController from 'Component/messagebox';
 import { ErrorAlert, UiAlert } from  "Util/message";
 
 class PokerBody extends ElementProvider {
@@ -32,7 +32,7 @@ class PokerInfo {
   }
 }
 
-export default class Poker extends Component {
+class Poker extends Component {
   constructor() {
     super();
     this.debuger.tag = 'Poker';
@@ -42,7 +42,8 @@ export default class Poker extends Component {
 
   init(body){
     super.init(body);
-    this.pageChange(Config.Page.Intro);
+    MessageBoxController.instence.setupBody(body);
+    this.onPageChange(Config.Page.Intro);
     return this.delegate;
   }
 
@@ -56,7 +57,14 @@ export default class Poker extends Component {
   //PUBLIC start
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   pageChange(id, options=null) {
-    this.debuger.log(id, "pageChange");
+
+    let hash = window.location.hash.replace("#","");
+    this.debuger.log(id, "pageChange " + hash);
+    if(hash == id) return this.onPageChange(id, options);
+    switch(id){
+      case Config.Page.Play : return this.onPageChange(id, options);
+      default: break;
+    }
     location.hash = id;
   }
   createClient(port){
@@ -65,7 +73,7 @@ export default class Poker extends Component {
     this.client.onError.add((err) => {
       switch(this.info.currentPageId){
         case Config.Page.Play :
-          alert(ErrorAlert.DisableGame);
+          MessageBoxController.instence.alert("",ErrorAlert.DisableGame);
           this.pageChange(Config.Page.Home);
           break;
         default : this.info.isGameReady = false ; break;
@@ -92,15 +100,14 @@ export default class Poker extends Component {
     SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
     this.onResize();
-    let test = new MessageBox();
-    test.init(this.getBody());
+
   }
 
   setupEvent() {
     Account.loginModel.delegate.subscribe ( this.onLoginEvent.bind(this) );
     this.attachEvent(window, "resize", this.onResize.bind(this));
     this.attachEvent(window, "orientationchange", e =>{
-      if(screen.orientation.type.indexOf("portrait") != -1) alert( UiAlert.DisableoOrientation )
+      if(screen.orientation.type.indexOf("portrait") != -1) MessageBoxController.instence.alert("",UiAlert.DisableoOrientation);
     });
     this.attachEvent(window, "hashchange", e =>{
         let hash = window.location.hash;
@@ -112,17 +119,16 @@ export default class Poker extends Component {
   onPageChange(id, options=null) {
     this.debuger.log(id, "onPageChange");
     if(this.info.isGameReady == false && id == Config.Page.Play){
-        alert(ErrorAlert.DisableConnect);
-        return;
+      MessageBoxController.instence.alert("",ErrorAlert.DisableConnect);
+      return;
     }
     if(Config.Page.Play != id) this.removeClient();
     if(this.currentPage != null) this.currentPage.remove();
     let page = null;
     switch( id ) {
       case Config.Page.Home : page = new Page.Home(); break;
-      case Config.Page.Intro : page = new Page.Intro(); break;
       case Config.Page.Play : page = new Page.Play(); break;
-
+      default : page = new Page.Intro(); break;
     }
     if(page == null) return;
     this.info.currentPageId = id;
@@ -150,3 +156,21 @@ export default class Poker extends Component {
   }
 
 }
+const instence = new Poker();
+class PokerModule {
+  constructor() {}
+
+  init(body){
+    return instence.init(body);
+  }
+
+  pageChange(id, options=null) {
+    instence.pageChange(id, options);
+  }
+
+  createClient(port){
+    instence.createClient(port);
+  }
+}
+
+export const pokerModule = new PokerModule();

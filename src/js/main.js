@@ -1,3 +1,3 @@
-import Poker from './ui/poker'
+import * as Poker from './ui/poker'
 
-window.Poker = new Poker();
+window.Poker = Poker.pokerModule;

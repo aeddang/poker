@@ -3,6 +3,7 @@ import ElementProvider from 'Skeleton/elementprovider';
 import * as SoundFactory from 'Root/soundfactory';
 import { Confirm } from  "Util/message";
 import * as Config from 'Util/config';
+import * as MessageBoxController from 'Component/messagebox';
 
 class TopNaviBody extends ElementProvider {
   writeHTML() {
@@ -61,9 +62,15 @@ export default class TopNavi extends Component {
   }
 
   onExit() {
-    if(confirm(Confirm.ExitGame) == true){
-      Poker.onPageChange(Config.Page.Home);
-    }
+    MessageBoxController.instence.confirm("",Confirm.ExitGame).subscribe(e=>{
+      switch (e.data) {
+        case 1:
+          Poker.pageChange(Config.Page.Home);
+          break;
+        default:
+          break;
+      }
+    });
   }
 
 }

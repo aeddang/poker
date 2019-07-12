@@ -4,7 +4,7 @@ import * as Util from 'Skeleton/util';
 import * as Account from "ViewModel/account";
 import * as Event from '../event'
 import * as Config from "Util/config";
-import { UiAlert, Confirm } from  "Util/message";
+import * as MessageBoxController from 'Component/messagebox';
 
 class RoomListBody extends ElementProvider {
   writeHTML() {
@@ -106,7 +106,7 @@ class ListItem extends Component {
           return;
        }
        if(!this.data.isAble){
-         alert(UiAlert.DisableLv);
+         MessageBoxController.instence.alert("",UiAlert.DisableLv);
          return;
        }
        window.Poker.createClient(this.data.port);
