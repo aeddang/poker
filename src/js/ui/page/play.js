@@ -244,7 +244,7 @@ export default class Play extends Room {
   onError(error) {
     super.onError(error);
     this.loadingBar.stop();
-    this.onExit();
+    
   }
 
 }

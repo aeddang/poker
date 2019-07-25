@@ -32,7 +32,8 @@ const SRC = {
   HTML: DIR.SRC + '/*.html',
   RESOURCE: DIR.SRC + '/resource/*',
   STATIC: DIR.SRC + '/static/**/*',
-  SERVER: 'server/web/**/*.js'
+  WEB: 'server/web/**/*.js',
+  API: 'server/api/**/*.js'
 };
 
 const DEST = {
@@ -41,18 +42,29 @@ const DEST = {
   HTML: DIR.DEST + '/',
   RESOURCE: DIR.DEST + '/resource',
   STATIC: DIR.DEST + '/static',
-  SERVER: 'app'
+  WEB: 'web',
+  API: 'api'
 };
 
 
-gulp.task('server', () => {
-  return gulp.src(SRC.SERVER)
+gulp.task('web', () => {
+  return gulp.src(SRC.WEB)
     .pipe(cache.filter())
     .pipe(babel({
       presets: ['@babel/preset-env']
     }))
     .pipe(cache.cache())
-    .pipe(gulp.dest(DEST.SERVER));
+    .pipe(gulp.dest(DEST.WEB));
+});
+
+gulp.task('api', () => {
+  return gulp.src(SRC.API)
+    .pipe(cache.filter())
+    .pipe(babel({
+      presets: ['@babel/preset-env']
+    }))
+    .pipe(cache.cache())
+    .pipe(gulp.dest(DEST.API));
 });
 
 
@@ -117,7 +129,7 @@ gulp.task('watch', () => {
     html: gulp.watch(SRC.HTML, ['html']),
     resource: gulp.watch(SRC.RESOURCE, ['resource']),
     static: gulp.watch(SRC.STATIC, ['static']),
-    babel: gulp.watch(SRC.SERVER, ['babel'])
+    babel: gulp.watch(SRC.WEB, ['babel'])
   };
 
   let notify = (event) => {

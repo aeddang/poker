@@ -4,10 +4,9 @@
   "main": "index.js",
   "scripts": {
     "game": "nodemon --watch '**/*.ts' --exec ts-node server/game/index.ts",
-    "web": "node app/index.js",
-    "bundle-colyseus-client": "browserify ./node_modules/colyseus.js/lib/index.js -s Colyseus -o static/colyseus.js",
-    "build-client": "gulp",
-    "build-web": "gulp server",
+    "web": "node web/index.js",
+    "api": "node api/index.js",
+    "client": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -27,6 +26,7 @@
     "fb": "^2.0.0",
     "get-node-dimensions": "^1.2.2",
     "nodemon": "^1.11.0",
+    "orientjs": "^3.0.5",
     "rxjs": "^6.4.0",
     "rxjs-observe": "^2.0.0",
     "serve-index": "^1.8.0",

@@ -29,6 +29,7 @@ class UserBoxBody extends ElementProvider {
 export default class UserBox extends Component {
   constructor() {
     super();
+    this.debuger.tag = 'UserBox';
   }
 
   remove() {
