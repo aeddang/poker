@@ -8,4 +8,15 @@ const dbServer = OrientDB({
   password: Config.PW
 });
 
+
+export const Class = Object.freeze ({
+	User: "User"
+});
+
+export const Index = Object.freeze ({
+	User: "User.id",
+  UserToken: "User.snsToken"
+});
+
+
 export const db = dbServer.use( Config.DB_TABLE );

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.db = void 0;
+exports.db = exports.Index = void 0;
 
 var _orientjs = _interopRequireDefault(require("orientjs"));
 
@@ -19,5 +19,10 @@ var dbServer = (0, _orientjs.default)({
   username: Config.ID,
   password: Config.PW
 });
+var Index = Object.freeze({
+  User: "User.id",
+  UserToken: "User.snsToken"
+});
+exports.Index = Index;
 var db = dbServer.use(Config.DB_TABLE);
 exports.db = db;
