@@ -26,7 +26,7 @@ export function index(){
 
   OrientDB.db.index.create({
       name: OrientDB.Index.UserToken,
-      type: 'fulltext'
+      type: 'hash'
   }).then(
       (index) => debuger.log('created UserToken Index'),
       (error) => debuger.error(error.message, 'created UserToken Index')
@@ -39,7 +39,8 @@ function setupUser(User){
      {name: 'profileImg', type: 'String'},
      {name: 'name',       type: 'String'},
      {name: 'snsToken',   type: 'String'},
-     {name: 'bank',       type: 'String'}
+     {name: 'bank',       type: 'Double'},
+     {name: 'rank',       type: 'Double'}
   ]).then(
       (property) => {
           debuger.log(property, 'setup User');

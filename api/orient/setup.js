@@ -18,7 +18,7 @@ var debuger = new _log.default();
 debuger.tag = "DB Setup";
 
 function init() {
-  OrientDB.db.class.create('User').then(function (User) {
+  OrientDB.db.class.create(OrientDB.Class.User).then(function (User) {
     debuger.log('created User');
     setupUser(User);
   }, function (error) {
