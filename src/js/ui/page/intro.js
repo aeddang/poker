@@ -36,7 +36,7 @@ export default class Intro extends Component {
 
   setupEvent() {
     this.attachEvent(this.btnJoin, "click", e => {
-        Util.enterFullscreen(this.getBody());
+        //Util.enterFullscreen(this.getBody());
         Poker.pageChange(Config.Page.Home);
     } );
   }

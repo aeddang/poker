@@ -5,9 +5,7 @@ import { JoinOption, PlayerData } from "../util/interface"
 import Command, * as Cmd from  "../util/command"
 import * as Brodcast from  "../util/brodcastfactory"
 import Debugger from '../util/log'
-
-const FACEBOOK_APP_TOKEN = "277177683181704|jaDiJtuMu6KF0HGyHpM8ul26c-Y"
-
+import ApiConfig from '../api/config'
 
 export default class AuthJoin extends RoomComponent {
   players: EntityMap<string> = {}
@@ -20,17 +18,24 @@ export default class AuthJoin extends RoomComponent {
     super.onDispose()
   }
 
-  /*
+
   async onAuth (options:JoinOption) {
-    const response = await axios.get('https://graph.facebook.com/debug_token',  {
-      params: {
-        'input_token': options.accessToken,
-        'access_token': FACEBOOK_APP_TOKEN
+    const response = await axios.request({
+      method: 'post',
+      url: API_PATH + 'users/autosign/' + options.userId + "?api_key=i" + ApiConfig.API_KEY,
+      data: {
+        profileImg: options.profileImg,
+        name: options.name,
+        snsToken: options.accessToken
       }
-    })
+    });
+    if(response.data){
+      options.bank = response.data.data.bank
+      options.loginToken = response.data.data.loginToken
+    }
     return response.data
   }
-  */
+
   onJoin (client:Client, options:JoinOption) {
     this.players [ client.sessionId ] = options.name
     this.broadcast( Brodcast.getJoinMsg ( options.name ))

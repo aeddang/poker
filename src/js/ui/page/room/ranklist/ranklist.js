@@ -5,7 +5,7 @@ import * as Util from 'Skeleton/util';
 import * as Config from "Util/config";
 import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
-
+import * as Api from 'Root/api';
 
 class RankListBody extends ElementProvider {
   writeHTML() {
@@ -38,28 +38,20 @@ class ListItemBody extends ElementProvider {
 }
 
 class ListData {
-  constructor(name, rank, bank, profileImg = "./static/asset/profile_image.png") {
-    this.bank = bank;
-    this.name = name;
-    this.rank = rank;
-    this.profileImg = profileImg
+  constructor() {
+  }
+
+  setData(data) {
+    this.bank = data.bank;
+    this.name = data.name;
+    this.rank = data.rank;
+    this.profileImg = data.profileImg;
   }
 }
 
 export default class RankList extends Component {
   constructor() {
     super();
-    this.datas = [];
-    this.datas.push(new ListData("test1",1, 10000000));
-    this.datas.push(new ListData("test2",2, 1000000));
-    this.datas.push(new ListData("test3",3, 100000));
-    this.datas.push(new ListData("test4",4, 10000));
-    this.datas.push(new ListData("test5",5, 10000));
-    this.datas.push(new ListData("test6",6, 10000));
-    this.datas.push(new ListData("test7",7, 10000));
-    this.datas.push(new ListData("test8",8, 10000));
-    this.datas.push(new ListData("test9",9, 10000));
-    this.datas.push(new ListData("test10",10, 10000));
   }
 
   remove() {
@@ -68,15 +60,23 @@ export default class RankList extends Component {
 
   getElementProvider() { return new RankListBody(this.body); }
   onCreate(elementProvider) {
+    Api.getUsers().subscribe(
+	    response => this.onCreateListItem(response.data.data),
+	    error => this.onError( error.response.data )
+	  );
     this.onCreateListItem();
   }
 
-  onCreateListItem(){
-    this.datas.forEach( (data) => {
-      let item = new ListItem()
-      item.data = data;
+  onCreateListItem(datas){
+    datas.forEach( (data) => {
+      let item = new ListItem();
+      item.data = new ListData();
+      item.data.setData(data);
       item.init( this.getBody() ).subscribe ( e => { this.delegate.next(e) } );
     });
+  }
+
+  onError(data){
   }
 
   setupEvent() {

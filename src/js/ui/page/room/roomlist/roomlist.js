@@ -36,7 +36,6 @@ class ListData {
     this.minBank = minBank;
     this.port = port;
     this.isAble = false;
-
   }
 }
 
@@ -97,7 +96,7 @@ class ListItem extends Component {
 
   setupEvent() {
     Account.loginModel.delegate.subscribe ( e => {
-        if(e.type == Account.EVENT.ON_PROFILE || e.type == Account.EVENT.ON_LOGOUT) this.updateUserData();
+        if(e.type == Account.EVENT.ON_PLAY_DATA || e.type == Account.EVENT.ON_LOGOUT) this.updateUserData();
     } );
 
     this.attachEvent(this.btn, "click", e => {

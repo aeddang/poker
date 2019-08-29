@@ -53,7 +53,18 @@ export default class UserBox extends Component {
 
   setupEvent() {
     Account.loginModel.delegate.subscribe ( e => {
-        if(e.type == Account.EVENT.ON_PROFILE || e.type == Account.EVENT.ON_LOGOUT) this.updateUserData();
+      switch(e.type){
+        case Account.EVENT.ON_PLAY_DATA :
+        case Account.EVENT.ON_LOGOUT :
+          this.updateUserData();
+          break;
+        case Account.EVENT.ON_PROFILE :
+          Account.loginModel.getPlayData();
+          break;
+        case Account.EVENT.ON_UNREGISTERED :
+          Account.loginModel.signUp();
+          break;
+      }
     });
 
     this.attachEvent(this.btn, "click", e => {

@@ -41,7 +41,8 @@ export default class Room extends Component {
     this.room = this.client.join(this.ROOM_KEY, {
       accessToken: this.userInfo.accessToken,
       name: this.userInfo.name,
-      userId: this.userInfo.id
+      userId: this.userInfo.id,
+      profileImg: this.userInfo.profileImg
     });
     this.setupRoomEvent();
   }

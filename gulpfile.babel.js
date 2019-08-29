@@ -32,8 +32,7 @@ const SRC = {
   HTML: DIR.SRC + '/*.html',
   RESOURCE: DIR.SRC + '/resource/*',
   STATIC: DIR.SRC + '/static/**/*',
-  WEB: 'server/web/**/*.js',
-  API: 'server/api/**/*.js'
+  WEB: 'server/web/**/*.js'
 };
 
 const DEST = {
@@ -42,8 +41,7 @@ const DEST = {
   HTML: DIR.DEST + '/',
   RESOURCE: DIR.DEST + '/resource',
   STATIC: DIR.DEST + '/static',
-  WEB: 'web',
-  API: 'api'
+  WEB: 'web'
 };
 
 
@@ -55,16 +53,6 @@ gulp.task('web', () => {
     }))
     .pipe(cache.cache())
     .pipe(gulp.dest(DEST.WEB));
-});
-
-gulp.task('api', () => {
-  return gulp.src(SRC.API)
-    .pipe(cache.filter())
-    .pipe(babel({
-      presets: ['@babel/preset-env']
-    }))
-    .pipe(cache.cache())
-    .pipe(gulp.dest(DEST.API));
 });
 
 
