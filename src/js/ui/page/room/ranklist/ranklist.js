@@ -5,7 +5,7 @@ import * as Util from 'Skeleton/util';
 import * as Config from "Util/config";
 import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
-import * as Api from 'Root/api';
+import * as Api from 'Api/apicontroller';
 
 class RankListBody extends ElementProvider {
   writeHTML() {
@@ -64,7 +64,6 @@ export default class RankList extends Component {
 	    response => this.onCreateListItem(response.data.data),
 	    error => this.onError( error.response.data )
 	  );
-    this.onCreateListItem();
   }
 
   onCreateListItem(datas){

@@ -2,8 +2,9 @@ import { Room, EntityMap, Client } from "colyseus"
 import { JoinOption, PushData } from "../util/interface"
 import Command, * as Cmd from  "../util/command"
 import * as Brodcast from  "../util/brodcastfactory"
+import * as ApiConfig from  "../api/config"
 import Debugger from './log'
-
+import Axios from  'axios';
 
 export default class RoomComponent<T> extends Room<T> {
   debuger: Debugger
@@ -17,9 +18,27 @@ export default class RoomComponent<T> extends Room<T> {
     this.debuger = null
   }
 
-	onAuth (options:JoinOption) {
-    let isJoinAble = ( this.state == null ) ? true : this.state.isJoinAble()
-    return isJoinAble
+  async onAuth (options:JoinOption) {
+    this.debuger.log(options, 'onAuth')
+    try {
+      const response = await Axios.post(ApiConfig.API_PATH + 'users/autosign/' + options.userId + ApiConfig.API_QUERY,  {
+        profileImg: options.profileImg,
+        name: options.name,
+        snsToken: options.accessToken
+      })
+      if( !response.data ) return false
+      options.loginToken = response.data.data.loginToken
+      options.bank = response.data.data.bank
+      options.rank = response.data.data.rank
+      options.rid = response.data.data['@rid'];
+
+      this.debuger.log(options, 'onAuth response')
+      let isJoinAble = this.state.isJoinAble(options)
+      return isJoinAble
+    } catch (error) {
+      this.debuger.log(error, 'onAuth error')
+      return false;
+    }
   }
 
   onMessage (client:Client, data: Any) {

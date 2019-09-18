@@ -20,7 +20,8 @@ module.exports = {
       Util: path.resolve(__dirname, 'src/js/ui/util/'),
       ViewModel: path.resolve(__dirname, 'src/js/ui/viewmodel/'),
       Page: path.resolve(__dirname, 'src/js/ui/page/'),
-      Root: path.resolve(__dirname, 'src/js/ui/')
+      Root: path.resolve(__dirname, 'src/js/ui/'),
+      Api: path.resolve(__dirname, 'src/js/api/')
     }
   },
 

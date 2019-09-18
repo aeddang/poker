@@ -9,20 +9,22 @@ import Debugger from '../util/log'
 import axios from "axios"
 
 const REJOIN_LIMITED_TIME = 20
-const FACEBOOK_APP_TOKEN = "277177683181704|jaDiJtuMu6KF0HGyHpM8ul26c-Y"
+
 
 export default class Play extends RoomComponent<Game> {
   maxClients = 9
 	ante:number = 1
   gameRule:number = 2
   debuger: Debugger
+  serverId:string = ''
   onInit (options) {
     super.onInit(options)
     if( options ) {
+      this.serverId = options.serverId
       this.ante = options.ante
       this.gameRule = options.gameRule
     }
-    this.setState(new Game(this.ante, this.gameRule, this.maxClients))
+    this.setState(new Game(this.serverId, this.ante, this.gameRule, this.maxClients))
     this.state.delegate.subscribe( this.onStateEvent.bind(this) )
   }
 
@@ -32,18 +34,7 @@ export default class Play extends RoomComponent<Game> {
     this.state = null
   }
 
-	async onAuth (options:JoinOption) {
-    this.debuger.log(options, 'onAuth')
-    const response = await axios.get('https://graph.facebook.com/debug_token',  {
-      params: {
-        'input_token': FACEBOOK_APP_TOKEN,
-        'access_token': options.accessToken
-      }
-    })
-    if( !response.data ) return false
-    let isJoinAble = this.state.isJoinAble(options)
-    return isJoinAble
-  }
+
 
   onJoin (client:Client, options:JoinOption) {
     if(options.sessionId != undefined) {

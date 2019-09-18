@@ -7,6 +7,8 @@ import * as Game from './game/game';
 import TopNavi from 'Component/topnavi';
 import Command, * as Cmd from  "Util/command";
 import * as SoundFactory from 'Root/soundfactory';
+import * as MessageBoxController from 'Component/messagebox';
+import { ErrorAlert } from  "Util/message";
 
 class PlayBody extends ElementProvider {
   writeHTML() {
@@ -244,7 +246,8 @@ export default class Play extends Room {
   onError(error) {
     super.onError(error);
     this.loadingBar.stop();
-    
+    MessageBoxController.instence.alert("",ErrorAlert.DisableGame);
+    Poker.pageChange(Config.Page.Home);
   }
 
 }

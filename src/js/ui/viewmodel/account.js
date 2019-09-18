@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import ComponentEvent from 'Skeleton/event';
 import Debugger from 'Skeleton/log';
-import * as Api from 'Root/api';
+import * as Api from 'Api/apicontroller';
 import uuidv4 from 'uuid/v4';
 
 export const EVENT = Object.freeze ({
@@ -38,7 +38,7 @@ class UserInfo {
 
   setData(data) {
 		this.name = data.name;
-		this.id = data.id;
+		this.id = ( instenceID === null) ? data.id : instenceID;
 		this.profileImg = data.profileImg;
 		this.debuger.log( this, 'setData');
   }

@@ -19,23 +19,6 @@ export default class AuthJoin extends RoomComponent {
   }
 
 
-  async onAuth (options:JoinOption) {
-    const response = await axios.request({
-      method: 'post',
-      url: API_PATH + 'users/autosign/' + options.userId + "?api_key=i" + ApiConfig.API_KEY,
-      data: {
-        profileImg: options.profileImg,
-        name: options.name,
-        snsToken: options.accessToken
-      }
-    });
-    if(response.data){
-      options.bank = response.data.data.bank
-      options.loginToken = response.data.data.loginToken
-    }
-    return response.data
-  }
-
   onJoin (client:Client, options:JoinOption) {
     this.players [ client.sessionId ] = options.name
     this.broadcast( Brodcast.getJoinMsg ( options.name ))

@@ -6,6 +6,7 @@ export interface JoinOption {
   sessionId:string
   bank:number
   loginToken: string
+  rid: string
 }
 
 export interface PushData {

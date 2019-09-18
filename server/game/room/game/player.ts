@@ -3,10 +3,11 @@ import Component from '../../skeleton/component'
 import { Action, checkCommand } from  "../../util/command"
 import { JoinOption } from "../../util/interface"
 import { nosync } from "colyseus"
+import * as Api from  "../api/apicontroller"
 
 export default class Player extends Component {
 
-  bankroll:number = 1000
+  bankroll:number = 0
   userId:string
   name:string
   position:number = -1
@@ -52,11 +53,18 @@ export default class Player extends Component {
   @nosync
   getPot:number = 0
 
+  @nosync
+  userData:number = 0
+  @nosync
+  prevBank:number = 0
+
   constructor(id:stirng, options:JoinOption) {
     super()
     this.id = id
+    this.userData = options
     this.name = options.name
     this.userId = options.userId
+    this.bankroll = options.bank
     this.networkStatus = NetworkStatus.Connected
   }
 
@@ -169,6 +177,7 @@ export default class Player extends Component {
   }
 
   start(hand:Array) {
+    this.prevBank = this.bankroll
     this.hand = hand
     this.actionBlind = false
     this.status = Status.Play
@@ -227,6 +236,14 @@ export default class Player extends Component {
     else this.debuger.log(this.winPot,'draw ' + this.name)
   }
 
+  getUpdateData():Object{
+    return {
+      prevBank: this.prevBank,
+      changeBank: (this.bankroll - this.prevBank),
+      rid: this.userData.rid
+    }
+  }
+
   setPosition( idx:number ){
     switch( idx ){
       case 0: this.positionStatus = PositionStatus.DeallerButton; break
@@ -274,7 +291,6 @@ export default class Player extends Component {
         case Action.AllIn: this.actionAllIn = true; break
       }
     })
-
     this.currentBlindAction = isBlindAc ? currentAction[0] : -1
   }
 

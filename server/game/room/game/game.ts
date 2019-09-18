@@ -8,8 +8,9 @@ import { take } from 'rxjs/operators'
 import Event from  "../../util/event"
 
 import Player  from  "./player"
+import Dealler  from  "./dealler"
 import Stage, * as Stg from  "./stage"
-import Dealler from  "./dealler"
+import * as Api from  "../../api/apicontroller"
 
 
 const WAIT_TIME:number = 5000
@@ -51,17 +52,20 @@ export default class Game extends Component {
 	deallerButton:number = 0
 	@nosync
   isStart: boolean = false
+	@nosync
+  serverId: string = ''
 
 
-
-	constructor(ante: number, gameRule:number, maxClients:number) {
+	constructor(serverId:string, ante: number, gameRule:number, maxClients:number) {
 		super()
+		this.serverId = serverId
 		this.maxPlayer = maxClients
 		this.players = {}
 		this.positions = Array(maxClients)
     this.dealler = new Dealler()
     this.stage = new Stage(ante, gameRule)
     this.delegate = new Rx.Subject()
+		this.debuger.info('game server is start ' +this.serverId)
   }
 
   remove() {
@@ -244,6 +248,7 @@ export default class Game extends Component {
 		this.stage.onTurnComplete()
 
   }
+
 	onBetting(id:String, amount:number){
 		this.players[ id ].betting(amount)
 		this.stage.betting(id, amount)
@@ -329,9 +334,25 @@ export default class Game extends Component {
 	onShowDownComplete( handsValues ) {
 		this.debuger.log('onShowDownComplete')
 		this.onDivisionPots( handsValues )
+		let updateDatas = []
     for (let id in this.players) {
+			updateDatas.push( this.players[id].getUpdateData() )
 			if( !this.players[id].isConnected() ) this.leaveCompleted(id)
 		}
+
+		this.debuger.log(updateDatas, 'updateDatas')
+		Api.sharedInstance.changeBanks(this.serverId, updateDatas).subscribe(
+	    response => {
+				this.onNextPlayStart()
+			},
+	    error => {
+				this.debuger.error(error,'error changeBanks')
+				this.onNextPlayStart()
+			}
+	  );
+	}
+
+	onNextPlayStart(){
 		this.disposable[ SUBSCRIPTION.COMPLETE ] = Rx.interval(WAIT_TIME).pipe(take(1)).subscribe( this.onComplete.bind(this) )
 	}
 
@@ -394,7 +415,7 @@ export default class Game extends Component {
 			let player = this.players[id]
 			if( player.userId == userId ) {
 				let able = player.isRejoinAble()
-				if(!able) this.debuger.log(player, 'exist player')
+				if(!able) this.debuger.log(player.userId, 'exist player')
 				else options.sessionId = id;
 				return able
 			}
