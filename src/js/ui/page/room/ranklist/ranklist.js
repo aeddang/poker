@@ -41,10 +41,10 @@ class ListData {
   constructor() {
   }
 
-  setData(data) {
+  setData(data,idx) {
     this.bank = data.bank;
     this.name = data.name;
-    this.rank = data.rank;
+    this.rank = idx+1;
     this.profileImg = data.profileImg;
   }
 }
@@ -60,17 +60,17 @@ export default class RankList extends Component {
 
   getElementProvider() { return new RankListBody(this.body); }
   onCreate(elementProvider) {
-    Api.getUsers().subscribe(
+    Api.getRanks("0").subscribe(
 	    response => this.onCreateListItem(response.data.data),
 	    error => this.onError( error.response.data )
 	  );
   }
 
   onCreateListItem(datas){
-    datas.forEach( (data) => {
+    datas.forEach( (data,idx) => {
       let item = new ListItem();
       item.data = new ListData();
-      item.data.setData(data);
+      item.data.setData(data, idx);
       item.init( this.getBody() ).subscribe ( e => { this.delegate.next(e) } );
     });
   }

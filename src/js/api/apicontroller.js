@@ -9,6 +9,13 @@ export function getUsers(){
   });
 }
 
+export function getRanks(groupId){
+  return Axios.request({
+    method: 'get',
+    url: Config.API_PATH + 'ranks/' + Config.API_QUERY + "&groupId=" + groupId
+  });
+}
+
 export function getUser(userId, rid = null){
   let addedQuery = (rid == null || rid == "") ? "" : ("&rid="+rid);
   console.log(addedQuery)
@@ -25,3 +32,17 @@ export function signUp(userId, userData){
     data: userData
   });
 }
+
+
+export const ErrorCode = Object.freeze ({
+  DBError : '901',
+  DuplicatedKey : '902',
+  UndefinedKey : '903',
+  InvalidDataType : '904',
+  UnauthorizedApiKey : '905',
+  UnauthorizedAccessToken : '906',
+  ValidationUserId : '907',
+  ValidationLoginToken : '908',
+  ValidationServerKey : '909',
+  UnregisteredData : '910'
+});
