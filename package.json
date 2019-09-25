@@ -13,6 +13,7 @@
   "dependencies": {
     "@colyseus/monitor": "^0.1.11",
     "animate-value": "^1.1.0",
+    "cors": "^2.8.5",
     "axios": "^0.18.0",
     "axios-observable": "^1.1.2",
     "body-parser": "^1.19.0",
