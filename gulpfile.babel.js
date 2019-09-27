@@ -133,7 +133,7 @@ gulp.task('browser-sync', () => {
   browserSync.init(null, {
     proxy: "http://localhost:2053",
     files: ["dist/**/*.*"],
-    port: 7000
+    port: 2083
   })
 });
 

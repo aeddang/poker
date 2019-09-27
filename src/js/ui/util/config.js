@@ -1,4 +1,4 @@
-export const SERVER_HOST = "wss://poker.ironraft.com";
+export const SERVER_HOST = "wss://game%path%.ironraft.com";
 
 export const Page = Object.freeze ({
   Intro: "intro",

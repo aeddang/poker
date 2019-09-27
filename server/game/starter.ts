@@ -21,6 +21,9 @@ export default function start( port, options ) {
       custom_options: "you can use me on Room#onInit"
   })
   */
+  app.use('/', (req, res) => {
+    debuger.info(req,'input')
+  })
   app.use('/colyseus', monitor(gameServer))
 
   gameServer.onShutdown(function(){

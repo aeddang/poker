@@ -54,7 +54,7 @@ export default class Player extends Component {
   getPot:number = 0
 
   @nosync
-  userData:number = 0
+  userData:JoinOption = 0
   @nosync
   prevBank:number = 0
 
@@ -238,6 +238,8 @@ export default class Player extends Component {
 
   getUpdateData():Object{
     return {
+      profileImg: this.userData.profileImg,
+      name: this.userData.name,
       prevBank: this.prevBank,
       changeBank: (this.bankroll - this.prevBank),
       rid: this.userData.rid
