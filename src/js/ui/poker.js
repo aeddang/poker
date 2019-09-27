@@ -68,7 +68,7 @@ class Poker extends Component {
   }
   createClient(port){
     this.removeClient();
-    this.client = new Colyseus.Client(Config.SERVER_HOST + ":" + port);
+    this.client = new Colyseus.Client(Config.SERVER_HOST + "/" + port);
     this.client.onError.add((err) => {
       switch(this.info.currentPageId){
         case Config.Page.Play :

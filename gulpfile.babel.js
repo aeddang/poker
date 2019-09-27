@@ -131,7 +131,7 @@ gulp.task('watch', () => {
 
 gulp.task('browser-sync', () => {
   browserSync.init(null, {
-    proxy: "http://localhost:3000",
+    proxy: "http://localhost:2053",
     files: ["dist/**/*.*"],
     port: 7000
   })

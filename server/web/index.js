@@ -1,11 +1,11 @@
 import express from 'express';
 import articles from './router/articles';
 import cors from  "cors";
-const port = Number(process.env.PORT || 2083);
+const port = Number(process.env.PORT || 2053);
 const app = express();
 var corsOptions = {
   origin: "*",
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
+  methods: "GET,POST"
 }
 
 app.use(cors(corsOptions));
