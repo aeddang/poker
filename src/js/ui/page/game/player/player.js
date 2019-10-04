@@ -290,13 +290,13 @@ export default class Player extends SyncPropsComponent {
       networkStatus: value =>{
         switch ( value ) {
           case NetworkStatus.Connected:
-            this.profileBg.src = ImageFactory.BgPlayerProfile.Default;
+            this.profileImg.classList.remove("disable");
             break;
           case NetworkStatus.DisConnected:
-            this.profileBg.src = ImageFactory.BgPlayerProfile.Disable;
+            this.profileImg.classList.add("disable");
             break;
           case NetworkStatus.Wait:
-            this.profileBg.src = ImageFactory.BgPlayerProfile.Disable;
+            this.profileImg.classList.add("disable");
             break;
         }
       },

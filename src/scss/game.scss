@@ -28,8 +28,10 @@
 .poker .position-r .player .profile { left:auto; right:-4 }
 .poker .position .player .profile .bg{@include position-absolute; @include size; @include bg-image($image-bg-profile)}
 .poker .position .player .profile .img{ @include position-center(88,88); @include size(88,88) }
-.poker .position .player .profile .change-bank{@include position-absolute(0,25); @include size(100%,50); @include text-small($color-red); text-align: center;}
-.poker .position .player .profile .increase{ @include text-small($color-remon); }
+.poker .position .player .profile .disable{@include filter-grayscale}
+
+.poker .position .player .profile .change-bank{@include position-absolute(0,25); @include size(100%,50); @include text-shadow($color-white, 3px); @include text-default($color-red); text-align: center;}
+.poker .position .player .profile .increase{ @include text-default($color-remon); }
 
 .poker .position .player .hands {@include position-top(); @include size(120, 75); z-index:88}
 .poker .position .player-hands-l .hands {left:90}
@@ -40,8 +42,8 @@
 .poker .position .player .alert { border: 1px solid $color-remon }
 .poker .position .player .action { border: 1px solid $color-red }
 .poker .position .player .celebration { border: 1px solid $color-blue }
-.poker .position-l .player .message { left:100 }
-.poker .position-r .player .message { right:100 }
+.poker .position-l .player .message { left:90 }
+.poker .position-r .player .message { right:90 }
 
 .poker .position .player .info-box {@include position-absolute(auto,10); @include size(148, auto);}
 .poker .position-l .player .info-box { right:10 }
