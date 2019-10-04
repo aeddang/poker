@@ -117,16 +117,20 @@ export default class MusicBox extends Component {
   playEffect(path) {
     //this.debuger.log('play ' + path);
     if(!this.info.isFocus) return;
-    this.mainPlayer.src = this.info.path + path + this.info.extension;
-    this.mainPlayer.load();
-    this.mainPlayer.play();
+    try{
+      this.mainPlayer.src = this.info.path + path + this.info.extension;
+      this.mainPlayer.load();
+      this.mainPlayer.play();
+    } catch (e) {}
   }
 
   playSideEffect(path) {
     //this.debuger.log('playSide ' + path);
     if(!this.info.isFocus) return;
-    this.subPlayer.src = this.info.path + path + this.info.extension;
-    this.subPlayer.load();
-    this.subPlayer.play();
+    try{
+      this.subPlayer.src = this.info.path + path + this.info.extension;
+      this.subPlayer.load();
+      this.subPlayer.play();
+    } catch (e) {}
   }
 }

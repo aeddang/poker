@@ -2,7 +2,7 @@
 @import 'mixin';
 
 @mixin page($background){ @include position-relative(); @include size(); @include bg-image($background) }
-@mixin loading-bar($marginX:0, $marginY:0) { @include position-center(100px, 100px, $marginX, $marginY); @include size(100px, 100px) }
+@mixin loading-bar($marginX:0, $marginY:0) { @include position-center(80px, 80px, $marginX, $marginY); @include size(80px, 80px) }
 
 
 @mixin btn-sound-on { @include btn-image($image-btn-sound-on, 75px, 75px) }
