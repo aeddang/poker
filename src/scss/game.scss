@@ -10,7 +10,7 @@
                                     text-align: center; padding-top: 16px}
 .poker .game-viewer .pot .side-pot{ @include position-relative(0,$margin-tiny); @include size(100%, 50); @include text-small($color-white); @include text-shadow; text-align: center }
 
-.poker .card{ @include position-absolute; @include bg-image($image-card); background-color:$color-grey;}
+.poker .card{ @include position-absolute; @include bg-image($image-card)}
 .poker .card-show { @include position-absolute; @include size;}
 
 .poker .player-viewer { @include position-absolute; @include size }
@@ -20,25 +20,28 @@
 
 .poker .position { @include position-absolute; @include size(252,86);  @include bg-image($image-bg-user);}
 .poker .position .box { @include position-relative; @include size;}
+.poker .position .text-status { @include position-absolute(0, 20); @include size(100%, 30); @include text-tiny($color-remon); text-align: center; opacity:0.3}
 .poker .position .btn-join { @include size @include btn-text; @include text-default($color-white) }
 
 .poker .position .player .profile { @include position-absolute(0, -4); @include size(102,94);}
-.poker .position .player .profile .bg{@include position-absolute; @include size; @include bg-image($image-bg-profile)}
-.poker .position .player .profile .img{ @include position-center(88,88); @include size(88,88) }
-
 .poker .position-l .player .profile { left:-4; right:auto}
 .poker .position-r .player .profile { left:auto; right:-4 }
+.poker .position .player .profile .bg{@include position-absolute; @include size; @include bg-image($image-bg-profile)}
+.poker .position .player .profile .img{ @include position-center(88,88); @include size(88,88) }
+.poker .position .player .profile .change-bank{@include position-absolute(0,25); @include size(100%,50); @include text-small($color-red); text-align: center;}
+.poker .position .player .profile .increase{ @include text-small($color-remon); }
+
 .poker .position .player .hands {@include position-top(); @include size(120, 75); z-index:88}
 .poker .position .player-hands-l .hands {left:90}
 .poker .position .player-hands-r .hands {right:90}
-.poker .position .player .message{@include position-top(20); @include size("auto", "auto"); @include bg-radius(5px); @include text-tiny($color-black); max-width: 400px;
+.poker .position .player .message{@include position-top(15); @include size("auto", "auto"); @include bg-radius(5px); @include text-tiny($color-black); max-width: 400px;
                                   background: $color-white; text-align: center; z-index:99; padding:$margin-tiny; @include text-line-limit}
-.poker .position .player .chat { border: 1px solid $color-grey }
+.poker .position .player .default { border: 1px solid $color-grey }
 .poker .position .player .alert { border: 1px solid $color-remon }
 .poker .position .player .action { border: 1px solid $color-red }
 .poker .position .player .celebration { border: 1px solid $color-blue }
-.poker .position-l .player .message { left:-50 }
-.poker .position-r .player .message { right:-50 }
+.poker .position-l .player .message { left:100 }
+.poker .position-r .player .message { right:100 }
 
 .poker .position .player .info-box {@include position-absolute(auto,10); @include size(148, auto);}
 .poker .position-l .player .info-box { right:10 }
@@ -47,6 +50,8 @@
 .poker .position .player .info-box .bankroll {height:37px; @include position-relative(10); @include text-tiny($color-remon); @include text-line-limit; @include text-shadow($color-transparent-black70) }
 .poker .position-r .player .info-box .name { margin-left:30px}
 .poker .position-r .player .info-box .bankroll { margin-left:30px}
+
+
 
 .poker .position .player .info-box .position-icon{ z-index:90; @include size(52, 54); }
 .poker .position-l .player .info-box .position-icon { @include position-top-right(-30, 6)}
@@ -58,7 +63,7 @@
 .poker .position .player .info-box .time-range .time-thumb{ @include position-center-alignment(40,20,0,0); @include position-top-left; @include icon-time-thumb}
 
 .poker .ui-box { @include position-absolute(30%,100%); @include size(910,200);}
-.poker .ui-box .hands {@include position-top-left(150); @include size(200, 120) }
+.poker .ui-box .hands {@include position-top-left(160); @include size(200, 120) }
 .poker .ui-box .action-area{@include position-top-right(256px); @include size(256px,100%); font-size:0}
 .poker .ui-box .action-area .btn-fold { @include btn-action($image-btn-bet-sky) }
 .poker .ui-box .action-area .btn-small-blind { @include btn-action($image-btn-bet-yellow) }

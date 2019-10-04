@@ -36,6 +36,7 @@ class Brodcast {
       case Sender.Push : this.message = JSON.parse(this.message); return;
       default : return;
     }
+    this.originMessage = this.message;
     this.message = '<span class="text">' + this.message + '</span>';
     this.header = header;
     this.row = document.createElement("p");

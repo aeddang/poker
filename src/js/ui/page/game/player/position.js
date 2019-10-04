@@ -18,8 +18,10 @@ class PositionBody extends ElementProvider {
     cell.classList.add("position");
     cell.innerHTML = `
 			<div id='${this.id}box' class='box'>
+			  <div id='${this.id}textStatus' class='text-status'>Waiting</div>
 				<button id='${this.id}btnJoin' class='btn-join'>Join</button>
 			</div>
+
     `;
     this.body.appendChild(cell);
   }
@@ -56,6 +58,7 @@ export default class Position extends DomComponent {
   remove() {
     super.remove();
     this.btnJoin = null;
+		this.textStatus=null;
 		this.info = null;
 		this.player = null;
 
@@ -64,7 +67,9 @@ export default class Position extends DomComponent {
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
     this.btnJoin = elementProvider.getElement('btnJoin');
+		this.textStatus = elementProvider.getElement('textStatus');
 		this.box = elementProvider.getElement('box');
+		this.textStatus.visible = false;
   }
 
   setupEvent() {
@@ -86,6 +91,7 @@ export default class Position extends DomComponent {
 		this.player = player;
 		this.box.appendChild(player);
 		this.setRotatePos(this.info.rotatePos);
+		this.textStatus.visible = false;
 	}
 
 	setMe(){
@@ -108,6 +114,7 @@ export default class Position extends DomComponent {
   }
 
 	set rotate(rotate){
+
 		this.info.rotate = ( rotate > 0) ? rotate%(Math.PI * 2) : rotate + (Math.PI * 2)
 		var posX = this.info.posX + (Math.cos(this.info.rotate) *this.info.radiusX);
 		var posY = this.info.posY + (Math.sin(this.info.rotate) *this.info.radiusY);
@@ -122,11 +129,12 @@ export default class Position extends DomComponent {
 				posX -= 50;
 				break;
 			case 1 :
-				posX -= 50;
-				break;
+					posX -= 100;
+					break;
 			case 9 :
-				posX += 50;
-				break;
+					posX += 100;
+					break;
+
 		}
 		this.x = posX;
 		this.y = posY;
@@ -146,11 +154,17 @@ export default class Position extends DomComponent {
 
   joinPlayer(){
     this.btnJoin.visible = false;
+		if(this.player == null ) this.textStatus.visible = true;
   }
 
   leavePlayer(isSelected = true) {
 		this.player = null;
 		this.debuger.log(isSelected, "leavePlayer");
-		if( !isSelected ) this.btnJoin.visible = true;
+		if( !isSelected ) {
+			this.btnJoin.visible = true;
+			this.textStatus.visible = false;
+		}else{
+			this.textStatus.visible = true;
+		}
   }
 }

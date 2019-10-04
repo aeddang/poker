@@ -31,7 +31,9 @@ class PlayerBody extends ElementProvider {
       <div class='profile'>
         <img id='${this.id}profileBg' class='bg'></img>
         <img id='${this.id}profileImg' class='img'></img>
+        <div id='${this.id}changeBank' class='change-bank'></div>
       </div>
+
       <div id='${this.id}message' class='message'></div>
       `;
 
@@ -44,9 +46,9 @@ const CARD_HEIGHT = 70;
 class PlayerInfo {
   constructor() {
     this.reset();
-    this.finalWinPot = 0;
 		this.finalBet = 0;
     this.finalBank = 0;
+    this.prevBank = -1;
     this.me = false;
     this.limitTime = 0;
     this.time = 0
@@ -62,6 +64,7 @@ export default class Player extends SyncPropsComponent {
     this.info = new PlayerInfo();
     this.cards = null;
     this.rxMessage = null
+    this.rxBank = null
   }
 
   init(body, itsMe) {
@@ -71,9 +74,11 @@ export default class Player extends SyncPropsComponent {
   remove() {
     super.remove();
     this.removeCards();
-    this.removeViewMessage()
+    this.removeViewMessage();
+    this.removeChangeBank();
     this.info = null;
     this.name = null;
+    this.changeBank = null;
     this.bankroll = null;
     this.timeRange = null;
     this.timeBar = null;
@@ -98,10 +103,12 @@ export default class Player extends SyncPropsComponent {
     this.timeThumb = elementProvider.getElement('timeThumb');
     this.positionIcon = elementProvider.getElement('positionIcon');
     this.hands = elementProvider.getElement('hands');
+    this.changeBank = elementProvider.getElement('changeBank');
     this.message = elementProvider.getElement('message');
     this.timeThumb.visible = false;
     this.hands.opacity = 0;
     this.message.opacity = 0;
+    this.changeBank.opacity = 0;
   }
 
   setupWatchs(){
@@ -119,6 +126,7 @@ export default class Player extends SyncPropsComponent {
       bankroll: value =>{
         this.info.finalBank = value;
         this.bankUpdate();
+        this.viewChangeBank();
       },
       status: value =>{
         switch ( value ) {
@@ -170,14 +178,12 @@ export default class Player extends SyncPropsComponent {
 
       },
       isWinner: value =>{
-        this.debuger.log(value, "isWinner");
         if(value == null || value == "") return;
-        if(value) this.viewMessage( ("++ $" + this.info.finalWinPot) , "celebration");
+
       },
       winPot: value =>{
-        this.debuger.log(value, "winPot");
         if(value == 0) return;
-        this.info.finalWinPot = value;
+        //if(value) this.viewMessage( ("$" + value) , "celebration");
       },
 
       isActive: value =>{
@@ -337,19 +343,47 @@ export default class Player extends SyncPropsComponent {
     if( this.rxMessage != null ) this.rxMessage.unsubscribe();
     this.rxMessage = null
   }
+  removeChangeBank(){
+    this.changeBank.classList.remove("increase");
+    if( this.rxBank != null ) this.rxBank.unsubscribe();
+    this.rxBank = null
+  }
   viewMessage(msg, style = "action"){
     this.removeViewMessage()
     if(style != null) this.message.classList.add(style);
     this.message.innerHTML = msg;
-    animation(this.message, { opacity:1, scale:1, top:-15 });
+    animation(this.message, { opacity:1, scale:1 });
     this.rxMessage = Rx.interval(1500).pipe(take(1)).subscribe( {
-      next :(t) => { animation(this.message, { opacity:0, scale:1.5, top:-30 }); },
+      next :(t) => { animation(this.message, { opacity:0, scale:1.5 }); },
+      complete :() => { }
+    })
+  }
+
+  viewChangeBank(){
+    if(this.info.prevBank == -1) {
+      this.info.prevBank = this.info.finalBank;
+      return;
+    }
+    let changed = this.info.finalBank - this.info.prevBank;
+    this.info.prevBank = this.info.finalBank;
+    if(changed == 0) return;
+    this.removeChangeBank();
+    if(changed>0){
+      changed = "+" + changed;
+      this.changeBank.classList.add("increase");
+    }
+
+    this.changeBank.innerHTML = changed;
+
+    animation(this.changeBank, { opacity:1, scale:1 });
+    this.rxBank = Rx.interval(1500).pipe(take(1)).subscribe( {
+      next :(t) => { animation(this.changeBank, { opacity:0, scale:1.5}); },
       complete :() => { }
     })
   }
 
   onChat(brodcast){
-    this.viewMessage(brodcast.message, "chat");
+    this.viewMessage(brodcast.originMessage, "default");
   }
 
   onGameJoin( ) {
