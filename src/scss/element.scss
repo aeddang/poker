@@ -5,21 +5,21 @@ $font-text-B: 'NanumSquareB','Noto Sans KR','Noto Sans CJK KR','Noto Sans Korean
 $font-number-R: 'FuturaStdHeavy','Noto Sans KR','Noto Sans CJK KR','Noto Sans Korean';
 $font-number-B: 'FuturaBTHeavy','Noto Sans KR','Noto Sans CJK KR','Noto Sans Korean';
 
-$margin-tiny: 5px;
-$margin-small: 10px;
-$margin-default: 20px;
-$margin-big: 35px;
+$margin-tiny: 10px;
+$margin-small: 20px;
+$margin-default: 40px;
+$margin-big: 70px;
 
-$font-tiny: 11px;
-$font-small: 13px;
-$font-default: 15px;
-$font-big: 20px;
-$font-ultra: 30px;
+$font-tiny: 20px;
+$font-small: 24px;
+$font-default: 30px;
+$font-big: 40px;
+$font-ultra: 60px;
 
 $color-white: rgba(255, 255, 255, 1.0);
 $color-black: rgba(0, 0, 0, 1.0);
 $color-grey: rgba(102, 102, 102, 1.0);
-$color-red: rgba(205, 1, 1, 1.0);
+$color-red: rgba(130, 11, 11, 1.0);
 $color-blue: rgba(40, 64, 255, 1.0);
 $color-yellow: rgba(250, 200, 10, 1.0);
 $color-remon: rgba(250, 249, 124, 1.0);
@@ -39,25 +39,22 @@ $color-transparent-black15: rgba(0, 0, 0, 0.15);
 
 $image-path:  '../static/asset/';
 $image-bg: $image-path + 'bg.png';
-$image-bg-home: $image-path + 'bg_home.png';
+$image-bg1: $image-path + 'bg1.png';
 $image-bg-game: $image-path + 'bg_game.png';
 $image-bg-user-box: $image-path + 'bg_user_box.png';
 $image-bg-chat: $image-path + 'bg_chat.png';
 $image-bg-layer-popup: $image-path + 'bg_layer_popup.png';
 $image-bg-rank: $image-path + 'bg_rank.png';
-$image-bg-lv-blue: $image-path + 'bg_lv_blue.png';
-$image-bg-lv-red: $image-path + 'bg_lv_red.png';
-$image-bg-lv-purple: $image-path + 'bg_lv_purple.png';
-$image-bg-lv-yellow: $image-path + 'bg_lv_yellow.png';
-$image-bg-lv-green: $image-path + 'bg_lv_green.png';
+$image-bg-rank-top: $image-path + 'bg_rank_top.png';
+
 $image-bg-lv1: $image-path + 'bg_lv1.png';
 $image-bg-lv2: $image-path + 'bg_lv2.png';
 $image-bg-lv3: $image-path + 'bg_lv3.png';
 $image-bg-lv4: $image-path + 'bg_lv4.png';
 
 $image-bg-profile: $image-path + 'bg_profile.png';
-$image-bg-profile-rect: $image-path + 'bg_profile_rect.png';
 $image-bg-user: $image-path + 'bg_user.png';
+
 $image-bg-betting: $image-path + 'bg_betting.png';
 $image-bg-main-pot: $image-path + 'bg_main_pot.png';
 $image-bg-progress: $image-path + 'bg_progress.png';
@@ -71,9 +68,8 @@ $image-cover-player-profile-remon: $image-path + 'cover_player_profile_remon.png
 
 $image-btn-sound-on: $image-path + 'btn_sound_on.png';
 $image-btn-sound-off: $image-path + 'btn_sound_off.png';
-$image-btn-menu: $image-path + 'btn_menu.png';
-$image-btn-event: $image-path + 'btn_event.png';
-$image-btn-event-2: $image-path + 'btn_event_2.png';
+
+
 $image-btn-chat: $image-path + 'btn_chat.png';
 $image-btn-close: $image-path + 'btn_close.png';
 
@@ -87,24 +83,10 @@ $image-btn-bet-sky: $image-path + 'btn_bet_sky.png';
 $image-btn-bet-yellow: $image-path + 'btn_bet_yellow.png';
 
 $image-btn-chip: $image-path + 'btn_chip.png';
-$image-btn-blue-chip: $image-path + 'btn_blue_chip.png';
-$image-btn-red-chip: $image-path + 'btn_red_chip.png';
-$image-btn-yellow-chip: $image-path + 'btn_yellow_chip.png';
-$image-btn-blue-half-chip: $image-path + 'btn_blue_half_chip.png';
-$image-btn-red-half-chip: $image-path + 'btn_red_half_chip.png';
-$image-btn-purple-half-chip: $image-path + 'btn_purple_half_chip.png';
 
-$image-icon-bb: $image-path + 'icon_bb.png';
-$image-icon-sb: $image-path + 'icon_sb.png';
-$image-icon-hand: $image-path + 'icon_hand.png';
-$image-icon-chips-little: $image-path + 'icon_chips_little.png';
-$image-icon-chips-much: $image-path + 'icon_chips_much.png';
-$image-icon-chips-very-much: $image-path + 'icon_chips_very_much.png';
-$image-icon-mission-join: $image-path + 'icon_mission_join.png';
-$image-icon-mission-7days: $image-path + 'icon_mission_7days.png';
-$image-icon-mission-30days: $image-path + 'icon_mission_30days.png';
 $image-icon-rock: $image-path + 'icon_rock.png';
 $image-icon-logo: $image-path + 'icon_logo.png';
+$image-icon-logo1: $image-path + 'icon_logo1.png';
 $image-icon-time-thumb: $image-path + 'icon_time_thumb.png';
 $image-icon-main-pot: $image-path + 'icon_main_pot.png';
 

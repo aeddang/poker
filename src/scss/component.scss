@@ -3,11 +3,11 @@
 @import 'ui';
 
 .poker .chat { @include position-relative; @include size }
-.poker .chat .btn-chat { @include btn-chat; @include position-vertical-center(36); }
-.poker .chat .body { @include position-relative($margin-small); @include size(120px,100%); @include bg-image($image-bg-chat) }
+.poker .chat .btn-chat { @include btn-chat; @include position-vertical-center(72); }
+.poker .chat .body { @include position-relative($margin-small); @include size(280px,100%); @include bg-image($image-bg-chat) }
 .poker .chat .body .viewer  { position:relative; @include position-side-margin($margin-small, $margin-small); @include text-small($color-white); overflow-y:auto; overflow-x: hidden;}
-.poker .chat .body .bottom { @include position-bottom-left(0, 0); @include size(100%, 64px) }
-.poker .chat .body .bottom .input {  @include position-relative; @include position-side-margin($margin-small, $margin-small); text-align: center }
+.poker .chat .body .bottom { @include position-bottom-left(0, 0); @include size(100%, 128px) }
+.poker .chat .body .bottom .input {  @include position-relative; @include position-side-margin($margin-default, $margin-small); text-align: center }
 .poker .chat .body .bottom .input .text { @include position-relative; width:100%; @include text-small($color-white); background:none }
 .poker .chat .body .bottom .input .btn { @include position-relative(0, $margin-tiny); @include btn-text; @include text-default($color-sky)}
 .poker .chat .body .row{ padding: $margin-tiny}
@@ -20,18 +20,15 @@
 .poker .chat .body .viewer .text { font-size:$font-small}
 
 .poker .top-navi{ @include position-relative; @include size}
-.poker .top-navi .btn-exit { @include btn-close @include position-right($margin-tiny,$margin-tiny); }
 .poker .top-navi .btn-sound { @include btn-sound-off; @include position-right($margin-tiny,$margin-tiny); }
 .poker .top-navi .btn-sound-on { @include btn-sound-on; }
-.poker .top-navi .btn-event { @include btn-event; @include position-right($margin-tiny,$margin-tiny); }
-.poker .top-navi .btn-event-2 { @include btn-event-2; @include position-right($margin-tiny,$margin-tiny); }
 
 .poker .btn-chip{ @include btn-chip; }
 
 
 .poker .message-box{ @include position-absolute; @include size; z-index:9999}
 .poker .message-box .dimed{ @include position-relative; @include size; background:$color-transparent-black70}
-.poker .message-box .box{ @include position-center(320,180); @include size(320,180); @include bg-radius; background:$color-white; text-align:center;}
+.poker .message-box .box{ @include position-center(640,360); @include size(640,360); @include bg-radius; background:$color-white; text-align:center;}
 .poker .message-box .box .title{ @include position-relative; @include text-big($color-black); padding:$margin-default $margin-default 0 $margin-default; text-align:center;}
 .poker .message-box .box .message{ @include position-relative; @include text-small($color-black); padding:$margin-default; text-align:center;}
 .poker .message-box .box .bottom{ @include position-bottom($margin-default); width:100%}

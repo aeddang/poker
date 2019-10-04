@@ -5,6 +5,7 @@ import * as Account from "ViewModel/account";
 import * as Event from '../event'
 import * as Config from "Util/config";
 import * as MessageBoxController from 'Component/messagebox';
+import * as ImageFactory from 'Root/imagefactory';
 
 class RoomListBody extends ElementProvider {
   writeHTML() {
@@ -21,7 +22,11 @@ class ListItemBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("item");
     cell.innerHTML = `
-      <div id='${this.id}text' class='text' ></div>
+      <img id='${this.id}iconLv' class='icon-lv'></img>
+      <div  class='text-box'>
+        <img id='${this.id}textLv' class='text-lv'></img>
+        <div id='${this.id}text' class='text' ></div>
+      </div>
       <div id='${this.id}dimed' class='dimed'></div>
       <div id='${this.id}iconRock' class='icon-rock' ></div>
 			<button id='${this.id}btn' class='btn'></button>
@@ -43,10 +48,10 @@ export default class RoomList extends Component {
   constructor() {
     super();
     this.datas = [];
-    this.datas.push(new ListData(4,10000, Config.Port.Lv4));
-    this.datas.push(new ListData(3,5000, Config.Port.Lv3));
-    this.datas.push(new ListData(2,2000, Config.Port.Lv2));
-    this.datas.push(new ListData(1,0, Config.Port.Lv1));
+    this.datas.push(new ListData(4,Config.MinBank.Lv4, Config.Port.Lv4));
+    this.datas.push(new ListData(3,Config.MinBank.Lv3, Config.Port.Lv3));
+    this.datas.push(new ListData(2,Config.MinBank.Lv2, Config.Port.Lv2));
+    this.datas.push(new ListData(1,Config.MinBank.Lv1, Config.Port.Lv1));
   }
 
   remove() {
@@ -79,6 +84,8 @@ class ListItem extends Component {
     this.data = null;
     this.text = null;
     this.iconRock = null;
+    this.iconLv = null;
+    this.textLv = null;
     this.dimed = null;
     this.btn = null;
   }
@@ -87,10 +94,14 @@ class ListItem extends Component {
   onCreate(elementProvider) {
     this.text = elementProvider.getElement('text');
     this.iconRock = elementProvider.getElement('iconRock');
+    this.iconLv = elementProvider.getElement('iconLv');
+    this.textLv = elementProvider.getElement('textLv');
     this.dimed = elementProvider.getElement('dimed');
     this.btn = elementProvider.getElement('btn');
-    this.text.innerHTML = "bank $"+Util.numberWithCommas(this.data.minBank);
+    this.text.innerHTML = "min bank $"+Util.numberWithCommas(this.data.minBank);
     this.getBody().classList.add("lv" + this.data.lv);
+    this.iconLv.src = ImageFactory.getLvIcon(this.data.lv);
+    this.textLv.src = ImageFactory.getLvTitle(this.data.lv);
     this.updateUserData();
   }
 

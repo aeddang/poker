@@ -4,36 +4,22 @@
 @mixin page($background){ @include position-relative(); @include size(); @include bg-image($background) }
 @mixin loading-bar($marginX:0, $marginY:0) { @include position-center(100px, 100px, $marginX, $marginY); @include size(100px, 100px) }
 
-@mixin btn-event { @include btn-image($image-btn-event, 33px, 33px) }
-@mixin btn-event-2 { @include btn-image($image-btn-event-2, 33px, 33px) }
-@mixin btn-sound-on { @include btn-image($image-btn-sound-on, 33px, 33px) }
-@mixin btn-sound-off { @include btn-image($image-btn-sound-off, 33px, 33px) }
 
-@mixin btn-chat { @include btn-image($image-btn-chat, 13px, 37px) }
+@mixin btn-sound-on { @include btn-image($image-btn-sound-on, 75px, 75px) }
+@mixin btn-sound-off { @include btn-image($image-btn-sound-off, 75px, 75px) }
+
+@mixin btn-chat { @include btn-image($image-btn-chat, 26px, 75px) }
 @mixin btn-close { @include btn-image($image-btn-close, 33px, 33px) }
-@mixin btn-chip { @include btn-image($image-btn-chip, 74px, 67px) }
-@mixin btn-blue-chip { @include btn-image($image-btn-blue-chip, 38px, 38px) }
-@mixin btn-red-chip { @include btn-image($image-btn-red-chip, 38px, 38px) }
-@mixin btn-yellow-chip { @include btn-image($image-btn-yellow-chip, 38px, 38px) }
-@mixin btn-blue-half-chip { @include btn-image($image-btn-blue-half-chip, 65px, 32px) }
-@mixin btn-red-half-chip { @include btn-image($image-btn-red-half-chip, 65px, 32px) }
-@mixin btn-purple-half-chip { @include btn-image($image-btn-purple-half-chip, 65px, 32px) }
+@mixin btn-chip { @include btn-image($image-btn-chip, 283px, 258px) }
+
 
 @mixin btn-ui-box($image){ @include bg-image($image); @include btn-default(); @include text-default($color-white); margin:0; float: left;}
-@mixin btn-action($image){@include size(64,32); @include btn-ui-box($image)}
-@mixin btn-bet($image){@include size(32,32); @include btn-ui-box($image) }
+@mixin btn-action($image){@include size(128,46); @include btn-ui-box($image)}
+@mixin btn-bet($image){@include size(64,64); @include btn-ui-box($image) }
 
-@mixin icon-logo { @include icon-image($image-icon-logo, 79px, 44px) }
-@mixin icon-bb { @include icon-image($image-icon-bb, 32px, 18px) }
-@mixin icon-sb { @include icon-image($image-icon-sb, 32px, 18px) }
+@mixin icon-logo($image:$image-icon-logo) { @include icon-image($image, 146px, 144px) }
 
-@mixin icon-hand { @include icon-image($image-icon-hand, 37px, 31px) }
-@mixin icon-chips-little { @include icon-image($image-icon-chips-little, 110px, 80px) }
-@mixin icon-chips-much { @include icon-image($image-icon-chips-much, 110px, 80px) }
-@mixin icon-chips-very-much { @include icon-image($image-icon-chips-very-much, 110px, 80px) }
-@mixin icon-mission-join { @include icon-image($image-icon-mission-join, 35px, 32px) }
-@mixin icon-mission-7days { @include icon-image($image-icon-mission-7days, 32px, 35px) }
-@mixin icon-mission-30days { @include icon-image($image-icon-mission-30days, 35px, 32px) }
-@mixin icon-rock { @include icon-image($image-icon-rock, 64px, 76px) }
-@mixin icon-time-thumb { @include icon-image($image-icon-time-thumb, 20px, 10px) }
+
+@mixin icon-rock { @include icon-image($image-icon-rock, 140px, 188px) }
+@mixin icon-time-thumb { @include icon-image($image-icon-time-thumb, 40px, 20px) }
 @mixin icon-main-pot { @include icon-image($image-icon-main-pot, 44px, 43px) }

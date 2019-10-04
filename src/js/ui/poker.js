@@ -42,7 +42,7 @@ class Poker extends Component {
   init(body){
     super.init(body);
     MessageBoxController.instence.setupBody(body);
-    this.onPageChange(Config.Page.Intro);
+    this.onPageChange(Config.Page.Home);
     return this.delegate;
   }
 

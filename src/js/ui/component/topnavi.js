@@ -11,10 +11,7 @@ class TopNaviBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("top-navi");
     cell.innerHTML =`
-    <button id='${this.id}btnExit' class='btn-exit'></button>
     <button id='${this.id}btnSound' class='btn-sound'></button>
-    <button id='${this.id}btnEvent' class='btn-event'></button>
-    <button id='${this.id}btnEvent2' class='btn-event-2'></button>
     `;
     this.body.appendChild(cell);
   }
@@ -28,18 +25,12 @@ export default class TopNavi extends Component {
 
   remove() {
     super.remove();
-    this.btnExit = null;
     this.btnSound = null;
-    this.btnEvent = null;
-    this.btnEvent2 = null;
   }
 
   getElementProvider() { return new TopNaviBody(this.body); }
   onCreate(elementProvider) {
-    this.btnExit = elementProvider.getElement('btnExit');
     this.btnSound = elementProvider.getElement('btnSound');
-    this.btnEvent = elementProvider.getElement('btnEvent');
-    this.btnEvent2 = elementProvider.getElement('btnEvent2');
     this.updateSoundStatus();
   }
 
@@ -51,7 +42,7 @@ export default class TopNavi extends Component {
 
   setupEvent() {
     this.attachEvent(this.btnSound, "click", this.onSoundChange.bind(this) );
-    this.attachEvent(this.btnExit, "click", this.onExit.bind(this) );
+    //this.attachEvent(this.btnExit, "click", this.onExit.bind(this) );
     //this.attachEvent(this.btnEvent, "click", this.onLoginChange.bind(this) );
     //this.attachEvent(this.btnEvent2, "click", this.onLoginChange.bind(this) );
   }

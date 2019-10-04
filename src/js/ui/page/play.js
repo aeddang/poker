@@ -32,11 +32,11 @@ class PlayBody extends ElementProvider {
   }
 }
 
-const CARD_WIDTH = 50;
-const CARD_HEIGHT = 75;
-const CARD_MARGIN = 3;
+const CARD_WIDTH = 100;
+const CARD_HEIGHT = 150;
+const CARD_MARGIN = 5;
 const BOTTOM_HEIGHT = 0;
-const BOTTOM_MARGIN = 20;
+const BOTTOM_MARGIN = 40;
 class PlayInfo {
   constructor() {
     this.reset();
