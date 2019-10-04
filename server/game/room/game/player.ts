@@ -238,8 +238,6 @@ export default class Player extends Component {
 
   getUpdateData():Object{
     return {
-      profileImg: this.userData.profileImg,
-      name: this.userData.name,
       prevBank: this.prevBank,
       changeBank: (this.bankroll - this.prevBank),
       rid: this.userData.rid
