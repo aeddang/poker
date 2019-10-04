@@ -50,6 +50,8 @@ class UserInfo {
 		this.bank= data.bank;
 		this.rank = data.rank;
 		this.rankId = data.rankId;
+		this.loginToken = data.loginToken;
+		this.character = data.character;
   }
 
   getStatus() {
