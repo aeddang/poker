@@ -20,8 +20,8 @@ export const UI_EVENT = Object.freeze ({
 	BLIND: 9
 });
 
-const CARD_WIDTH = 42;
-const CARD_HEIGHT = 63;
+const CARD_WIDTH = 84;
+const CARD_HEIGHT = 126;
 
 class UiBoxInfo {
   constructor() {
@@ -37,7 +37,6 @@ class UiBoxInfo {
 class UiBoxBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
-	    <div id='${this.id}profileCover' class='profile-cover'></div>
 			<div id='${this.id}hands' class='hands'></div>
 			<div id='${this.id}actionArea' class='action-area'>
 	      <button id='${this.id}btnFold' class='btn-fold'>Fold</button>
@@ -68,7 +67,6 @@ export default class UiBox extends SyncPropsComponent {
 		this.betting.remove();
 		this.removeCards();
 		this.betting = null;
-		this.profileCover = null;
 
 		this.btnFold = null;
 		this.btnSmallBlind = null;
@@ -95,7 +93,6 @@ export default class UiBox extends SyncPropsComponent {
 		this.btnRaise = elementProvider.getElement('btnRaise');
 		this.btnAllIn = elementProvider.getElement('btnAllIn');
 		this.actionArea = elementProvider.getElement('actionArea');
-		this.profileCover = elementProvider.getElement('profileCover');
 		this.bettingArea = elementProvider.getElement('bettingArea');
 		this.hands = elementProvider.getElement('hands');
   	this.betting.init( this.bettingArea ).subscribe ( this.onBetEvent.bind(this) );

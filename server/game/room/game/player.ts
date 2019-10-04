@@ -10,6 +10,7 @@ export default class Player extends Component {
   bankroll:number = 0
   userId:string
   name:string
+  character:string
   position:number = -1
   networkStatus:NetworkStatus =  NetworkStatus.DisConnected
 
@@ -42,6 +43,7 @@ export default class Player extends Component {
   actionRaise:boolean = false
   actionAllIn:boolean = false
 
+
   @nosync
   currentBlindAction:number = -1
   @nosync
@@ -65,6 +67,7 @@ export default class Player extends Component {
     this.name = options.name
     this.userId = options.userId
     this.bankroll = options.bank
+    this.character = options.character
     this.networkStatus = NetworkStatus.Connected
   }
 

@@ -6,6 +6,7 @@ import * as Config from "Util/config";
 import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
 import * as Api from 'Api/apicontroller';
+import * as ImageFactory from 'Root/imagefactory';
 
 class RankListBody extends ElementProvider {
   writeHTML() {
@@ -22,11 +23,8 @@ class ListItemBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("item");
     cell.innerHTML = `
+      <img id='${this.id}profileImg' class='profile-img'></img>
       <div id='${this.id}rank' class='rank' ></div>
-      <div class='profile'>
-        <img id='${this.id}profileImg' class='profile-img'></img>
-        <div class='profile-cover'></div>
-      </div>
       <div class='info'>
         <div id='${this.id}text' class='text' ></div>
         <div id='${this.id}desc' class='desc' ></div>
@@ -44,6 +42,7 @@ class ListData {
   setData(data,idx) {
     this.bank = data.bank;
     this.name = data.name;
+    this.character = data.character;
     this.rank = idx+1;
     this.profileImg = data.profileImg;
   }
@@ -113,7 +112,7 @@ class ListItem extends Component {
     this.rank.innerHTML = this.data.rank + "st";
     this.text.innerHTML = this.data.name;
     this.desc.innerHTML = "$"+Util.numberWithCommas(this.data.bank);
-    this.profileImg.src = this.data.profileImg;
+    this.profileImg.src = ImageFactory.getMyCharacter(this.data.character);
     this.getBody().classList.add("rank" + this.data.rank);
   }
 

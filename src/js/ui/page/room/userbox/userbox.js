@@ -4,7 +4,7 @@ import * as Util from 'Skeleton/util';
 import * as Account from "ViewModel/account";
 import * as Event from '../event'
 import * as Config from "Util/config";
-
+import * as ImageFactory from 'Root/imagefactory';
 
 class UserBoxBody extends ElementProvider {
   writeHTML() {
@@ -13,13 +13,13 @@ class UserBoxBody extends ElementProvider {
     cell.classList.add("user-box");
     cell.innerHTML = `
       <img id='${this.id}profileImg' class='profile-img'></img>
-      <div class='profile-cover'></div>
       <div class='info'>
         <div id='${this.id}text' class='text' ></div>
-        <div id='${this.id}desc' class='desc' ></div>
-        <div id='${this.id}rank' class='rank' ></div>
+        <button id='${this.id}btn' class='btn'></button>
       </div>
-      <button id='${this.id}btn' class='btn'></button>
+      <img id='${this.id}lv' class='lv'></img>
+      <img id='${this.id}rank' class='rank' ></img>
+
     `;
     this.body.appendChild(cell);
   }
@@ -35,7 +35,7 @@ export default class UserBox extends Component {
   remove() {
     super.remove();
     this.text = null;
-    this.desc = null;
+    this.lv = null;
     this.rank = null;
     this.profileImg = null;
     this.btn = null;
@@ -44,7 +44,7 @@ export default class UserBox extends Component {
   getElementProvider() { return new UserBoxBody(this.body); }
   onCreate(elementProvider) {
     this.rank = elementProvider.getElement('rank');
-    this.desc = elementProvider.getElement('desc');
+    this.lv = elementProvider.getElement('lv');
     this.text = elementProvider.getElement('text');
     this.profileImg = elementProvider.getElement('profileImg');
     this.btn = elementProvider.getElement('btn');
@@ -75,18 +75,20 @@ export default class UserBox extends Component {
 
   updateUserData(){
     if( Account.loginModel.getStatus() != Account.Status.Login ){
-      this.profileImg.src = "";
-      this.rank.innerHTML = "";
-      this.text.innerHTML = "";
-      this.desc.innerHTML = "Login"
+      this.profileImg.src = ImageFactory.DEFAULT_CHARACTER;
+      this.lv.src = "";
+      //this.lv.visible = false;
+      this.rank.src = ImageFactory.DEFAULT_RANK_GROUP;
+      this.text.innerHTML = "Login";
       return;
     }
 
     let info = Account.loginModel.getUserData();
-    this.rank.innerHTML = info.rank+"st";
-    this.text.innerHTML = info.name;
-    this.desc.innerHTML = "$"+Util.numberWithCommas(info.bank);
-    this.profileImg.src = info.profileImg;
+    this.text.innerHTML = info.name+"<br>$"+Util.numberWithCommas(info.bank);
+    this.rank.src = ImageFactory.getMyRankGroup(info.rankId);
+    this.profileImg.src = ImageFactory.getMyCharacter(info.character);
+    this.lv.src = ImageFactory.getMyLvTitle(info.bank);
+    this.lv.visible = true;
   }
 
 }

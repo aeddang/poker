@@ -32,8 +32,10 @@ class UserInfo {
 		this.rid = "";
 		this.bank= -1;
 		this.rank = -1;
+		this.rankId = -1;
     this.accessToken = '';
 		this.profileImg = "";
+		this.character = 0;
   }
 
   setData(data) {
@@ -47,6 +49,7 @@ class UserInfo {
 	  this.rid = data['@rid'];
 		this.bank= data.bank;
 		this.rank = data.rank;
+		this.rankId = data.rankId;
   }
 
   getStatus() {

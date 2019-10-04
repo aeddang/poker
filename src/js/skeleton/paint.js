@@ -161,7 +161,7 @@ export class FrameAnimation extends Paint {
 }
 
 export class LoadingSpiner extends Paint {
-  init(body, width = 80, height = 80, depth = 6, isAutoView = true) {
+  init(body, width = 80, height = 80, depth = 10, isAutoView = true) {
     super.init(body, isAutoView);
     this.width = width;
     this.height = height;
@@ -197,9 +197,9 @@ export class LoadingSpiner extends Paint {
     for (var i=0; i < len; ++i) {
       var a = Math.sin((len-i)/len);
       var gradient=this.context.createLinearGradient(0,0,this.width,this.height);
-      gradient.addColorStop(0,'rgba(86,84,225,'+a+')');
-      gradient.addColorStop(0.3,'rgba(141,79,227,'+a+')');
-      gradient.addColorStop(1,'rgba(42,197,254,'+a+')');
+      gradient.addColorStop(0,'rgba(96,68,45,'+a+')');
+      gradient.addColorStop(0.3,'rgba(245,221,177,'+a+')');
+      gradient.addColorStop(1,'rgba(174,130,89,'+a+')');
       this.context.strokeStyle = gradient;
       var idx  = ((this.frm + i) % frame);
       var point = this.points[ idx ];

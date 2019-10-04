@@ -38,13 +38,13 @@ util
   box-shadow: grayscale($amount);;
 }
 
-@mixin glow($color, $size:2px){
+@mixin glow($color, $size:5px){
   -webkit-box-shadow: 0 0 $size $size $color;
   -moz-box-shadow: 0 0 $size $size $color;
   box-shadow: 0 0 $size $size $color;
 }
 
-@mixin text-shadow($color:$color-remon, $amount:3px){ text-shadow: 0 0 $amount $color; }
+@mixin text-shadow($color:$color-remon, $amount:5px){ text-shadow: 0 0 $amount $color; }
 @mixin text-line-limit{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 @mixin screen-out{ overflow:hidden; position:absolute; left:-1000px; height:0; padding:1px 0 0 0; line-height:0; font-size:0 }
 @mixin bg-image ($image){ background: url($image) no-repeat; background-size:100% 100%;}
@@ -56,7 +56,7 @@ util
 @mixin btn-image ($image, $width, $height){ @include btn-default(); @include icon-image($image, $width, $height) }
 @mixin btn-bg ($image){ @include btn-image ($image);  @include font-out() }
 @mixin btn-default-text ($textColor:$color-black, $borderColor:$color-blue) {
-  @include btn-default; @include size(80,30); @include bg-radius; @include text-default($textColor); border:0.5px solid $borderColor }
+  @include btn-default; @include size(160,60); @include bg-radius; @include text-default($textColor); border:1px solid $borderColor }
 /*
 font
 */

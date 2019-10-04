@@ -12,3 +12,10 @@ export const Port = Object.freeze ({
   Lv3: 2570,
   Lv4: 2571
 });
+
+export const MinBank = Object.freeze ({
+  Lv1: 0,
+  Lv2: 2000,
+  Lv3: 5000,
+  Lv4: 10000
+});

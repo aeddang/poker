@@ -8,7 +8,7 @@
 .poker {@include position-relative; @include size; overflow:hidden }
 .poker .page-area { @include position-relative; @include size; overflow:hidden }
 .poker .sound-area{@include screen-out; height:1px; width:1px}
-.poker .logo{ @include position-top-left($margin-default, $margin-default) ; @include icon-logo}
+
 
 .poker ::-moz-selection { background: transparent}
 .poker ::-webkit-selection {background: transparent}

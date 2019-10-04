@@ -16,12 +16,10 @@ class HomeBody extends ElementProvider {
     cell.classList.add("home");
     cell.innerHTML =`
     <div class ='logo'></div>
-    <div class ='board'></div>
     <div id='${this.id}topNaviArea' class='top-navi-area'></div>
     <div id='${this.id}userBoxArea' class='user-box-area'></div>
     <div id='${this.id}rankListArea' class='rank-list-area'></div>
     <div id='${this.id}roomListArea' class='room-list-area'></div>
-
     <button id='${this.id}btnChip' class='btn-chip'></button>
     `;
     this.body.appendChild(cell);

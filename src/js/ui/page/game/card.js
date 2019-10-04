@@ -2,9 +2,10 @@ import { DomComponent } from 'Skeleton/component';
 import { FrameAnimation } from 'Skeleton/paint';
 import { animationAndProgress, animationStop } from 'Skeleton/animation';
 import * as SoundFactory from 'Root/soundfactory';
+import * as ImageFactory from 'Root/imagefactory';
 import * as Rx from 'rxjs'
 import { take } from 'rxjs/operators'
-const IMG_PATH = './static/asset/cards.png';
+
 
 export default class Card extends DomComponent {
   constructor() {
@@ -22,7 +23,7 @@ export default class Card extends DomComponent {
     this.width = width;
     this.height = height;
     this.view = new FrameAnimation();
-    this.view.init( this.getBody(), IMG_PATH, 4, 13 );
+    this.view.init( this.getBody(), ImageFactory.CARD_PATH, 4, 13 );
     this.hidden(false , 10);
     return this;
   }

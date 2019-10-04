@@ -8,6 +8,7 @@ import Card from '../card'
 import * as Rx from 'rxjs'
 import { take } from 'rxjs/operators'
 import * as SoundFactory from 'Root/soundfactory';
+import * as ImageFactory from 'Root/imagefactory';
 
 class PlayerBody extends ElementProvider {
   writeHTML() {
@@ -16,16 +17,21 @@ class PlayerBody extends ElementProvider {
     cell.classList.add("player");
     cell.classList.add("player-position-wait");
     cell.innerHTML = `
+
       <div class='info-box'>
         <div id='${this.id}name' class='name'></div>
         <div id='${this.id}bankroll' class='bankroll'></div>
-        <div id='${this.id}positionIcon' class='position-icon'></div>
+        <img id='${this.id}positionIcon' class='position-icon'></img>
         <div id='${this.id}timeRange' class='time-range'>
           <div id='${this.id}timeBar' class='time-bar'></div>
           <div id='${this.id}timeThumb' class='time-thumb'></div>
         </div>
       </div>
       <div id='${this.id}hands' class='hands'></div>
+      <div class='profile'>
+        <img id='${this.id}profileBg' class='bg'></img>
+        <img id='${this.id}profileImg' class='img'></img>
+      </div>
       <div id='${this.id}message' class='message'></div>
       `;
 
@@ -33,13 +39,14 @@ class PlayerBody extends ElementProvider {
   }
 }
 
-const CARD_WIDTH = 23;
-const CARD_HEIGHT = 35;
+const CARD_WIDTH = 46;
+const CARD_HEIGHT = 70;
 class PlayerInfo {
   constructor() {
     this.reset();
     this.finalWinPot = 0;
 		this.finalBet = 0;
+    this.finalBank = 0;
     this.me = false;
     this.limitTime = 0;
     this.time = 0
@@ -62,7 +69,6 @@ export default class Player extends SyncPropsComponent {
     return super.init(body);
   }
   remove() {
-    this.resetStatus();
     super.remove();
     this.removeCards();
     this.removeViewMessage()
@@ -76,12 +82,15 @@ export default class Player extends SyncPropsComponent {
     this.hands = null;
     this.cards = null;
     this.message = null;
+    this.profileImg = null;
+    this.profileBg = null;
   }
 
 
   getElementProvider() { return new PlayerBody(this.body); }
   onCreate(elementProvider) {
-
+    this.profileImg = elementProvider.getElement('profileImg');
+    this.profileBg = elementProvider.getElement('profileBg');
     this.name = elementProvider.getElement('name');
     this.bankroll = elementProvider.getElement('bankroll');
     this.timeRange = elementProvider.getElement('timeRange');
@@ -100,40 +109,45 @@ export default class Player extends SyncPropsComponent {
       name: value =>{
         this.name.innerHTML = value;
       },
+      character: value =>{
+        this.profileImg.src = ImageFactory.getMyCharacter(value);
+      },
       position: value =>{
         this.info.position = value;
         if( value != -1 ) this.onGameJoin();
       },
       bankroll: value =>{
-        this.bankroll.innerHTML = '$' + Util.numberWithCommas(value);
+        this.info.finalBank = value;
+        this.bankUpdate();
       },
       status: value =>{
         switch ( value ) {
           case Status.Wait:
             this.resetHand();
-            this.removePlayerStatus();
-            this.removeGameStatus();
+            this.bankUpdate();
+            this.profileBg.src = ImageFactory.BgPlayerProfile.Default;
             break;
           case Status.Impossible:
-            this.addPlayerStatus("impossible");
+            this.bankDisAbleUpdate("Bank Rack")
+            this.profileBg.src = ImageFactory.BgPlayerProfile.Disable;
             break;
           case Status.Fold:
-            this.addPlayerStatus("fold");
+            this.bankDisAbleUpdate("Fold")
+            this.profileBg.src = ImageFactory.BgPlayerProfile.Default;
             break;
           case Status.Play:
             this.setHand();
-            this.addPlayerStatus("play");
+            this.profileBg.src = ImageFactory.BgPlayerProfile.Play;
             break;
           case Status.AllIn:
-            this.addGameStatus("allin");
+            this.bankDisAbleUpdate("All In");
             break;
           case Status.ShowDown:
-            this.addGameStatus("showdown");
+            this.profileBg.src = ImageFactory.BgPlayerProfile.ShowDown;
             break;
           case Status.Absence:
           case Status.WaitBigBlind:
-            this.removeGameStatus();
-            this.addPlayerStatus("wait");
+            this.profileBg.src = ImageFactory.BgPlayerProfile.Default;
             break;
 
         }
@@ -171,11 +185,11 @@ export default class Player extends SyncPropsComponent {
           this.timeThumb.visible = true;
           this.timeBar.style.width = 0;
           this.timeThumb.style.left = 0;
-          this.addGameStatus("active");
+          this.profileBg.src = ImageFactory.BgPlayerProfile.Active;
         } else{
           this.timeThumb.visible = false;
           this.timeBar.style.width = 0;
-          this.addGameStatus("passive");
+          this.profileBg.src = ImageFactory.BgPlayerProfile.Play;
         }
       },
       resultValue: value =>{
@@ -270,13 +284,13 @@ export default class Player extends SyncPropsComponent {
       networkStatus: value =>{
         switch ( value ) {
           case NetworkStatus.Connected:
-            this.addNetworkStatus("connect")
+            this.profileBg.src = ImageFactory.BgPlayerProfile.Default;
             break;
           case NetworkStatus.DisConnected:
-            this.addNetworkStatus("disconnect")
+            this.profileBg.src = ImageFactory.BgPlayerProfile.Disable;
             break;
           case NetworkStatus.Wait:
-            this.addNetworkStatus("disconnect")
+            this.profileBg.src = ImageFactory.BgPlayerProfile.Disable;
             break;
         }
       },
@@ -284,26 +298,35 @@ export default class Player extends SyncPropsComponent {
       positionStatus: value =>{
         switch ( value ) {
           case PositionStatus.DeallerButton:
-            this.positionIcon.classList.add("db");
+            this.positionIcon.src = ImageFactory.IconPosition.DeallerButton;
             this.positionIcon.visible = true;
             break;
           case PositionStatus.BigBlind:
-            this.positionIcon.classList.add("bb");
+            this.positionIcon.src = ImageFactory.IconPosition.BigBlind;
             this.positionIcon.visible = true;
             break;
           case PositionStatus.SmallBlind:
-            this.positionIcon.classList.add("sb");
+            this.positionIcon.src = ImageFactory.IconPosition.SmallBlind;
             this.positionIcon.visible = true;
             break;
           case PositionStatus.None:
-            this.positionIcon.classList.remove("db");
-            this.positionIcon.classList.remove("sb");
-            this.positionIcon.classList.remove("bb");
             this.positionIcon.visible = false;
             break;
         }
       }
     };
+  }
+
+
+
+  bankUpdate(){
+    this.bankroll.classList.remove("off");
+    this.bankroll.innerHTML = '$' + Util.numberWithCommas(this.info.finalBank);
+  }
+
+  bankDisAbleUpdate(status){
+    this.bankroll.classList.add("off");
+    this.bankroll.innerHTML = status;
   }
 
   removeViewMessage(){
@@ -323,61 +346,6 @@ export default class Player extends SyncPropsComponent {
       next :(t) => { animation(this.message, { opacity:0, scale:1.5, top:-30 }); },
       complete :() => { }
     })
-  }
-
-  getStatusBody(){
-    var parent = this.getBody().parentNode;
-    if(parent == null) return null;
-    return parent.parentNode;
-  }
-
-  resetStatus(){
-    this.removeGameStatus();
-    this.removePlayerStatus();
-    this.removeNetworkStatus();
-  }
-
-  setStatus(style = ""){
-    let parent = this.getStatusBody();
-    if(parent == null) return;
-    parent.classList.add("position-"+style);
-  }
-
-  removeGameStatus(){
-    let parent = this.getStatusBody();
-    if(parent == null) return;
-    parent.classList.remove("position-allin");
-    parent.classList.remove("position-showdown");
-    parent.classList.remove("position-active");
-    parent.classList.remove("position-passive");
-  }
-  addGameStatus(style = ""){
-    this.removeGameStatus();
-    this.setStatus(style);
-  }
-
-  removePlayerStatus(){
-    let parent = this.getStatusBody();
-    if(parent == null) return;
-    parent.classList.remove("position-wait");
-    parent.classList.remove("position-fold");
-    parent.classList.remove("position-play")
-    parent.classList.remove("position-impossible")
-  }
-  addPlayerStatus(style = ""){
-    this.removePlayerStatus();
-    this.setStatus(style);
-  }
-
-  removeNetworkStatus(){
-    let parent = this.getStatusBody();
-    if(parent == null) return;
-    parent.classList.remove("position-disconnect");
-    parent.classList.remove("position-connect");
-  }
-  addNetworkStatus(style = ""){
-    this.removeNetworkStatus();
-    this.setStatus(style);
   }
 
   onChat(brodcast){

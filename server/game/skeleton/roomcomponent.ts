@@ -31,7 +31,7 @@ export default class RoomComponent<T> extends Room<T> {
       options.bank = response.data.data.bank
       options.rank = response.data.data.rank
       options.rid = response.data.data['@rid'];
-
+      options.character = response.data.data.character
       this.debuger.log(options, 'onAuth response')
       let isJoinAble = this.state.isJoinAble(options)
       return isJoinAble

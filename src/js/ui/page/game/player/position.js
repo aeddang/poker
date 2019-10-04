@@ -20,11 +20,6 @@ class PositionBody extends ElementProvider {
 			<div id='${this.id}box' class='box'>
 				<button id='${this.id}btnJoin' class='btn-join'>Join</button>
 			</div>
-		  <div class='profile'>
-				<img id='${this.id}profileImg' class='profile-img'></img>
-				<div class='dimed'></div>
-			</div>
-			<div id='${this.id}profileCover' class='profile-cover'></div>
     `;
     this.body.appendChild(cell);
   }
@@ -61,20 +56,15 @@ export default class Position extends DomComponent {
   remove() {
     super.remove();
     this.btnJoin = null;
-		this.profileCover = null;
 		this.info = null;
 		this.player = null;
-		this.profileImg = null;
+
   }
 
   getElementProvider() { return new PositionBody(this.body); }
   onCreate(elementProvider) {
     this.btnJoin = elementProvider.getElement('btnJoin');
 		this.box = elementProvider.getElement('box');
-		this.profileCover = elementProvider.getElement('profileCover');
-		this.profileImg = elementProvider.getElement('profileImg');
-		this.profileImg.visible = false;
-		this.profileImg.src = "./static/asset/profile_image.png"
   }
 
   setupEvent() {
@@ -95,7 +85,6 @@ export default class Position extends DomComponent {
 	addPlayer(player){
 		this.player = player;
 		this.box.appendChild(player);
-		this.profileImg.visible = true;
 		this.setRotatePos(this.info.rotatePos);
 	}
 
@@ -124,30 +113,24 @@ export default class Position extends DomComponent {
 		var posY = this.info.posY + (Math.sin(this.info.rotate) *this.info.radiusY);
 		switch( this.info.rotatePos ){
 			case 0 :
-				posY += 40;
+				posY += 50;
 				break;
 			case 4 :
-				posX += 25;
+				posX += 50;
 				break;
 			case 6 :
-				posX -= 25;
-				break;
-			case 3 :
-				posX += 40;
-				break;
-			case 7 :
-				posX -= 40;
+				posX -= 50;
 				break;
 			case 1 :
-				posX -= 25;
+				posX -= 50;
 				break;
 			case 9 :
-				posX += 25;
+				posX += 50;
 				break;
 		}
 		this.x = posX;
 		this.y = posY;
-			if(this.info.itsMe) this.delegate.next(new ComponentEvent( POSITION_EVENT.MOVE_POSITION, Util.convertRectFromDimension(this.getBody()) ));
+		if(this.info.itsMe) this.delegate.next(new ComponentEvent( POSITION_EVENT.MOVE_POSITION, Util.convertRectFromDimension(this.getBody()) ));
 	}
 
 	get rotate(){
@@ -155,7 +138,7 @@ export default class Position extends DomComponent {
 	}
 
 	onAnimationCompleted(){
-		if(this.info.itsMe) animationAndComplete( this.getBody(),{ scale:1.2},
+		if(this.info.itsMe) animationAndComplete( this.getBody(),{ scale:1.5},
 		p => {
 			this.delegate.next(new ComponentEvent( POSITION_EVENT.SELECTED_POSITION, Util.convertRectFromDimension(this.getBody()) ));
 		});
@@ -167,7 +150,6 @@ export default class Position extends DomComponent {
 
   leavePlayer(isSelected = true) {
 		this.player = null;
-		this.profileImg.visible = false;
 		this.debuger.log(isSelected, "leavePlayer");
 		if( !isSelected ) this.btnJoin.visible = true;
   }

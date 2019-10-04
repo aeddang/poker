@@ -5,24 +5,23 @@
 @import 'room';
 
 .poker .intro { @include page($image-bg) }
-.poker .intro .board { @include position-center(367,275); @include size(367,275); @include bg-image($image-bg-home); }
+.poker .intro .logo{ @include position-top-left($margin-default, $margin-tiny) ; @include icon-logo}
 .poker .intro .btn-join { @include position-center(150,50); @include size(150,50); @include btn-text; @include text-ultra($color-remon); @include text-shadow($color-remon-45,10px);}
 
 
 .poker .home { @include page($image-bg) }
-$home-left-width: 184px;
-.poker .home .board { @include position-center(367,275,$home-left-width/2,0); @include size(367,275); @include bg-image($image-bg-home); }
-.poker .home .top-navi-area { @include position-top-right($margin-default, 0); @include size(50,150)}
-.poker .home .user-box-area{ @include position-top-left(0, 50); @include size($home-left-width,178); }
-.poker .home .rank-list-area{ @include position-top-left(0, 228); @include size($home-left-width,10); }
-.poker .home .room-list-area{ @include position-top-center(318, $home-left-width/2); @include size(318,100%);}
-.poker .home .btn-join{  @include position-center(100,50,$home-left-width/2,0); @include size(100,50); }
-.poker .home .top-navi .btn-exit { display: none }
-.poker .home .btn-chip{ @include position-top-left(160, -1); }
+.poker .home .logo{ @include position-top-left($margin-default, $margin-tiny) ; @include icon-logo}
+$home-left-width: 360px;
+.poker .home .top-navi-area { @include position-top-right($margin-default, 260); @include size(75,75)}
+.poker .home .user-box-area{ @include position-top-left($margin-tiny, 175); @include size($home-left-width+50,192); }
+.poker .home .rank-list-area{ @include position-top-left($margin-tiny+3, 375); @include size($home-left-width,10); }
+.poker .home .room-list-area{ @include position-top-center(638, $home-left-width/2 - 30); @include size(638,100%);}
+.poker .home .btn-chip{ @include position-top-right(0, 0); }
 
-.poker .play { @include page($image-bg) }
-.poker .play .btn-chip{ @include position-top-right($margin-default, -1); }
-.poker .play .top-navi-area { @include position-top-right(100, 0); @include size(160,36)}
-.poker .play .chat-area { @include position-top-right(-117px,80px); @include size(130px,0); z-index:999}
+.poker .play { @include page($image-bg1) }
+.poker .play .logo{ @include position-top-left($margin-default, $margin-tiny) ; @include icon-logo($image-icon-logo1)}
+.poker .play .btn-chip{ @include position-top-right(-30, -1); }
+.poker .play .top-navi-area { @include position-top-right(250, 0); @include size(160,36)}
+.poker .play .chat-area { @include position-top-right(-274px,240px); @include size(300px,0); z-index:999}
 .poker .play .play-area { @include position-absolute(); @include size() }
 .poker .play .loading-bar { @include loading-bar }

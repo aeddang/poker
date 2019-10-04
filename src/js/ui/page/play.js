@@ -16,6 +16,7 @@ class PlayBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("play");
     cell.innerHTML =`
+    <button id='${this.id}btnChip' class='btn-chip'></button>
     <div id='${this.id}playArea' class='play-area'>
       <div id='${this.id}gameViewer' class='game-viewer'></div>
       <div id='${this.id}cardShow' class='card-show'></div>
@@ -23,7 +24,6 @@ class PlayBody extends ElementProvider {
       <div id='${this.id}uiBox' class='ui-box'></div>
       <div class ='logo'></div>
     </div>
-    <button id='${this.id}btnChip' class='btn-chip'></button>
     <div id='${this.id}topNaviArea' class='top-navi-area'></div>
     <div id='${this.id}chatArea' class='chat-area'></div>
     <div id='${this.id}loadingBar' class='loading-bar'></div>
@@ -32,11 +32,11 @@ class PlayBody extends ElementProvider {
   }
 }
 
-const CARD_WIDTH = 50;
-const CARD_HEIGHT = 75;
-const CARD_MARGIN = 3;
+const CARD_WIDTH = 100;
+const CARD_HEIGHT = 150;
+const CARD_MARGIN = 5;
 const BOTTOM_HEIGHT = 0;
-const BOTTOM_MARGIN = 20;
+const BOTTOM_MARGIN = 40;
 class PlayInfo {
   constructor() {
     this.reset();
@@ -195,7 +195,7 @@ export default class Play extends Room {
   }
 
   onShowEvent( event ) {
-    this.debuger.log(event.type, 'event.type');
+    //this.debuger.log(event.type, 'event.type');
     switch( event.type ){
       case Game.SHOW_EVENT.SHUFFLE_COMPLETED:
         this.debuger.log(Game.SHOW_EVENT.SHUFFLE_COMPLETED, 'attachCard');
@@ -207,7 +207,7 @@ export default class Play extends Room {
   }
 
   onUiEvent(event) {
-    this.debuger.log(event, 'onUiEvent');
+    //this.debuger.log(event, 'onUiEvent');
     switch( event.type ){
       case Game.POSITION_EVENT.SELECTED_POSITION:
         this.uiBox.onSelectedPosition( event.data );
