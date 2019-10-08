@@ -1,4 +1,3 @@
-import * as Colyseus from "colyseus.js";
 import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
@@ -6,7 +5,7 @@ import * as Config from "Util/config";
 import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
 import * as Api from 'Api/apicontroller';
-import * as ImageFactory from 'Root/imagefactory';
+import * as ImageFactory from 'Util/imagefactory';
 
 class RankListBody extends ElementProvider {
   writeHTML() {

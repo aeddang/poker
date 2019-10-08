@@ -1,8 +1,7 @@
 @import 'element';
 @import 'mixin';
 @import 'ui';
-@import 'game';
-@import 'room';
+
 
 .poker .intro { @include page($image-bg) }
 .poker .intro .logo{ @include position-top-left($margin-default, $margin-tiny) ; @include icon-logo}

@@ -1,12 +1,16 @@
 @import 'element';
 @import 'mixin';
-@import 'page';
-@import 'component';
 
+@import 'component';
+@import 'page';
+@import 'popup';
+@import 'game';
+@import 'pageui';
 
 
 .poker {@include position-relative; @include size; overflow:hidden }
 .poker .page-area { @include position-relative; @include size; overflow:hidden }
+.poker .popup-area { @include position-absolute; @include size; overflow:hidden;  background-color:$color-transparent-black70 }
 .poker .sound-area{@include screen-out; height:1px; width:1px}
 
 

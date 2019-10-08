@@ -33,6 +33,17 @@ export function signUp(userId, userData){
   });
 }
 
+export function updateUser(userId, loginToken, userData){
+  return Axios.request({
+    method: 'put',
+    headers: {
+        'loginToken': loginToken
+    },
+    url: Config.API_PATH + 'users/' + userId + Config.API_QUERY,
+    data: userData
+  });
+}
+
 
 export const ErrorCode = Object.freeze ({
   DBError : '901',

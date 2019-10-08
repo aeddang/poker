@@ -29,12 +29,13 @@ class UserInfo {
   reset() {
     this.name = '';
     this.id = '';
-		this.rid = "";
+		this.rid = '';
 		this.bank= -1;
 		this.rank = -1;
 		this.rankId = -1;
     this.accessToken = '';
-		this.profileImg = "";
+		this.profileImg = '';
+		this.loginToken = '';
 		this.character = 0;
   }
 
@@ -65,7 +66,14 @@ class LoginModel {
     this.info = new UserInfo();
 		this.debuger = new Debugger();
 		this.debuger.tag = 'LoginModel';
+
+
   }
+  init(){
+		FB.getLoginStatus(function(response) {
+  			if (response.status === 'connected') this.onLogin(response.authResponse.accessToken);
+ 		});
+	}
 
   remove() {
     this.delegate.complete(this);
@@ -91,13 +99,14 @@ class LoginModel {
     return this.delegate;
   }
 
-	signUp () {
+	signUp (character = 0) {
     this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
 		this.debuger.log('signUp');
 		Api.signUp(this.info.id, {
 			profileImg:this.info.profileImg,
 			name:this.info.name,
-			snsToken:this.info.accessToken
+			snsToken:this.info.accessToken,
+			character:character
 		}).subscribe(
 	    response => {
 				this.info.setPlayData(response.data.data);

@@ -2,9 +2,9 @@ import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import * as Account from "ViewModel/account";
-import * as Event from '../event'
 import * as Config from "Util/config";
-import * as ImageFactory from 'Root/imagefactory';
+import * as ImageFactory from 'Util/imagefactory';
+import * as MessageBoxController from 'Component/messagebox';
 
 class UserBoxBody extends ElementProvider {
   writeHTML() {
@@ -62,22 +62,30 @@ export default class UserBox extends Component {
           Account.loginModel.getPlayData();
           break;
         case Account.EVENT.ON_UNREGISTERED :
-          Account.loginModel.signUp();
+          this.openSelectCharacter();
+          break;
+        case Account.EVENT.ERROR :
+          MessageBoxController.instence.alert("",ErrorAlert.DisableLogin);
           break;
       }
     });
 
     this.attachEvent(this.btn, "click", e => {
       if( Account.loginModel.getStatus() != Account.Status.Login )Account.loginModel.login();
-      else{ };
+      else Account.loginModel.getPlayData();
+    });
+  }
+
+  openSelectCharacter(){
+    window.Poker.openPopup(Config.Popup.Join).subscribe (  e =>{
+        Account.loginModel.signUp(e.data);
     });
   }
 
   updateUserData(){
     if( Account.loginModel.getStatus() != Account.Status.Login ){
       this.profileImg.src = ImageFactory.DEFAULT_CHARACTER;
-      this.lv.src = "";
-      //this.lv.visible = false;
+      this.lv.visible = false;
       this.rank.src = ImageFactory.DEFAULT_RANK_GROUP;
       this.text.innerHTML = "Login";
       return;

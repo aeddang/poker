@@ -4,8 +4,10 @@ const PATH = "./static/asset/"
 
 
 export const CARD_PATH = PATH + "cards.png"
-export const DEFAULT_CHARACTER = PATH + "character0.png"
+
 export const DEFAULT_RANK_GROUP = PATH + "text_group3.png"
+export const TOTAL_CHARACTER_TYPE = 5;
+export const DEFAULT_CHARACTER = PATH + "character0.png"
 
 export const IconPosition = Object.freeze ({
   BigBlind: PATH + "icon_bb.png",
@@ -43,5 +45,6 @@ export function getLvIcon(lv){
 }
 
 export function getMyRankGroup(rankGroup){
+  if(rankGroup == null) return DEFAULT_RANK_GROUP;
   return PATH+"text_group"+rankGroup+".png";
 }

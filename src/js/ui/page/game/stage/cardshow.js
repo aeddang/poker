@@ -4,7 +4,7 @@ import ComponentEvent from 'Skeleton/event';
 import * as Util from 'Skeleton/util';
 import { animation, animationAndComplete } from 'Skeleton/animation';
 import Card from '../card'
-import * as SoundFactory from 'Root/soundfactory';
+import * as SoundFactory from 'Util/soundfactory';
 class CardShowBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `

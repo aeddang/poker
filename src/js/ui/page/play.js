@@ -6,7 +6,7 @@ import * as Config from 'Util/config';
 import * as Game from './game/game';
 import TopNavi from 'Component/topnavi';
 import Command, * as Cmd from  "Util/command";
-import * as SoundFactory from 'Root/soundfactory';
+import * as SoundFactory from 'Util/soundfactory';
 import * as MessageBoxController from 'Component/messagebox';
 import { ErrorAlert } from  "Util/message";
 

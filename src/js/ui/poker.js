@@ -5,7 +5,8 @@ import * as Util from 'Skeleton/util';
 import * as Config from "Util/config";
 import * as Account from "ViewModel/account";
 import * as Page from 'Page/page';
-import * as SoundFactory from './soundfactory';
+import * as Popup from 'Page/popup/popup';
+import * as SoundFactory from 'Util/soundfactory';
 import * as MessageBoxController from 'Component/messagebox';
 import { ErrorAlert, UiAlert } from  "Util/message";
 
@@ -15,6 +16,7 @@ class PokerBody extends ElementProvider {
     this.body.innerHTML =`
     <div id='${this.id}soundArea' class ='sound-area'></div>
     <div id='${this.id}pageArea' class ='page-area'></div>
+    <div id='${this.id}popupArea' class ='popup-area'></div>
     `;
   }
 }
@@ -37,6 +39,7 @@ class Poker extends Component {
     this.debuger.tag = 'Poker';
     this.info = new PokerInfo();
     this.client = null;
+    this.popups = [];
   }
 
   init(body){
@@ -56,16 +59,24 @@ class Poker extends Component {
   //PUBLIC start
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   pageChange(id, options=null) {
-
     let hash = window.location.hash.replace("#","");
     this.debuger.log(id, "pageChange " + hash);
     if(hash == id) return this.onPageChange(id, options);
-    switch(id){
-      case Config.Page.Play : return this.onPageChange(id, options);
-      default: break;
-    }
     location.hash = id;
   }
+
+  openPopup(id, options=null){
+    let stateObj = {popupId : id, options:options};
+    window.history.pushState(stateObj, id, "popup.html");
+    return this.onOpenPopup(stateObj);
+  }
+
+  closePopup(id){
+    let find = this.popups.find( pop=> pop.popupId === id );
+    if(find == null) return;
+    window.history.back();
+  }
+
   createClient(port){
     this.removeClient();
     this.client = new Colyseus.Client(Config.SERVER_HOST.replace("%path%", port));
@@ -98,8 +109,10 @@ class Poker extends Component {
   onCreate(elementProvider) {
     SoundFactory.getInstence( elementProvider.getElement('soundArea') );
     this.pageArea = elementProvider.getElement('pageArea');
+    this.popupArea = elementProvider.getElement('popupArea');
     this.onResize();
-
+    Account.loginModel.init();
+    this.popupArea.visible = false;
   }
 
   setupEvent() {
@@ -113,6 +126,46 @@ class Poker extends Component {
         this.onPageChange(hash.replace("#",""));
     });
 
+    this.attachEvent(window, "popstate", e =>{
+        this.debuger.log(JSON.stringify(e.state), "onPopstate");
+        if(e.state == null){
+          this.onCloseAllPopup();
+        }else{
+          let find = this.popups.findIndex( pop=> pop.popupId === e.state.popupId );
+          if( find == -1) this.onOpenPopup(e.state);
+          else this.onClosePopup(e.state.popupId, find);
+        }
+    });
+  }
+
+  onOpenPopup(stateObj){
+    this.debuger.log(this.popups, "onOpenPopup");
+    let page = null;
+    switch( stateObj.popupId ) {
+      case Config.Popup.Join : page = new Popup.Join(); break;
+      default : break;
+    }
+    if(page == null) return;
+    this.popups.push(stateObj);
+    stateObj.page = page;
+    this.popupArea.visible = true;
+    return page.init(this.popupArea, stateObj.options);
+  }
+
+  onClosePopup(id, idx){
+    let page = this.popups[idx].page;
+    this.popups.splice( idx , 1);
+    this.popupArea.visible = false;
+    this.debuger.log(this.popups, "onClosePopup");
+    if(page == null) return;
+    page.remove();
+  }
+
+  onCloseAllPopup(){
+    this.popups.forEach( popup => {if(popup.page!=null) popup.page.remove();} );
+    this.popups = [];
+    this.popupArea.visible = false;
+    this.debuger.log(this.popups, "onCloseAllPopup");
   }
 
   onPageChange(id, options=null) {
@@ -121,13 +174,14 @@ class Poker extends Component {
       MessageBoxController.instence.alert("",ErrorAlert.DisableConnect);
       return;
     }
+    this.onCloseAllPopup();
     if(Config.Page.Play != id) this.removeClient();
     if(this.currentPage != null) this.currentPage.remove();
     let page = null;
     switch( id ) {
       case Config.Page.Home : page = new Page.Home(); break;
       case Config.Page.Play : page = new Page.Play(); break;
-      default : page = new Page.Intro(); break;
+      default : page = new Page.Home(); break;
     }
     if(page == null) return;
     this.info.currentPageId = id;
@@ -150,6 +204,7 @@ class Poker extends Component {
     if( bounce.width != this.info.finalSize.width || bounce.height != this.info.finalSize.height ) {
         this.pageArea.height = bounce.height;
         if(this.currentPage != null) this.currentPage.onResize();
+        this.popups.forEach( popup => { if(popup.page!=null) popup.page.onResize() } );
     }
     this.info.finalSize = bounce;
   }
@@ -169,6 +224,14 @@ class PokerModule {
 
   createClient(port){
     instence.createClient(port);
+  }
+
+  openPopup(id, options=null){
+    return instence.openPopup(id, options)
+  }
+
+  closePopup(id){
+    instence.closePopup(id)
   }
 }
 
