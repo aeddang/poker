@@ -62,11 +62,11 @@ class MessageBox extends Component {
 
   setupEvent() {
     this.attachEvent(this.btnConfirm, "click", e => {
-      this.delegate.next(new ComponentEvent( SELECTED_EVENT.SELECTED,1));
+      this.delegate.next(new ComponentEvent( SELECTED_EVENT.SELECTED,true));
       this.remove();
     });
     this.attachEvent(this.btnCancel, "click", e => {
-      this.delegate.next(new ComponentEvent( SELECTED_EVENT.SELECTED,0 ));
+      this.delegate.next(new ComponentEvent( SELECTED_EVENT.SELECTED,false));
       this.remove();
     });
   }

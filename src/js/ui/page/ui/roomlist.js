@@ -111,7 +111,6 @@ class ListItem extends Component {
 
     this.attachEvent(this.btn, "click", e => {
        if( Account.loginModel.getStatus() != Account.Status.Login ){
-          if(confirm(Confirm.NeedLogin) == true) Account.loginModel.login();
           return;
        }
        if(!this.data.isAble){

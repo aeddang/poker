@@ -44,6 +44,17 @@ export function updateUser(userId, loginToken, userData){
   });
 }
 
+export function updateUserBank(userData, bank){
+  return Axios.request({
+    method: 'put',
+    headers: {
+        'loginToken': userData.loginToken
+    },
+    url: Config.API_PATH + 'users/updatebank' + userData.id + Config.API_QUERY,
+    data: {"rid": userData.rid,"bank":bank}
+  });
+}
+
 
 export const ErrorCode = Object.freeze ({
   DBError : '901',

@@ -175,11 +175,10 @@ export default class UiBox extends SyncPropsComponent {
 		this.getBody().y = playerBounce.y;
 	}
 	onSelectedPosition( playerBounce ){
-		animationAndComplete( this.getBody(),{ left:playerBounce.x, top:playerBounce.y },
-		p => {
-			 this.info.isSelectedPlayer = true;
-			 animation( this.actionArea ,{ opacity:1 } );
-		});
+		this.getBody().x = playerBounce.x;
+		this.getBody().y = playerBounce.y;
+		this.info.isSelectedPlayer = true;
+		animation( this.actionArea ,{ opacity:1 } );
 	}
 
 	onPushHand(cardDatas){

@@ -17,11 +17,11 @@
 .poker .rank-list .item{ @include position-relative; @include size(100%, 88); @include bg-image($image-bg-rank);  }
 .poker .rank-list .rank1{ @include bg-image($image-bg-rank-top); }
 .poker .rank-list .item .profile-img { @include position-left(10,5); @include size(80,80);}
-.poker .rank-list .item .rank{ @include position-left(27, 24); @include size(52, 30); @include text-tiny($color-white); @include text-shadow($color-transparent-black45); text-align:center;}
+.poker .rank-list .item .rank{ @include position-left(27, 26); @include size(52, 30); @include text-tiny($color-white); @include text-shadow($color-transparent-black45); text-align:center;}
 .poker .rank-list .rank1 .rank{ @include text-small($color-yellow); }
 .poker .rank-list .rank2 .rank{ @include text-small($color-yellow); }
 .poker .rank-list .rank3 .rank{ @include text-small($color-yellow); }
-.poker .rank-list .item .info { @include position-left($margin-tiny,5); @include size(150,12);}
+.poker .rank-list .item .info { @include position-left($margin-tiny,13); @include size(150,12);}
 .poker .rank-list .item .info .text{@include position-relative; @include size(100%, 35); @include text-small($color-white); @include text-shadow($color-transparent-black45); text-align:center; @include text-line-limit}
 .poker .rank-list .item .info .desc{@include position-relative; @include size(100%, 35); @include text-tiny($color-remon); @include text-shadow($color-transparent-black45); @include text-line-limit; text-align:center;}
 .poker .rank-list .item .btn{@include btn-trensparent;}

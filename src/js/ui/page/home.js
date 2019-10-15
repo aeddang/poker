@@ -66,7 +66,9 @@ export default class Home extends Component {
   }
 
   setupEvent() {
-    this.attachEvent(this.btnChip, "click", e => {} );
+    this.attachEvent(this.btnChip, "click", e => {
+        Account.loginModel.repillBank();
+    } );
   }
 
 

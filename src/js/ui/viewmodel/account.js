@@ -2,6 +2,8 @@ import { Subject } from 'rxjs';
 import ComponentEvent from 'Skeleton/event';
 import Debugger from 'Skeleton/log';
 import * as Api from 'Api/apicontroller';
+import * as MessageBoxController from 'Component/messagebox';
+import * as Message from  "Util/message";
 import uuidv4 from 'uuid/v4';
 
 export const EVENT = Object.freeze ({
@@ -33,6 +35,7 @@ class UserInfo {
 		this.bank= -1;
 		this.rank = -1;
 		this.rankId = -1;
+		this.getBank = 0;
     this.accessToken = '';
 		this.profileImg = '';
 		this.loginToken = '';
@@ -49,6 +52,7 @@ class UserInfo {
 	setPlayData(data) {
 	  this.rid = data['@rid'];
 		this.bank= data.bank;
+		this.getBank = data.getBank;
 		this.rank = data.rank;
 		this.rankId = data.rankId;
 		this.loginToken = data.loginToken;
@@ -116,6 +120,26 @@ class LoginModel {
 	  );
     return this.delegate;
   }
+
+	repillBank(){
+		if(this.info.getStatus() != Status.Login) {
+			MessageBoxController.instence.confirm( Message.Confirm.NeedLogin ).subscribe(
+				e => { if (e.data == true) this.login(); }
+			);
+			return;
+		}
+		if(this.info.bank>0) {
+			MessageBoxController.instence.alert("",Message.UiAlert.DisableBankRefill);
+			return;
+		}
+		Api.updateUserBank(this.info, 1000).subscribe(
+	    response => {
+				this.info.setPlayData(response.data.data);
+				this.delegate.next(new ComponentEvent( EVENT.ON_PLAY_DATA, this.info));
+			},
+	    error => MessageBoxController.instence.alert("",Message.ErrorAlert.DisableBankRefill)
+	  );
+	}
 
   getProFile () {
     this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
