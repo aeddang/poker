@@ -123,7 +123,7 @@ class LoginModel {
 
 	repillBank(){
 		if(this.info.getStatus() != Status.Login) {
-			MessageBoxController.instence.confirm( Message.Confirm.NeedLogin ).subscribe(
+			MessageBoxController.instence.confirm("",Message.Confirm.NeedLogin ).subscribe(
 				e => { if (e.data == true) this.login(); }
 			);
 			return;

@@ -17,7 +17,6 @@ class PlayBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("play");
     cell.innerHTML =`
-    <button id='${this.id}btnChip' class='btn-chip'></button>
     <div id='${this.id}playArea' class='play-area'>
       <div id='${this.id}gameViewer' class='game-viewer'></div>
       <div id='${this.id}cardShow' class='card-show'></div>
@@ -76,7 +75,7 @@ export default class Play extends Room {
     this.uiBox = null;
     this.topNavi = null;
     this.cardShow = null;
-    this.btnchip = null;
+
   }
 
   getElementProvider() { return new PlayBody(this.body); }
@@ -86,7 +85,6 @@ export default class Play extends Room {
     let bounce = Util.convertRectFromDimension(loadingBarBody);
     this.loadingBar.init(elementProvider.getElement('loadingBar'));
     this.gameViewer.init(elementProvider.getElement('gameViewer'));
-    this.btnChip = elementProvider.getElement('btnChip');
     this.playArea = elementProvider.getElement('playArea');
     this.chatArea = elementProvider.getElement('chatArea');
     this.chat.init(this.chatArea).subscribe ( this.onChatEvent.bind(this) );
@@ -100,10 +98,7 @@ export default class Play extends Room {
   }
 
   setupEvent() {
-    this.attachEvent(this.btnChip, "click", e => {
-        Account.loginModel.repillBank();
-    } );
-
+    
     this.room.listen("maxPlayer", e => {
       this.playerViewer.onUpdateSyncProp("maxPlayer", e.value);
     });
