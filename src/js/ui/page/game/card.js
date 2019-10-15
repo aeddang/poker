@@ -1,8 +1,8 @@
 import { DomComponent } from 'Skeleton/component';
 import { FrameAnimation } from 'Skeleton/paint';
 import { animationAndProgress, animationStop } from 'Skeleton/animation';
-import * as SoundFactory from 'Root/soundfactory';
-import * as ImageFactory from 'Root/imagefactory';
+import * as SoundFactory from 'Util/soundfactory';
+import * as ImageFactory from 'Util/imagefactory';
 import * as Rx from 'rxjs'
 import { take } from 'rxjs/operators'
 

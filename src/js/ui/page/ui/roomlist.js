@@ -2,10 +2,9 @@ import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import * as Account from "ViewModel/account";
-import * as Event from '../event'
 import * as Config from "Util/config";
 import * as MessageBoxController from 'Component/messagebox';
-import * as ImageFactory from 'Root/imagefactory';
+import * as ImageFactory from 'Util/imagefactory';
 
 class RoomListBody extends ElementProvider {
   writeHTML() {

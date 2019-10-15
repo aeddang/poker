@@ -1,7 +1,7 @@
 import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
-import * as SoundFactory from 'Root/soundfactory';
+import * as SoundFactory from 'Util/soundfactory';
 import * as Config from "Util/config";
 
 class IntroBody extends ElementProvider {

@@ -6,6 +6,10 @@ export const Page = Object.freeze ({
   Play: "play"
 });
 
+export const Popup = Object.freeze ({
+  Join: "join"
+});
+
 export const Port = Object.freeze ({
   Lv1: 2568,
   Lv2: 2569,

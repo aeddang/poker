@@ -6,7 +6,7 @@ import Card from '../card'
 import Betting from './betting'
 import { animation, animationAndComplete, animationWithDelay } from 'Skeleton/animation';
 import { Status, PositionStatus, NetworkStatus } from  "../playerstatus";
-import * as SoundFactory from 'Root/soundfactory';
+import * as SoundFactory from 'Util/soundfactory';
 
 export const UI_EVENT = Object.freeze ({
 	FOLD: 1,
@@ -38,17 +38,20 @@ class UiBoxBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
 			<div id='${this.id}hands' class='hands'></div>
+			<div id='${this.id}bettingArea' class='betting-area'></div>
 			<div id='${this.id}actionArea' class='action-area'>
 	      <button id='${this.id}btnFold' class='btn-fold'>Fold</button>
 	      <button id='${this.id}btnSmallBlind' class='btn-small-blind'>SBlind</button>
 				<button id='${this.id}btnBigBlind' class='btn-big-blind'>BBlind</button>
 				<button id='${this.id}btnCheck' class='btn-check'>Check</button>
 				<button id='${this.id}btnCall' class='btn-call'>Call</button>
-				<button id='${this.id}btnBet' class='btn-bet'>Bat</button>
-				<button id='${this.id}btnRaise' class='btn-raise'>Raise</button>
 	      <button id='${this.id}btnAllIn' class='btn-all-in'>Allin</button>
 			</div>
-			<div id='${this.id}bettingArea' class='betting-area'></div>
+			<div class= 'info-area'>
+			   <div id='${this.id}gameBet' class='game-bet'></div>
+			   <div id='${this.id}check' class='check'></div>
+				 <div id='${this.id}bet' class='bet'></div>
+			</div>
     `;
   }
 }
@@ -68,13 +71,15 @@ export default class UiBox extends SyncPropsComponent {
 		this.removeCards();
 		this.betting = null;
 
+		this.check = null;
+		this.bet = null;
+		this.gameBet = null;
+
 		this.btnFold = null;
 		this.btnSmallBlind = null;
 		this.btnBigBlind = null;
 		this.btnCheck = null;
 		this.btnCall = null;
-		this.btnBet = null;
-		this.btnRaise = null;
 		this.btnAllIn = null;
 		this.hands = null;
 	  this.bettingArea = null;
@@ -83,14 +88,15 @@ export default class UiBox extends SyncPropsComponent {
 
   getElementProvider() { return new UiBoxBody(this.body); }
   onCreate(elementProvider) {
+		this.check = elementProvider.getElement('check');
+		this.bet = elementProvider.getElement('bet');
+		this.gameBet = elementProvider.getElement('gameBet');
 		this.btnBlind = elementProvider.getElement('btnBlind');
     this.btnFold = elementProvider.getElement('btnFold');
 		this.btnSmallBlind = elementProvider.getElement('btnSmallBlind');
 		this.btnBigBlind = elementProvider.getElement('btnBigBlind');
 		this.btnCheck = elementProvider.getElement('btnCheck');
 		this.btnCall = elementProvider.getElement('btnCall');
-		this.btnBet = elementProvider.getElement('btnBet');
-		this.btnRaise = elementProvider.getElement('btnRaise');
 		this.btnAllIn = elementProvider.getElement('btnAllIn');
 		this.actionArea = elementProvider.getElement('actionArea');
 		this.bettingArea = elementProvider.getElement('bettingArea');
@@ -105,12 +111,21 @@ export default class UiBox extends SyncPropsComponent {
 		this.watchs = {
 			checkBet: value =>{
 				this.info.checkPot = value;
+				if(value == 0) this.check.innerHTML = '';
+				else this.check.innerHTML = 'check $'+value;
       },
 			bankroll: value =>{
         this.info.bankroll = value;
       },
 	    minBet: value =>{
 				this.info.minBet = value;
+				if(value == 0) this.bet.innerHTML = '';
+				else this.bet.innerHTML = 'bet $'+value;
+
+      },
+			gameBet: value =>{
+				if(value == 0) this.gameBet.innerHTML = '';
+				else this.gameBet.innerHTML = 'total $'+value;
       },
 			status: value =>{
         switch ( value ) {
@@ -136,8 +151,8 @@ export default class UiBox extends SyncPropsComponent {
 	    actionBigBlind: value => { this.setActionButton( this.btnBigBlind,  value ) },
 	    actionCheck: value => { this.setActionButton( this.btnCheck,  value ) },
 	    actionCall: value => { this.setActionButton( this.btnCall,  value ) },
-	    actionBet: value => { this.setActionButton( this.btnBet,  value ) },
-	    actionRaise: value => { this.setActionButton( this.btnRaise,  value ) },
+	    actionBet: value => { if(value) this.onBet(UI_EVENT.BET) },
+	    actionRaise: value => { if(value) this.onBet(UI_EVENT.RAISE) },
 	    actionAllIn: value => { this.setActionButton( this.btnAllIn,  value ) }
     };
   }
@@ -169,7 +184,7 @@ export default class UiBox extends SyncPropsComponent {
 
 	onPushHand(cardDatas){
     this.cardDatas = cardDatas
-    this.debuger.log(cardDatas, 'onPushHand');
+
 		this.cards = [];
 		cardDatas.forEach( data => {
 			let card = new Card().init( this.hands , CARD_WIDTH , CARD_HEIGHT, 0 , 0);
@@ -219,14 +234,12 @@ export default class UiBox extends SyncPropsComponent {
 		this.attachEvent(this.btnBigBlind, "click", this.onBigBlind.bind(this));
     this.attachEvent(this.btnCheck, "click", this.onCheck.bind(this));
 		this.attachEvent(this.btnCall, "click", this.onCall.bind(this));
-    this.attachEvent(this.btnBet, "click", this.onBetSelect.bind(this, UI_EVENT.BET));
-		this.attachEvent(this.btnRaise, "click", this.onBetSelect.bind(this, UI_EVENT.RAISE));
     this.attachEvent(this.btnAllIn, "click", this.onAllIn.bind(this));
   }
 
-	onBetSelect(evtType) {
-		if(this.betting.isActive == true) this.betting.passive();
-		else this.betting.active(this.info.checkPot, this.info.minBet, this.info.bankroll, evtType);
+	onBet(evtType) {
+		this.debuger.log(evtType, 'onBet');
+    this.betting.active(this.info.checkPot, this.info.minBet, this.info.bankroll, evtType);
 	}
 
 	onBlind() {

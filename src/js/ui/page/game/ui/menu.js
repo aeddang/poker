@@ -6,7 +6,7 @@ import Card from '../card'
 import Betting from './betting'
 import { animation, animationAndComplete, animationWithDelay } from 'Skeleton/animation';
 import { Status, PositionStatus, NetworkStatus } from  "../playerstatus";
-import * as SoundFactory from 'Root/soundfactory';
+import * as SoundFactory from 'Util/soundfactory';
 
 
 class MenuInfo {

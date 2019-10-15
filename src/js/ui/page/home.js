@@ -3,11 +3,10 @@ import ElementProvider from 'Skeleton/elementprovider';
 import * as Util from 'Skeleton/util';
 import * as Account from "ViewModel/account";
 import TopNavi from 'Component/topnavi';
-import RoomList from './room/roomlist/roomlist';
-import RankList from './room/ranklist/ranklist';
-import UserBox from './room/userbox/userbox';
-import * as RoomEvent from './room/event'
-import * as SoundFactory from 'Root/soundfactory';
+import RoomList from './ui/roomlist';
+import RankList from './ui/ranklist';
+import UserBox from './ui/userbox';
+import * as SoundFactory from 'Util/soundfactory';
 
 class HomeBody extends ElementProvider {
   writeHTML() {

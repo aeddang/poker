@@ -1,6 +1,6 @@
 import Component from 'Skeleton/component';
 import ElementProvider from 'Skeleton/elementprovider';
-import * as SoundFactory from 'Root/soundfactory';
+import * as SoundFactory from 'Util/soundfactory';
 import { Confirm } from  "Util/message";
 import * as Config from 'Util/config';
 import * as MessageBoxController from 'Component/messagebox';
@@ -46,6 +46,7 @@ export default class TopNavi extends Component {
     //this.attachEvent(this.btnEvent, "click", this.onLoginChange.bind(this) );
     //this.attachEvent(this.btnEvent2, "click", this.onLoginChange.bind(this) );
   }
+
 
   onSoundChange() {
     SoundFactory.getInstence().toggleSound();

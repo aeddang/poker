@@ -4,7 +4,7 @@ import * as Util from 'Skeleton/util';
 import { decoratorDynamicDom } from 'Skeleton/uielement';
 import Card from '../card'
 import { Status } from '../gamestatus'
-import * as SoundFactory from 'Root/soundfactory';
+import * as SoundFactory from 'Util/soundfactory';
 class GameViewerBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `

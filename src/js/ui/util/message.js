@@ -8,6 +8,7 @@ export const UiAlert = Object.freeze ({
 	DisableoOrientation: "디바이스를 가로모드로 고정해주세요."
 })
 export const ErrorAlert = Object.freeze ({
-	DisableConnect: "서버문제로 게임에 접속할수 없습니다.",
+	DisableLogin: "로그인에 실패했습니다.",
+	DisableConnect: "네트웤문제로 게임에 접속할수 없습니다.",
 	DisableGame: "서버문제로 게임을 종료합니다. 정말 죄송합니다..."
 })

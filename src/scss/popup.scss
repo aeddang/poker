@@ -1,0 +1,6 @@
+
+
+.poker .popup-join { }
+.poker .popup-join .btn-close{ @include position-top-right($margin-default, $margin-default); @include text-small($color-white); @include btn-text();}
+.poker .popup-join .title{ @include position-side-margin($margin-default, $margin-default, $margin-big); @include text-default($color-white); }
+.poker .popup-join .character-list-area {@include position-side-margin($margin-default, $margin-default, $margin-default); }

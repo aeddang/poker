@@ -7,8 +7,8 @@ import { animation, animationAndComplete, animationWithDelay } from 'Skeleton/an
 import Card from '../card'
 import * as Rx from 'rxjs'
 import { take } from 'rxjs/operators'
-import * as SoundFactory from 'Root/soundfactory';
-import * as ImageFactory from 'Root/imagefactory';
+import * as SoundFactory from 'Util/soundfactory';
+import * as ImageFactory from 'Util/imagefactory';
 
 class PlayerBody extends ElementProvider {
   writeHTML() {
