@@ -18,7 +18,7 @@
 @mixin btn-bet($image){@include size(64,64); @include btn-ui-box($image) }
 
 @mixin icon-logo($image:$image-icon-logo) { @include icon-image($image, 146px, 144px) }
-
+@mixin btn-logo($image:$image-icon-logo1) { @include btn-image($image, 146px, 144px) }
 
 @mixin icon-rock { @include icon-image($image-icon-rock, 140px, 188px) }
 @mixin icon-time-thumb { @include icon-image($image-icon-time-thumb, 40px, 20px) }
