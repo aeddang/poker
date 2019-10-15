@@ -5,6 +5,7 @@ import * as Account from "ViewModel/account";
 import * as Config from "Util/config";
 import * as ImageFactory from 'Util/imagefactory';
 import * as MessageBoxController from 'Component/messagebox';
+import { ErrorAlert, UiAlert } from  "Util/message";
 
 class UserBoxBody extends ElementProvider {
   writeHTML() {
@@ -92,7 +93,7 @@ export default class UserBox extends Component {
     }
 
     let info = Account.loginModel.getUserData();
-    this.text.innerHTML = info.name+"<br>$"+Util.numberWithCommas(info.bank);
+    this.text.innerHTML = info.name+"<br>bank : "+Util.numberWithCommas(info.bank, "$")+"<br>get : "+Util.numberWithCommas(info.getBank, "$");
     this.rank.src = ImageFactory.getMyRankGroup(info.rankId);
     this.profileImg.src = ImageFactory.getMyCharacter(info.character);
     this.lv.src = ImageFactory.getMyLvTitle(info.bank);

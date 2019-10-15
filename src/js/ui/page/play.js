@@ -8,6 +8,7 @@ import TopNavi from 'Component/topnavi';
 import Command, * as Cmd from  "Util/command";
 import * as SoundFactory from 'Util/soundfactory';
 import * as MessageBoxController from 'Component/messagebox';
+import * as Account from "ViewModel/account";
 import { ErrorAlert } from  "Util/message";
 
 class PlayBody extends ElementProvider {
@@ -99,7 +100,9 @@ export default class Play extends Room {
   }
 
   setupEvent() {
-    this.attachEvent(this.btnChip, "click", e => {} );
+    this.attachEvent(this.btnChip, "click", e => {
+        Account.loginModel.repillBank();
+    } );
 
     this.room.listen("maxPlayer", e => {
       this.playerViewer.onUpdateSyncProp("maxPlayer", e.value);
