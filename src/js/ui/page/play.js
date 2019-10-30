@@ -9,7 +9,8 @@ import Command, * as Cmd from  "Util/command";
 import * as SoundFactory from 'Util/soundfactory';
 import * as MessageBoxController from 'Component/messagebox';
 import * as Account from "ViewModel/account";
-import { ErrorAlert } from  "Util/message";
+import { ErrorAlert, Confirm } from  "Util/message";
+
 
 class PlayBody extends ElementProvider {
   writeHTML() {
@@ -17,13 +18,12 @@ class PlayBody extends ElementProvider {
     cell.id = this.id+'cell';
     cell.classList.add("play");
     cell.innerHTML =`
-    <button id='${this.id}btnChip' class='btn-chip'></button>
     <div id='${this.id}playArea' class='play-area'>
       <div id='${this.id}gameViewer' class='game-viewer'></div>
       <div id='${this.id}cardShow' class='card-show'></div>
       <div id='${this.id}playerViewer' class='player-viewer'></div>
       <div id='${this.id}uiBox' class='ui-box'></div>
-      <div class ='logo'></div>
+      <button id='${this.id}btnLogo' class ='logo'></button>
     </div>
     <div id='${this.id}topNaviArea' class='top-navi-area'></div>
     <div id='${this.id}chatArea' class='chat-area'></div>
@@ -69,6 +69,7 @@ export default class Play extends Room {
     this.playerViewer.remove();
     this.uiBox.remove();
     this.cardShow.remove();
+    this.btnLogo = null;
     this.chatArea = null;
     this.loadingBar = null;
     this.gameViewer = null;
@@ -76,7 +77,7 @@ export default class Play extends Room {
     this.uiBox = null;
     this.topNavi = null;
     this.cardShow = null;
-    this.btnchip = null;
+
   }
 
   getElementProvider() { return new PlayBody(this.body); }
@@ -84,9 +85,9 @@ export default class Play extends Room {
     SoundFactory.getInstence().playBgm(SoundFactory.BGM.DEFAULT);
     let loadingBarBody = elementProvider.getElement('loadingBar');
     let bounce = Util.convertRectFromDimension(loadingBarBody);
+    this.btnLogo = elementProvider.getElement('btnLogo');
     this.loadingBar.init(elementProvider.getElement('loadingBar'));
     this.gameViewer.init(elementProvider.getElement('gameViewer'));
-    this.btnChip = elementProvider.getElement('btnChip');
     this.playArea = elementProvider.getElement('playArea');
     this.chatArea = elementProvider.getElement('chatArea');
     this.chat.init(this.chatArea).subscribe ( this.onChatEvent.bind(this) );
@@ -100,9 +101,7 @@ export default class Play extends Room {
   }
 
   setupEvent() {
-    this.attachEvent(this.btnChip, "click", e => {
-        Account.loginModel.repillBank();
-    } );
+    this.attachEvent(this.btnLogo, "click", this.onExit.bind(this) );
 
     this.room.listen("maxPlayer", e => {
       this.playerViewer.onUpdateSyncProp("maxPlayer", e.value);
@@ -158,6 +157,11 @@ export default class Play extends Room {
     });
   }
 
+  onExit() {
+    MessageBoxController.instence.confirm("",Confirm.ExitGame).subscribe(
+      e=>{ if( e.data) Poker.pageChange(Config.Page.Home); }
+    );
+  }
   onPush(data) {
     this.uiBox.onPushHand(data);
   }

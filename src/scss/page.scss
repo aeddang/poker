@@ -18,9 +18,8 @@ $home-left-width: 360px;
 .poker .home .btn-chip{ @include position-top-right(0, 0); }
 
 .poker .play { @include page($image-bg1) }
-.poker .play .logo{ @include position-top-left($margin-default, $margin-tiny) ; @include icon-logo($image-icon-logo1)}
-.poker .play .btn-chip{ @include position-top-right(-30, -1); }
-.poker .play .top-navi-area { @include position-top-right(250, 0); @include size(160,36)}
+.poker .play .logo{ @include position-top-left($margin-default, $margin-tiny) ; @include btn-logo}
+.poker .play .top-navi-area { @include position-top-right($margin-default, 0); @include size(75,75)}
 .poker .play .chat-area { @include position-top-right(-274px,240px); @include size(300px,0); z-index:999}
 .poker .play .play-area { @include position-absolute(); @include size() }
 .poker .play .loading-bar { @include loading-bar }
