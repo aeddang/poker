@@ -5,7 +5,7 @@ import * as Util from 'Skeleton/util';
 import { animation } from 'Skeleton/animation';
 
 
-const BETTING_LIMITED = 10;
+const BETTING_LIMITED = 9;
 
 class BettingBody extends ElementProvider {
   writeHTML() {
@@ -18,7 +18,7 @@ class BettingBody extends ElementProvider {
 
 class ListItemBody extends ElementProvider {
   writeHTML() {
-    var cell = document.createElement("div");
+    var cell = document.createElement("button");
     cell.id = this.id+'cell';
     cell.classList.add("item");
     this.body.appendChild(cell);
@@ -30,9 +30,10 @@ class ListItem extends Component {
     super();
   }
 
-  setData(bet){
+  setData(bet,idx){
     this.bet = bet;
-    this.getBody().innerHTML = '$' + bet;
+    var text = (idx==0) ? "bet" : 'X' + (idx+1);
+    this.getBody().innerHTML = text;
   }
 
   getElementProvider() { return new ListItemBody(this.body); }
@@ -76,7 +77,7 @@ export default class Betting extends Component {
     while ( currentBet <= maxBet && idx <= BETTING_LIMITED) {
       let item = new ListItem();
       item.init( this.getBody() ).subscribe ( e => { this.delegate.next( new ComponentEvent( eventType , e ) ) } );
-      item.setData(currentBet);
+      item.setData(currentBet,idx);
       this.bets.push(item);
       currentBet += minBet;
       idx ++;

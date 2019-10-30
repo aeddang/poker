@@ -41,6 +41,7 @@ $image-path:  '../static/asset/';
 $image-bg: $image-path + 'bg.png';
 $image-bg1: $image-path + 'bg1.png';
 $image-bg-game: $image-path + 'bg_game.png';
+$image-bg-alert: $image-path + 'bg_alert.png';
 $image-bg-user-box: $image-path + 'bg_user_box.png';
 $image-bg-chat: $image-path + 'bg_chat.png';
 $image-bg-layer-popup: $image-path + 'bg_layer_popup.png';
@@ -73,10 +74,18 @@ $image-btn-sound-off: $image-path + 'btn_sound_off.png';
 $image-btn-chat: $image-path + 'btn_chat.png';
 $image-btn-close: $image-path + 'btn_close.png';
 
-$image-btn-bet-blue: $image-path + 'btn_bet_blue.png';
-$image-btn-bet-red: $image-path + 'btn_bet_red.png';
-$image-btn-bet-sky: $image-path + 'btn_bet_sky.png';
-$image-btn-bet-yellow: $image-path + 'btn_bet_yellow.png';
+$image-btn-circle-yellow: $image-path + 'btn_circle_yellow.png';
+$image-btn-circle-green: $image-path + 'btn_circle_green.png';
+$image-btn-circle-deep-green: $image-path + 'btn_circle_deep_green.png';
+$image-btn-circle-blue: $image-path + 'btn_circle_blue.png';
+
+$image-btn-rect-yellow: $image-path + 'btn_rect_yellow.png';
+$image-btn-rect-red: $image-path + 'btn_rect_red.png';
+$image-btn-rect-black: $image-path + 'btn_rect_black.png';
+$image-btn-rect-blue: $image-path + 'btn_rect_blue.png';
+
+$image-btn-paper-yellow: $image-path + 'btn_paper_yellow.png';
+$image-btn-paper-blue: $image-path + 'btn_paper_blue.png';
 
 $image-btn-chip: $image-path + 'btn_chip.png';
 

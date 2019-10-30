@@ -120,7 +120,7 @@ export default class Position extends DomComponent {
 		var posY = this.info.posY + (Math.sin(this.info.rotate) *this.info.radiusY);
 		switch( this.info.rotatePos ){
 			case 0 :
-				posY += 50;
+				posY += 80;
 				break;
 			case 4 :
 				posX += 50;
