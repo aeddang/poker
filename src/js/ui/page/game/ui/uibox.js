@@ -38,19 +38,21 @@ class UiBoxBody extends ElementProvider {
   writeHTML() {
   this.body.innerHTML = `
 			<div id='${this.id}hands' class='hands'></div>
-			<div id='${this.id}bettingArea' class='betting-area'></div>
-			<div id='${this.id}actionArea' class='action-area'>
-	      <button id='${this.id}btnFold' class='btn-fold'>Fold</button>
-	      <button id='${this.id}btnSmallBlind' class='btn-small-blind'>SBlind</button>
-				<button id='${this.id}btnBigBlind' class='btn-big-blind'>BBlind</button>
-				<button id='${this.id}btnCheck' class='btn-check'>Check</button>
-				<button id='${this.id}btnCall' class='btn-call'>Call</button>
-	      <button id='${this.id}btnAllIn' class='btn-all-in'>Allin</button>
-			</div>
-			<div class= 'info-area'>
-			   <div id='${this.id}gameBet' class='game-bet'></div>
-			   <div id='${this.id}check' class='check'></div>
-				 <div id='${this.id}bet' class='bet'></div>
+			<div id='${this.id}playArea' class='play-area'>
+				<div id='${this.id}bettingArea' class='betting-area'></div>
+				<div id='${this.id}actionArea' class='action-area'>
+		      <button id='${this.id}btnSmallBlind' class='btn-small-blind'>SBlind</button>
+					<button id='${this.id}btnBigBlind' class='btn-big-blind'>BBlind</button>
+					<button id='${this.id}btnCheck' class='btn-check'>Check</button>
+					<button id='${this.id}btnCall' class='btn-call'>Call</button>
+		      <button id='${this.id}btnAllIn' class='btn-all-in'>Allin</button>
+					<button id='${this.id}btnFold' class='btn-fold'>Fold</button>
+				</div>
+				<div class= 'info-area'>
+				   <div id='${this.id}gameBet' class='game-bet'>"wait"</div>
+				   <div id='${this.id}check' class='check'></div>
+					 <div id='${this.id}bet' class='bet'></div>
+				</div>
 			</div>
     `;
   }
@@ -83,6 +85,7 @@ export default class UiBox extends SyncPropsComponent {
 		this.btnAllIn = null;
 		this.hands = null;
 	  this.bettingArea = null;
+		this.playArea = null;
 		this.actionArea = null;
   }
 
@@ -90,6 +93,7 @@ export default class UiBox extends SyncPropsComponent {
   onCreate(elementProvider) {
 		this.check = elementProvider.getElement('check');
 		this.bet = elementProvider.getElement('bet');
+		this.playArea = elementProvider.getElement('playArea');
 		this.gameBet = elementProvider.getElement('gameBet');
 		this.btnBlind = elementProvider.getElement('btnBlind');
     this.btnFold = elementProvider.getElement('btnFold');
@@ -103,7 +107,7 @@ export default class UiBox extends SyncPropsComponent {
 		this.hands = elementProvider.getElement('hands');
   	this.betting.init( this.bettingArea ).subscribe ( this.onBetEvent.bind(this) );
     this.hands.opacity = 0;
-		this.actionArea.opacity = 0;
+		this.playArea.opacity = 0;
 
   }
 
@@ -111,8 +115,8 @@ export default class UiBox extends SyncPropsComponent {
 		this.watchs = {
 			checkBet: value =>{
 				this.info.checkPot = value;
-				if(value == 0) this.check.innerHTML = '';
-				else this.check.innerHTML = 'check $'+value;
+				if(value <= 0) this.check.innerHTML = '';
+				else this.check.innerHTML = 'C $'+value;
       },
 			bankroll: value =>{
         this.info.bankroll = value;
@@ -120,12 +124,12 @@ export default class UiBox extends SyncPropsComponent {
 	    minBet: value =>{
 				this.info.minBet = value;
 				if(value == 0) this.bet.innerHTML = '';
-				else this.bet.innerHTML = 'bet $'+value;
+				else this.bet.innerHTML = 'B $'+value;
 
       },
 			gameBet: value =>{
 				if(value == 0) this.gameBet.innerHTML = '';
-				else this.gameBet.innerHTML = 'total $'+value;
+				else this.gameBet.innerHTML = 'T $'+value;
       },
 			status: value =>{
         switch ( value ) {
@@ -137,6 +141,7 @@ export default class UiBox extends SyncPropsComponent {
 			isWinner: value =>{
         if(value == null || value == "") return;
         let key = value  ? SoundFactory.SOUND.WIN : SoundFactory.SOUND.LOSE;
+				this.gameBet.innerHTML = value  ? "WIN" : "LOSE";
         SoundFactory.getInstence().playEffect( key );
       },
 
@@ -165,6 +170,7 @@ export default class UiBox extends SyncPropsComponent {
 		this.delegate.next( e );
 	}
 	onJoin(player){
+
 	}
 	onResize() {
     super.onResize();
@@ -178,7 +184,7 @@ export default class UiBox extends SyncPropsComponent {
 		this.getBody().x = playerBounce.x;
 		this.getBody().y = playerBounce.y;
 		this.info.isSelectedPlayer = true;
-		animation( this.actionArea ,{ opacity:1 } );
+		animation( this.playArea ,{ opacity:1 } );
 	}
 
 	onPushHand(cardDatas){

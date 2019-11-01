@@ -28,10 +28,10 @@
 
 .poker .message-box{ @include position-absolute; @include size; z-index:9999}
 .poker .message-box .dimed{ @include position-relative; @include size; background:$color-transparent-black70}
-.poker .message-box .box{ @include position-center(640,360); @include size(640,360); @include bg-radius; background:$color-white; text-align:center;}
-.poker .message-box .box .title{ @include position-relative; @include text-big($color-black); padding:$margin-default $margin-default 0 $margin-default; text-align:center;}
-.poker .message-box .box .message{ @include position-relative; @include text-small($color-black); padding:$margin-default; text-align:center;}
+.poker .message-box .box{ @include position-center(615,426); @include size(615,426); @include bg-image($image-bg-alert);  text-align:center;}
+.poker .message-box .box .title{ @include position-relative; @include text-big($color-white); padding:$margin-default $margin-default 0 $margin-default; text-align:center;}
+.poker .message-box .box .message{ @include position-relative; @include text-small($color-white); padding:$margin-default; text-align:center;}
 .poker .message-box .box .bottom{ @include position-bottom($margin-default); width:100%}
 .poker .message-box .box .bottom .box-btns { @include position-relative; }
-.poker .message-box .box .bottom .box-btns .btn-confirm{ @include btn-default-text}
-.poker .message-box .box .bottom .box-btns .btn-cancel{@include btn-default-text($color-grey,$color-grey)}
+.poker .message-box .box .bottom .box-btns .btn-confirm{ @include btn-paper}
+.poker .message-box .box .bottom .box-btns .btn-cancel{@include btn-paper($image-btn-paper-blue)}

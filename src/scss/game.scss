@@ -64,22 +64,23 @@
 .poker .position .player .info-box .time-range .time-bar { @include position-relative; @include size(0,100%) @include bg-image($image-bg-progress)}
 .poker .position .player .info-box .time-range .time-thumb{ @include position-center-alignment(40,20,0,0); @include position-top-left; @include icon-time-thumb}
 
-.poker .ui-box { @include position-absolute(30%,100%); @include size(780,200);}
+.poker .ui-box { @include position-absolute(30%,100%); @include size(820,150); }
 .poker .ui-box .hands {@include position-top-left(160); @include size(200, 120) }
 .poker .ui-box .hands .card {cursor:pointer}
 
-.poker .ui-box .info-area{@include position-right(); @include size(128px,100%); background-color:$color-transparent-black70}
-.poker .ui-box .info-area .check{@include text-small($color-white)}
-.poker .ui-box .info-area .bet{@include text-small($color-red)}
-.poker .ui-box .info-area .game-bet{@include text-small($color-grey)}
+.poker .ui-box .play-area{@include position-right(0, -10); @include size(410px,150); @include bg-image($image-bg_user);}
+.poker .ui-box .info-area{@include position-right(0); @include size(130px,100%);padding:$margin-tiny}
+.poker .ui-box .info-area .check{@include text-small($color-remon); @include text-shadow($color-transparent-black70)}
+.poker .ui-box .info-area .bet{@include text-small($color-red); @include text-shadow($color-transparent-black70)}
+.poker .ui-box .info-area .game-bet{@include text-small($color-white); margin-top:20px; @include text-shadow($color-transparent-black70)}
 
-.poker .ui-box .action-area{@include position-right(); @include size(128px,100%); font-size:0}
-.poker .ui-box .action-area .btn-fold { @include btn-action($image-btn-bet-sky) }
-.poker .ui-box .action-area .btn-small-blind { @include btn-action($image-btn-bet-yellow) }
-.poker .ui-box .action-area .btn-big-blind { @include btn-action($image-btn-bet-yellow) }
-.poker .ui-box .action-area .btn-check { @include btn-action($image-btn-bet-blue) }
-.poker .ui-box .action-area .btn-call { @include btn-action($image-btn-bet-blue) }
-.poker .ui-box .action-area .btn-all-in { @include btn-action($image-btn-bet-red) }
-.poker .ui-box .betting-area { @include position-right(); @include size(128px,100%); font-size:0; background-color:$color-transparent-black70}
+.poker .ui-box .action-area{@include position-right(5); @include size(120,100%); padding-top:$margin-tiny}
+.poker .ui-box .action-area .btn-fold { @include btn-rect($image-btn-rect-black) }
+.poker .ui-box .action-area .btn-small-blind { @include btn-rect($image-btn-rect-red) }
+.poker .ui-box .action-area .btn-big-blind { @include btn-rect($image-btn-rect-red) }
+.poker .ui-box .action-area .btn-check { @include btn-rect($image-btn-rect-blue) }
+.poker .ui-box .action-area .btn-call { @include btn-rect($image-btn-rect-blue) }
+.poker .ui-box .action-area .btn-all-in { @include btn-rect($image-btn-rect-red) }
+.poker .ui-box .betting-area { @include position-right($margin-tiny); @include size(80,125); padding:$margin-tiny}
 .poker .ui-box .betting-area .bet-list {@include size(); overflow-y: auto; overflow-x:hidden;}
-.poker .ui-box .betting-area .bet-list .item {@include size(100%, 50); @include text-small($color-red); text-align: center; cursor:pointer}
+.poker .ui-box .betting-area .bet-list .item {@include btn-circle(); margin-bottom:2px}

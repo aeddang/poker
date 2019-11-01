@@ -13,9 +13,10 @@
 @mixin btn-chip { @include btn-image($image-btn-chip, 283px, 258px) }
 
 
-@mixin btn-ui-box($image){ @include bg-image($image); @include btn-default(); @include text-default($color-white); margin:0; float: left;}
-@mixin btn-action($image){@include size(128,46); @include btn-ui-box($image)}
-@mixin btn-bet($image){@include size(64,64); @include btn-ui-box($image) }
+@mixin btn-ui-box($image){ @include bg-image($image); @include btn-default(); @include text-default($color-white)}
+@mixin btn-paper($image:$image-btn-paper-yellow){@include size(169,61); @include btn-ui-box($image)}
+@mixin btn-circle($image:$image-btn-circle-yellow){@include size(68,64); @include btn-ui-box($image)}
+@mixin btn-rect($image:$image-btn-rect-yellow){@include size(116,62); @include btn-ui-box($image) }
 
 @mixin icon-logo($image:$image-icon-logo) { @include icon-image($image, 146px, 144px) }
 @mixin btn-logo($image:$image-icon-logo1) { @include btn-image($image, 146px, 144px) }
