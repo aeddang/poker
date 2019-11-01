@@ -23,9 +23,9 @@ export const Status = Object.freeze ({
 
 class UserInfo {
   constructor() {
-    this.reset();
 		this.debuger = new Debugger();
 		this.debuger.tag = 'UserInfo';
+		this.reset();
 		this.debuger.log('created UserInfo');
   }
 
@@ -159,7 +159,7 @@ class LoginModel {
 	getPlayData () {
 
 		this.debuger.log(this.info, 'getPlayData ');
-    if(this.info.rid == "") return
+    //if(this.info.rid == "") return
 		this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
 		Api.getUser(this.info.id, this.info.rid).subscribe(
 	    response => {
