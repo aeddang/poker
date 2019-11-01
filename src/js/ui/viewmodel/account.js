@@ -26,9 +26,11 @@ class UserInfo {
     this.reset();
 		this.debuger = new Debugger();
 		this.debuger.tag = 'UserInfo';
+		this.debuger.log('created UserInfo');
   }
 
   reset() {
+		this.debuger.log('reset UserInfo');
     this.name = '';
     this.id = '';
 		this.rid = '';
@@ -156,6 +158,8 @@ class LoginModel {
 
 	getPlayData () {
 
+		this.debuger.log(this.info, 'getPlayData ');
+    if(this.info.rid == "") return
 		this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
 		Api.getUser(this.info.id, this.info.rid).subscribe(
 	    response => {
