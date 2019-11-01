@@ -70,13 +70,10 @@ class LoginModel {
     this.info = new UserInfo();
 		this.debuger = new Debugger();
 		this.debuger.tag = 'LoginModel';
-
-
   }
+
   init(){
-		FB.getLoginStatus(function(response) {
-  			if (response.status === 'connected') this.onLogin(response.authResponse.accessToken);
- 		});
+
 	}
 
   remove() {
@@ -92,6 +89,13 @@ class LoginModel {
   getStatus() {
     return this.info.getStatus();
   }
+
+	checkLogin(){
+		FB.getLoginStatus((response) => {
+			  this.debuger.log(response.status);
+  			if (response.status === 'connected') this.onLogin(response.authResponse.accessToken);
+ 		});
+	}
 
   login () {
     this.delegate.next(new ComponentEvent( EVENT.PROGRESS));

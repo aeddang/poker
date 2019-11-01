@@ -29,7 +29,8 @@
 .poker .user-box { @include position-relative; @include size(100%,100%); @include bg-image($image-bg-user-box)}
 .poker .user-box .profile-img{ @include position-absolute(28,80); @include size(88,88) }
 .poker .user-box .info { @include position-absolute(145,80); @include size(165,100)}
-.poker .user-box .info .text{@include position-relative; @include size(auto, auto); @include text-small($color-white); @include text-line-limit}
+.poker .user-box .info .title{@include position-relative; @include size(auto, auto); @include text-small($color-white); @include text-line-limit}
+.poker .user-box .info .desc{@include position-relative; @include size(auto, auto); @include text-tiny($color-remon); @include text-line-limit}
 .poker .user-box .lv{@include position-absolute(115,19); @include size(135, 28);}
 .poker .user-box .rank{ @include position-absolute(330,105); @include size(60, 32);}
 .poker .user-box .btn{@include btn-trensparent;}

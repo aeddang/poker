@@ -13,7 +13,7 @@
       var instenceID = null;
       window.onload = init;
       function init() {
-        Poker.init('area');
+
       }
 
       window.fbAsyncInit = function() {
@@ -23,6 +23,7 @@
           xfbml            : true,
           version          : 'v4.0'
         });
+        Poker.init('area');
       };
 
       (function(d, s, id){
