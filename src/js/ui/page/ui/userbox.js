@@ -33,6 +33,11 @@ export default class UserBox extends Component {
     super();
     this.debuger.tag = 'UserBox';
   }
+  init(body){
+    super.init(body);
+    Account.loginModel.checkLogin();
+    return this.delegate;
+  }
 
   remove() {
     super.remove();
@@ -52,7 +57,6 @@ export default class UserBox extends Component {
     this.desc = elementProvider.getElement('desc');
     this.profileImg = elementProvider.getElement('profileImg');
     this.btn = elementProvider.getElement('btn');
-    Account.loginModel.checkLogin();
     this.updateUserData();
   }
 
