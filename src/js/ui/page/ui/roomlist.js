@@ -5,6 +5,8 @@ import * as Account from "ViewModel/account";
 import * as Config from "Util/config";
 import * as MessageBoxController from 'Component/messagebox';
 import * as ImageFactory from 'Util/imagefactory';
+import * as Message from  "Util/message";
+
 
 class RoomListBody extends ElementProvider {
   writeHTML() {
@@ -111,10 +113,13 @@ class ListItem extends Component {
 
     this.attachEvent(this.btn, "click", e => {
        if( Account.loginModel.getStatus() != Account.Status.Login ){
+          MessageBoxController.instence.confirm("",Message.Confirm.NeedLogin ).subscribe(
+   				     e => { if (e.data == true)   Account.loginModel.login (); }
+   			  );
           return;
        }
        if(!this.data.isAble){
-         MessageBoxController.instence.alert("",UiAlert.DisableLv);
+         MessageBoxController.instence.alert("",Message.UiAlert.DisableLv);
          return;
        }
        window.Poker.createClient(this.data.port);
@@ -127,12 +132,12 @@ class ListItem extends Component {
        this.data.isAble = true;
        this.dimed.visible = false;
        this.iconRock.visible = false;
-       this.btn.visible = true;
+
     }else{
        this.data.isAble = false;
        this.dimed.visible = true;
        this.iconRock.visible = true;
-       this.btn.visible = false;
+
     }
   }
 
