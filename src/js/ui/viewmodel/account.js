@@ -23,14 +23,12 @@ export const Status = Object.freeze ({
 
 class UserInfo {
   constructor() {
-    this.reset();
 		this.debuger = new Debugger();
 		this.debuger.tag = 'UserInfo';
-		this.debuger.log('created UserInfo');
+    this.reset();
   }
 
   reset() {
-		this.debuger.log('reset UserInfo');
     this.name = '';
     this.id = '';
 		this.rid = '';
@@ -75,7 +73,6 @@ class LoginModel {
   }
 
   init(){
-
 	}
 
   remove() {
@@ -93,6 +90,7 @@ class LoginModel {
   }
 
 	checkLogin(){
+		if( this.info.getStatus() == Status.Login) return;
 		FB.getLoginStatus((response) => {
 			  this.debuger.log(response.status);
   			if (response.status === 'connected') this.onLogin(response.authResponse.accessToken);
@@ -157,9 +155,6 @@ class LoginModel {
   }
 
 	getPlayData () {
-
-		this.debuger.log(this.info, 'getPlayData ');
-    if(this.info.rid == "") return
 		this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
 		Api.getUser(this.info.id, this.info.rid).subscribe(
 	    response => {

@@ -4,7 +4,7 @@ export const Confirm = Object.freeze ({
 });
 
 export const UiAlert = Object.freeze ({
-	DisableLv: "You can't enter the LV<br>because you don't have enough acquired BankRoll.",
+	DisableLv: "You can't enter the LV<br>because you don't have<br>enough acquired BankRoll.",
 	DisableBankRefill: "Refill can be done<br>when you do not have a Bank.",
 	DisableoOrientation: "Please fix the device to horizontal mode."
 })
