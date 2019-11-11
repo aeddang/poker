@@ -90,7 +90,10 @@ class LoginModel {
   }
 
 	checkLogin(){
-		if( this.info.getStatus() == Status.Login) return;
+		if( this.info.getStatus() == Status.Login) {
+			this.getPlayData();
+			return;
+		}
 		FB.getLoginStatus((response) => {
 			  this.debuger.log(response.status);
   			if (response.status === 'connected') this.onLogin(response.authResponse.accessToken);
