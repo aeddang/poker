@@ -25,12 +25,8 @@ class UserInfo {
   constructor() {
 		this.debuger = new Debugger();
 		this.debuger.tag = 'UserInfo';
-<<<<<<< HEAD
 		this.reset();
 		this.debuger.log('created UserInfo');
-=======
-    this.reset();
->>>>>>> 31a10b5eeda558fdfb57fe88d534390da60654de
   }
 
   reset() {
@@ -160,12 +156,6 @@ class LoginModel {
   }
 
 	getPlayData () {
-<<<<<<< HEAD
-
-		this.debuger.log(this.info, 'getPlayData ');
-    //if(this.info.rid == "") return
-=======
->>>>>>> 31a10b5eeda558fdfb57fe88d534390da60654de
 		this.delegate.next(new ComponentEvent( EVENT.PROGRESS));
 		Api.getUser(this.info.id, this.info.rid).subscribe(
 	    response => {
