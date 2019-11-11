@@ -17,11 +17,11 @@ export function getRanks(groupId){
 }
 
 export function getUser(userId, rid = null){
-  let addedQuery = (rid == null || rid == "") ? "" : ("&rid="+rid);
+  let addedQuery = (rid == null || rid == "") ? "" : ("rid="+rid);
   console.log(addedQuery)
   return Axios.request({
     method: 'get',
-    url: Config.API_PATH + 'users/' + userId + encodeURIComponent(Config.API_QUERY + addedQuery)
+    url: Config.API_PATH + 'users/' + userId + Config.API_QUERY +"&"+ encodeURIComponent(addedQuery)
   });
 }
 
