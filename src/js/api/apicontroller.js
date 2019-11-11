@@ -21,7 +21,7 @@ export function getUser(userId, rid = null){
   console.log(addedQuery)
   return Axios.request({
     method: 'get',
-    url: encodeURIComponent(Config.API_PATH + 'users/' + userId + Config.API_QUERY + addedQuery)
+    url: Config.API_PATH + 'users/' + userId + encodeURIComponent(Config.API_QUERY + addedQuery)
   });
 }
 
