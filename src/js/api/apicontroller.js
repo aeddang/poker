@@ -21,7 +21,7 @@ export function getUser(userId, rid = null){
   console.log(addedQuery)
   return Axios.request({
     method: 'get',
-    url: Config.API_PATH + 'users/' + userId + Config.API_QUERY + addedQuery
+    url: Config.API_PATH + 'users/' + userId + Config.API_QUERY + encodeURIComponent(addedQuery)
   });
 }
 
@@ -50,7 +50,7 @@ export function updateUserBank(userData, bank){
     headers: {
         'loginToken': userData.loginToken
     },
-    url: Config.API_PATH + 'users/updatebank' + userData.id + Config.API_QUERY,
+    url: Config.API_PATH + 'users/updatebank/' + userData.id + Config.API_QUERY,
     data: {"rid": userData.rid,"bank":bank}
   });
 }
