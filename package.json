@@ -60,7 +60,7 @@
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-util": "^3.0.8",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "sass-loader": "^7.1.0",
     "ts-node": "^5.0.1",
     "typescript": "^2.7.2",
